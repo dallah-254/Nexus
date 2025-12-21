@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>NexusFlow | Verify Email</title>
+    <script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js@6.3.16/dist/amazon-cognito-identity.min.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 18px; text-align: center; letter-spacing: 5px; }
+        button { width: 100%; padding: 12px; background: #ff9900; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Verify Your Account</h2>
+    <p>Enter the 6-digit code sent to your email.</p>
+    <input type="text" id="verificationCode" placeholder="000000" maxlength="6">
+    <button id="verifyBtn">Confirm Account</button>
+    <div id="msg" style="margin-top: 15px; color: red;"></div>
+</div>
+
+<script>
+    const poolData = { 
+        UserPoolId: 'us-east-1_IK57zG64M', 
+        ClientId: '668q6c6krjv8b6n81cfc78n9a4' 
+    };
+    const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
+
+    document.getElementById('verifyBtn').onclick = function() {
+        const code = document.getElementById('verificationCode').value;
+        const email = localStorage.getItem('nexusEmail'); // Retrieved from the registration step
+        
+        const userData = {
+            Username: email,
+            Pool: userPool
+        };
+
+        const cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
+
+        cognitoUser.confirmRegistration(code, true, function(err, result) {
+            if (err) {
+                document.getElementById('msg').innerText = err.message || JSON.stringify(err);
+                return;
+            }
+            alert("Success! Your account is confirmed. Redirecting to login...");
+            window.location.href = 'login.html';
+        });
+    };
+</script>
+</body>
+</html>

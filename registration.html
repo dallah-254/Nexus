@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexusFlow | Registration</title>
+    <script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js@6.3.16/dist/amazon-cognito-identity.min.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f8f9fa; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .form-card { background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); width: 100%; max-width: 450px; }
+        h2 { color: #232f3e; text-align: center; margin-bottom: 1.5rem; }
+        input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background: #ff9900; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        button:hover { background: #ec8a00; }
+        .error { color: #d9534f; font-size: 14px; text-align: center; margin-top: 10px; min-height: 20px; }
+        hr { border: 0; border-top: 1px solid #eee; margin: 20px 0; }
+    </style>
+</head>
+<body>
+
+<div class="form-card">
+    <h2>NexusFlow Signup</h2>
+    <form id="regForm">
+        <input type="text" id="middleName" placeholder="Middle Name" required>
+        <input type="text" id="familyName" placeholder="Family Name (Surname)" required>
+        <input type="email" id="email" placeholder="Email Address" required>
+        <input type="tel" id="phone" placeholder="Phone (e.g. +254700000000)" required>
+        <input type="text" id="address" placeholder="Physical Address" required>
+        <hr>
+        <input type="password" id="password" placeholder="Create Password" required>
+        <button type="submit" id="submitBtn">Create Account</button>
+    </form>
+    <div id="statusMsg" class="error"></div>
+</div>
+
+<script>
+    // Configuration
+    const poolData = { 
+        UserPoolId: 'us-east-1_IK57zG64M', 
+        ClientId: '668q6c6krjv8b6n81cfc78n9a4' 
+    };
+
+    // Wait for the SDK to be fully available
+    window.onload = function() {
+        if (typeof AmazonCognitoIdentity === 'undefined') {
+            document.getElementById('statusMsg').innerText = "Error: AWS SDK failed to load. Check internet.";
+            return;
+        }
+
+        const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
+
+        document.getElementById('regForm').onsubmit = function(e) {
+            e.preventDefault();
+            
+            const status = document.getElementById('statusMsg');
+            const btn = document.getElementById('submitBtn');
+            
+            status.style.color = "blue";
+            status.innerText = "Connecting to AWS...";
+            btn.disabled = true;
+
+            // 1. GRAB DATA FROM HTML (The missing part)
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const middleName = document.getElementById('middleName').value;
+            const familyName = document.getElementById('familyName').value;
+            const phone = document.getElementById('phone').value;
+            const address = document.getElementById('address').value;
+
+            // 2. CREATE ATTRIBUTE LIST (Order doesn't matter, but names MUST match Cognito)
+            const attributeList = [
+                new AmazonCognitoIdentity.CognitoUserAttribute({ Name: 'email', Value: email }),
+                new AmazonCognitoIdentity.CognitoUserAttribute({ Name: 'family_name', Value: familyName }),
+                new AmazonCognitoIdentity.CognitoUserAttribute({ Name: 'middle_name', Value: middleName }),
+                new AmazonCognitoIdentity.CognitoUserAttribute({ Name: 'phone_number', Value: phone }),
+                new AmazonCognitoIdentity.CognitoUserAttribute({ Name: 'address', Value: address })
+            ];
+
+            // 3. SEND TO COGNITO
+            userPool.signUp(email, password, attributeList, null, function(err, result) {
+                if (err) {
+                    status.style.color = "red";
+                    status.innerText = err.message || JSON.stringify(err);
+                    btn.disabled = false;
+                    console.error("Signup Error:", err);
+                    return;
+                }
+                
+                // Success!
+                alert("Account created! Verification code sent to your email.");
+                localStorage.setItem('nexusEmail', email);
+                window.location.href = 'verify.html';
+            });
+        };
+    };
+</script>
+
+</body>
+</html>
