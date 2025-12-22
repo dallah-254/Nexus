@@ -2,70 +2,181 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NexusFlow | My Profile</title>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aws-sdk/2.1522.0/aws-sdk.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js@6.3.7/dist/amazon-cognito-identity.min.js"></script>
+    
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #f8f9fa; padding: 2rem; display: flex; justify-content: center; }
-        .profile-card { background: white; padding: 2.5rem; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); width: 100%; max-width: 500px; }
-        .header { border-bottom: 2px solid #ff9900; margin-bottom: 20px; padding-bottom: 10px; }
-        .data-row { margin: 15px 0; display: flex; justify-content: space-between; border-bottom: 1px solid #eee; padding-bottom: 8px; }
-        .label { font-weight: bold; color: #555; }
-        .value { color: #222; }
-        .logout-btn { margin-top: 30px; width: 100%; padding: 10px; background: #dc3545; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f7f9; padding: 20px; margin: 0; color: #333; }
+        .container { max-width: 1000px; margin: auto; }
+        .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin-bottom: 25px; }
+        
+        .header-flex { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #ff9900; padding-bottom: 15px; margin-bottom: 20px; }
+        h1, h2 { margin: 0; color: #232f3e; }
+
+        /* User Details Styling */
+        .user-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .detail-item { font-size: 15px; }
+        .detail-item strong { color: #555; text-transform: capitalize; margin-right: 5px; }
+
+        /* Table Styling */
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; background: #fff; }
+        th { background: #232f3e; color: white; text-align: left; padding: 15px; font-size: 14px; }
+        td { padding: 15px; border-bottom: 1px solid #eee; vertical-align: top; }
+        tr:hover { background-color: #f9f9f9; }
+
+        .status-badge { display: inline-block; background: #e1f5fe; color: #01579b; padding: 5px 12px; border-radius: 15px; font-size: 12px; font-weight: bold; text-transform: uppercase; }
+        .device-text { font-weight: bold; color: #333; display: block; }
+        .issue-text { font-size: 13px; color: #666; margin-top: 4px; display: block; }
+
+        .btn-action { background: #ff9900; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; text-decoration: none; font-weight: bold; font-size: 14px; }
+        .btn-logout { background: #d9534f; margin-left: 10px; }
+        .nav-buttons { display: flex; gap: 10px; }
     </style>
 </head>
 <body>
 
-<div class="profile-card">
-    <div class="header">
-        <h2 style="margin:0;">Customer Profile</h2>
-        <p style="color: #666; font-size: 14px;">Logged in securely via AWS Cognito</p>
+<div class="container">
+    <div class="card">
+        <div class="header-flex">
+            <h1>NexusFlow Profile</h1>
+            <div class="nav-buttons">
+                <a href="book.html" class="btn-action">Book New Repair</a>
+                <button class="btn-action btn-logout" onclick="logout()">Logout</button>
+            </div>
+        </div>
+        <div id="user-info" class="user-grid">Loading profile details...</div>
     </div>
 
-    <div id="profileDetails">
-        <div class="data-row"><span class="label">Full Name:</span> <span class="value" id="userName">Loading...</span></div>
-        <div class="data-row"><span class="label">Email:</span> <span class="value" id="userEmail">Loading...</span></div>
-        <div class="data-row"><span class="label">Phone:</span> <span class="value" id="userPhone">Loading...</span></div>
-        <div class="data-row"><span class="label">Address:</span> <span class="value" id="userAddress">Loading...</span></div>
+    <div class="card">
+        <h2>Recent Repair Requests</h2>
+        <div id="booking-status" style="padding: 20px; text-align: center; color: #666;">
+            Verifying session and fetching history...
+        </div>
+        <table id="booking-table" style="display:none;">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Device Details</th>
+                    <th>Pickup Location</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="booking-rows"></tbody>
+        </table>
     </div>
-
-    <button class="logout-btn" onclick="logout()">Logout & Exit</button>
 </div>
 
 <script>
-    // THE SECURITY GUARD: Check if logged in before anything else
+    // 1. CONFIGURATION
+    const poolData = { 
+        UserPoolId: 'us-east-1_IK57zG64M', 
+        ClientId: '668q6c6krjv8b6n81cfc78n9a4' 
+    };
+    const apiInvokeUrl = 'https://yskkdnff93.execute-api.us-east-1.amazonaws.com/prod/bookings';
+
+    // 2. PAGE LOAD LOGIC
     window.onload = function() {
-        const token = localStorage.getItem('nexus_id_token');
+        const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
+        const cognitoUser = userPool.getCurrentUser();
 
-        if (!token) {
-            // No token found - Kick them out!
+        if (cognitoUser != null) {
+            cognitoUser.getSession((err, session) => {
+                if (err || !session.isValid()) {
+                    window.location.href = 'login.html';
+                } else {
+                    displayProfile(cognitoUser);
+                    fetchRepairHistory(session);
+                }
+            });
+        } else {
             window.location.href = 'login.html';
-            return;
-        }
-
-        try {
-            // Decode the ID Token (it's a Base64 string)
-            const base64Url = token.split('.')[1];
-            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-            const payload = JSON.parse(window.atob(base64));
-
-            console.log("User Claims:", payload);
-
-            // Populate the UI with real data from Cognito
-            document.getElementById('userName').innerText = `${payload['middle_name'] || ''} ${payload['family_name'] || ''}`.trim();
-            document.getElementById('userEmail').innerText = payload['email'];
-            document.getElementById('userPhone').innerText = payload['phone_number'] || 'N/A';
-            document.getElementById('userAddress').innerText = payload['address'] || 'N/A';
-
-        } catch (e) {
-            console.error("Token decoding failed", e);
-            logout();
         }
     };
 
+    // 3. DISPLAY COGNITO ATTRIBUTES
+    function displayProfile(cognitoUser) {
+        cognitoUser.getUserAttributes((err, attributes) => {
+            const infoDiv = document.getElementById('user-info');
+            if (err) {
+                infoDiv.innerText = "Error loading profile.";
+                return;
+            }
+            let html = "";
+            attributes.forEach(attr => {
+                const label = attr.Name.replace('custom:', '').replace('_', ' ');
+                // Only show relevant fields
+                if (["email", "family_name", "middle_name", "address", "phone_number"].includes(attr.Name)) {
+                    html += `<div class="detail-item"><strong>${label}:</strong> ${attr.Value}</div>`;
+                }
+            });
+            infoDiv.innerHTML = html;
+        });
+    }
+
+    // 4. FETCH FROM DYNAMODB VIA API
+    function fetchRepairHistory(session) {
+        const idToken = session.getIdToken().getJwtToken();
+
+        fetch(apiInvokeUrl, {
+            method: 'GET',
+            headers: {
+                'Authorization': idToken,
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            if (!response.ok) throw new Error("API Status: " + response.status);
+            return response.json();
+        })
+        .then(data => {
+            const statusEl = document.getElementById('booking-status');
+            const tableEl = document.getElementById('booking-table');
+            const rowsEl = document.getElementById('booking-rows');
+
+            if (!data || data.length === 0) {
+                statusEl.innerHTML = "No repair requests found. <br><br> <a href='book.html'>Click here to book your first repair!</a>";
+            } else {
+                statusEl.style.display = 'none';
+                tableEl.style.display = 'table';
+                
+                rowsEl.innerHTML = data.map(item => {
+                    // Smart display logic for repair fields
+                    const deviceName = (item.brand && item.model) ? `${item.brand} ${item.model}` : (item.deviceType || "Unknown Device");
+                    const displayDate = item.bookingDate || (item.createdAt ? item.createdAt.split('T')[0] : 'N/A');
+                    const location = item.pickupAddress ? `${item.pickupAddress}, ${item.city || ''}` : "Not provided";
+
+                    return `
+                        <tr>
+                            <td>${displayDate}</td>
+                            <td>
+                                <span class="device-text">${deviceName}</span>
+                                <span class="issue-text">${item.issueDescription || 'No description provided.'}</span>
+                            </td>
+                            <td style="font-size: 13px;">${location}</td>
+                            <td><span class="status-badge">${item.status || 'RECEIVED'}</span></td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+        })
+        .catch(error => {
+            console.error("Fetch error:", error);
+            document.getElementById('booking-status').innerHTML = 
+                "<span style='color:red;'>Failed to load repairs. Please ensure API is deployed and CORS is enabled.</span>";
+        });
+    }
+
+    // 5. LOGOUT
     function logout() {
-        localStorage.clear();
+        const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
+        const cognitoUser = userPool.getCurrentUser();
+        if (cognitoUser) cognitoUser.signOut();
         window.location.href = 'login.html';
     }
 </script>
+
 </body>
 </html>
