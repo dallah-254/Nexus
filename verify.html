@@ -2,23 +2,100 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>NexusFlow | Verify Email</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexusFlow | Identity Verification</title>
     <script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js@6.3.16/dist/amazon-cognito-identity.min.js"></script>
+    <link rel="stylesheet" href="style.css">
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
-        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 18px; text-align: center; letter-spacing: 5px; }
-        button { width: 100%; padding: 12px; background: #ff9900; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        .auth-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 80vh;
+            padding: 20px;
+        }
+
+        .verify-card {
+            max-width: 400px;
+            text-align: center;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .code-input {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            color: var(--accent);
+            font-family: 'Courier New', monospace;
+            font-size: 2.5rem;
+            letter-spacing: 12px;
+            text-indent: 12px;
+            padding: 15px;
+            margin: 25px 0;
+            border-radius: 8px;
+            width: 100%;
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .code-input:focus {
+            border-color: var(--accent);
+        }
+
+        #msg {
+            margin-top: 20px;
+            font-size: 0.85rem;
+            min-height: 20px;
+            padding: 10px;
+            border-radius: 6px;
+            display: none;
+        }
+
+        .resend-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .resend-link:hover {
+            color: var(--accent);
+        }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <h2>Verify Your Account</h2>
-    <p>Enter the 6-digit code sent to your email.</p>
-    <input type="text" id="verificationCode" placeholder="000000" maxlength="6">
-    <button id="verifyBtn">Confirm Account</button>
-    <div id="msg" style="margin-top: 15px; color: red;"></div>
+<nav class="navbar">
+    <a href="index.html" class="logo">NEXUS<span style="color:white">FLOW</span></a>
+</nav>
+
+<div class="auth-container">
+    <div class="card verify-card">
+        <div style="margin-bottom: 20px;">
+            <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/>
+                <path d="m9 12 2 2 4-4"/>
+            </svg>
+        </div>
+        
+        <h2 style="margin: 0;">Identity <span style="color:var(--accent)">Verification</span></h2>
+        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 10px;" id="target-email">
+            Retrieving email from local cache...
+        </p>
+
+        <input type="text" id="verificationCode" placeholder="000000" maxlength="6" class="code-input" autocomplete="one-time-code">
+        
+        <button id="verifyBtn" class="btn btn-primary" style="width: 100%; padding: 15px; font-size: 1rem;">
+            Confirm Activation
+        </button>
+
+        <div id="msg"></div>
+
+        <a onclick="resendCode()" class="resend-link">Didn't receive a code? <b>Resend Signal</b></a>
+    </div>
 </div>
 
 <script>
@@ -27,27 +104,74 @@
         ClientId: '668q6c6krjv8b6n81cfc78n9a4' 
     };
     const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
+    const userEmail = localStorage.getItem('nexusEmail');
+
+    window.onload = function() {
+        if (!userEmail) {
+            window.location.href = 'registration.html';
+            return;
+        }
+        document.getElementById('target-email').innerText = `Enter the 6-digit protocol sent to: ${userEmail}`;
+    };
 
     document.getElementById('verifyBtn').onclick = function() {
         const code = document.getElementById('verificationCode').value;
-        const email = localStorage.getItem('nexusEmail'); // Retrieved from the registration step
-        
-        const userData = {
-            Username: email,
-            Pool: userPool
-        };
+        const status = document.getElementById('msg');
+        const btn = document.getElementById('verifyBtn');
 
+        if (code.length < 6) {
+            showStatus("Code must be 6 digits.", "danger");
+            return;
+        }
+
+        btn.disabled = true;
+        showStatus("Synchronizing identity...", "neutral");
+
+        const userData = { Username: userEmail, Pool: userPool };
         const cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
 
         cognitoUser.confirmRegistration(code, true, function(err, result) {
             if (err) {
-                document.getElementById('msg').innerText = err.message || JSON.stringify(err);
+                showStatus(err.message || "Verification failed.", "danger");
+                btn.disabled = false;
                 return;
             }
-            alert("Success! Your account is confirmed. Redirecting to login...");
-            window.location.href = 'login.html';
+            
+            showStatus("Identity Confirmed. Redirecting to access terminal...", "success");
+            setTimeout(() => { window.location.href = 'login.html'; }, 2000);
         });
     };
+
+    function resendCode() {
+        const userData = { Username: userEmail, Pool: userPool };
+        const cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
+        
+        cognitoUser.resendConfirmationCode(function(err, result) {
+            if (err) {
+                showStatus(err.message, "danger");
+            } else {
+                showStatus("New verification protocol transmitted.", "success");
+            }
+        });
+    }
+
+    function showStatus(text, type) {
+        const msg = document.getElementById('msg');
+        msg.style.display = "block";
+        msg.innerText = text;
+        
+        if (type === "success") {
+            msg.style.background = "rgba(16, 185, 129, 0.1)";
+            msg.style.color = "var(--success)";
+        } else if (type === "danger") {
+            msg.style.background = "rgba(239, 68, 68, 0.1)";
+            msg.style.color = "var(--danger)";
+        } else {
+            msg.style.background = "rgba(255, 255, 255, 0.05)";
+            msg.style.color = "var(--text-secondary)";
+        }
+    }
 </script>
+
 </body>
 </html>

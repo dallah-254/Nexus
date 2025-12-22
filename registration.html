@@ -3,151 +3,191 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NexusFlow | My Profile</title>
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/aws-sdk/2.1522.0/aws-sdk.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js@6.3.7/dist/amazon-cognito-identity.min.js"></script>
-    
+    <title>NexusFlow | Create Profile</title>
+    <script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js@6.3.16/dist/amazon-cognito-identity.min.js"></script>
+    <link rel="stylesheet" href="style.css">
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f9; padding: 40px; margin: 0; }
-        .container { max-width: 900px; margin: auto; }
-        .card { background: white; padding: 25px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        h1, h2 { color: #232f3e; margin-top: 0; }
-        .user-details { border-bottom: 2px solid #eee; padding-bottom: 15px; margin-bottom: 15px; }
-        .detail-item { padding: 8px 0; font-size: 16px; }
-        .detail-item strong { color: #555; text-transform: capitalize; }
-        
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        th { background: #f8f9fa; text-align: left; padding: 12px; border-bottom: 2px solid #dee2e6; }
-        td { padding: 12px; border-bottom: 1px solid #eee; }
-        .status-badge { background: #e1f5fe; color: #01579b; padding: 4px 10px; border-radius: 20px; font-size: 13px; font-weight: bold; }
-        
-        .btn-logout { background: #d9534f; color: white; border: none; padding: 10px 25px; border-radius: 5px; cursor: pointer; font-weight: bold; float: right; }
-        .btn-logout:hover { background: #c9302c; }
-        #status-msg { color: #666; font-style: italic; }
+        .auth-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 80vh;
+            padding: 40px 20px;
+        }
+
+        .signup-card {
+            width: 100%;
+            max-width: 550px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        /* 2-Column Grid for Form */
+        .registration-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .full-width { grid-column: span 2; }
+
+        #statusMsg {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.85rem;
+            min-height: 20px;
+            padding: 10px;
+            border-radius: 6px;
+            display: none;
+        }
+
+        hr {
+            border: 0;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            margin: 20px 0;
+            grid-column: span 2;
+        }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <button class="btn-logout" onclick="logout()">Logout</button>
-    
-    <div class="card">
-        <h1>Welcome to NexusFlow</h1>
-        <div id="user-info" class="user-details">Loading profile...</div>
+<nav class="navbar">
+    <a href="index.html" class="logo">NEXUS<span style="color:white">FLOW</span></a>
+    <div class="nav-links">
+        <a href="shop.html">Shop</a>
+        <a href="book-repair.html">Book Repair</a>
+        <a href="cart.html" class="cart-link">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="var(--accent)">
+                <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/>
+            </svg>
+            <span class="cart-count" id="cart-badge">0</span>
+        </a>
     </div>
+</nav>
 
-    <div class="card">
-        <h2>My Booking History</h2>
-        <div id="booking-status">Checking for bookings...</div>
-        <table id="booking-table" style="display:none;">
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Service</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody id="booking-rows"></tbody>
-        </table>
+<div class="auth-container">
+    <div class="card signup-card">
+        <div style="text-align: center; margin-bottom: 30px;">
+            <h2 style="margin: 0;">System <span style="color:var(--accent)">Registration</span></h2>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 8px;">Create your secure NexusFlow hardware profile.</p>
+        </div>
+
+        <form id="regForm" class="registration-grid">
+            <div>
+                <label>Middle Name</label>
+                <input type="text" id="middleName" placeholder="e.g. Alexander" required>
+            </div>
+            <div>
+                <label>Family Name</label>
+                <input type="text" id="familyName" placeholder="e.g. Smith" required>
+            </div>
+            
+            <div class="full-width">
+                <label>Email Address</label>
+                <input type="email" id="email" placeholder="name@company.com" required>
+            </div>
+
+            <div class="full-width">
+                <label>Phone Number (International)</label>
+                <input type="tel" id="phone" placeholder="+2547..." required>
+            </div>
+
+            <div class="full-width">
+                <label>Physical Address</label>
+                <input type="text" id="address" placeholder="Building, Street, City" required>
+            </div>
+
+            <hr>
+
+            <div class="full-width">
+                <label>Secure Password</label>
+                <input type="password" id="password" placeholder="••••••••" required>
+            </div>
+
+            <button type="submit" id="submitBtn" class="btn btn-primary full-width" style="padding: 15px; font-size: 1rem; margin-top: 10px;">
+                Initialize Profile
+            </button>
+        </form>
+
+        <div id="statusMsg"></div>
+
+        <div style="text-align: center; margin-top: 25px; font-size: 0.9rem; color: var(--text-secondary);">
+            Already have an account? <a href="login.html" style="color:var(--accent); text-decoration: none; font-weight: 700;">Sign In</a>
+        </div>
     </div>
 </div>
 
 <script>
-    // 1. CONFIGURATION
     const poolData = { 
         UserPoolId: 'us-east-1_IK57zG64M', 
         ClientId: '668q6c6krjv8b6n81cfc78n9a4' 
     };
-    const apiInvokeUrl = 'https://yskkdnff93.execute-api.us-east-1.amazonaws.com/prod/bookings';
 
-    // 2. INITIALIZE PAGE
     window.onload = function() {
-        const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
-        const cognitoUser = userPool.getCurrentUser();
-
-        if (cognitoUser != null) {
-            cognitoUser.getSession((err, session) => {
-                if (err || !session.isValid()) {
-                    console.error("Session invalid");
-                    window.location.href = 'login.html';
-                } else {
-                    console.log("Logged in successfully.");
-                    loadProfile(cognitoUser);
-                    loadBookings(session);
-                }
-            });
-        } else {
-            window.location.href = 'login.html';
+        updateCartBadge();
+        
+        if (typeof AmazonCognitoIdentity === 'undefined') {
+            const status = document.getElementById('statusMsg');
+            status.style.display = "block";
+            status.style.color = "var(--danger)";
+            status.innerText = "Error: AWS Cloud SDK failed to load.";
+            return;
         }
+
+        const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
+
+        document.getElementById('regForm').onsubmit = function(e) {
+            e.preventDefault();
+            
+            const status = document.getElementById('statusMsg');
+            const btn = document.getElementById('submitBtn');
+            
+            status.style.display = "block";
+            status.style.background = "rgba(255, 255, 255, 0.05)";
+            status.style.color = "var(--text-secondary)";
+            status.innerText = "Synchronizing with AWS Cognito...";
+            btn.disabled = true;
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const middleName = document.getElementById('middleName').value;
+            const familyName = document.getElementById('familyName').value;
+            const phone = document.getElementById('phone').value;
+            const address = document.getElementById('address').value;
+
+            const attributeList = [
+                new AmazonCognitoIdentity.CognitoUserAttribute({ Name: 'email', Value: email }),
+                new AmazonCognitoIdentity.CognitoUserAttribute({ Name: 'family_name', Value: familyName }),
+                new AmazonCognitoIdentity.CognitoUserAttribute({ Name: 'middle_name', Value: middleName }),
+                new AmazonCognitoIdentity.CognitoUserAttribute({ Name: 'phone_number', Value: phone }),
+                new AmazonCognitoIdentity.CognitoUserAttribute({ Name: 'address', Value: address })
+            ];
+
+            userPool.signUp(email, password, attributeList, null, function(err, result) {
+                if (err) {
+                    status.style.background = "rgba(239, 68, 68, 0.1)";
+                    status.style.color = "var(--danger)";
+                    status.innerText = err.message || "Registration failed.";
+                    btn.disabled = false;
+                    return;
+                }
+                
+                status.style.background = "rgba(16, 185, 129, 0.1)";
+                status.style.color = "var(--success)";
+                status.innerText = "Profile created. Verify your email to activate.";
+                
+                localStorage.setItem('nexusEmail', email);
+                setTimeout(() => { window.location.href = 'verify.html'; }, 2000);
+            });
+        };
     };
 
-    // 3. LOAD PROFILE DATA
-    function loadProfile(cognitoUser) {
-        cognitoUser.getUserAttributes((err, attributes) => {
-            if (err) {
-                document.getElementById('user-info').innerText = "Failed to load user attributes.";
-                return;
-            }
-            let html = "";
-            attributes.forEach(attr => {
-                const cleanName = attr.Name.replace('custom:', '').replace('_', ' ');
-                if (["email", "family_name", "middle_name", "address", "phone_number"].includes(attr.Name)) {
-                    html += `<div class="detail-item"><strong>${cleanName}:</strong> ${attr.Value}</div>`;
-                }
-            });
-            document.getElementById('user-info').innerHTML = html;
-        });
-    }
-
-    // 4. LOAD BOOKINGS FROM API
-    function loadBookings(session) {
-        const idToken = session.getIdToken().getJwtToken();
-
-        fetch(apiInvokeUrl, {
-            method: 'GET',
-            headers: {
-                'Authorization': idToken,
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(response => {
-            if (!response.ok) throw new Error("API responded with " + response.status);
-            return response.json();
-        })
-        .then(data => {
-            const statusEl = document.getElementById('booking-status');
-            const tableEl = document.getElementById('booking-table');
-            const rowsEl = document.getElementById('booking-rows');
-
-            statusEl.style.display = 'none';
-
-            if (data.length === 0) {
-                statusEl.style.display = 'block';
-                statusEl.innerText = "No bookings found for your account.";
-            } else {
-                tableEl.style.display = 'table';
-                rowsEl.innerHTML = data.map(item => `
-                    <tr>
-                        <td>${item.bookingDate}</td>
-                        <td>${item.serviceType || 'Standard Service'}</td>
-                        <td><span class="status-badge">${item.status || 'CONFIRMED'}</span></td>
-                    </tr>
-                `).join('');
-            }
-        })
-        .catch(error => {
-            console.error("Fetch Error:", error);
-            document.getElementById('booking-status').innerText = "Unable to connect to booking service. Check Console.";
-        });
-    }
-
-    // 5. LOGOUT
-    function logout() {
-        const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
-        const cognitoUser = userPool.getCurrentUser();
-        if (cognitoUser) cognitoUser.signOut();
-        window.location.href = 'login.html';
+    function updateCartBadge() {
+        const cart = JSON.parse(localStorage.getItem('nexus_cart')) || [];
+        const badge = document.getElementById('cart-badge');
+        if(badge) {
+            badge.innerText = cart.length;
+            badge.style.display = cart.length > 0 ? 'block' : 'none';
+        }
     }
 </script>
 

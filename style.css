@@ -1,0 +1,170 @@
+/* --- NEXUSFLOW DESIGN SYSTEM --- */
+:root {
+    --bg: #0f172a;           /* Deep Midnight */
+    --card-bg: #1e293b;      /* Slate Blue/Gray */
+    --accent: #f59e0b;       /* Action Orange */
+    --accent-hover: #fbbf24;
+    --text-primary: #f8fafc; /* Near White */
+    --text-secondary: #94a3b8; /* Muted Gray */
+    --danger: #ef4444;
+    --success: #10b981;
+    --nav-height: 70px;
+}
+
+* { box-sizing: border-box; transition: all 0.2s ease-in-out; }
+
+body {
+    margin: 0;
+    font-family: 'Inter', -apple-system, sans-serif;
+    background-color: var(--bg);
+    color: var(--text-primary);
+    line-height: 1.6;
+}
+
+/* --- NAVIGATION --- */
+.navbar {
+    height: var(--nav-height);
+    background: rgba(30, 41, 59, 0.8);
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 5%;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--accent);
+    text-decoration: none;
+    letter-spacing: -1px;
+}
+
+.nav-links { display: flex; gap: 2rem; }
+.nav-links a {
+    text-decoration: none;
+    color: var(--text-secondary);
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.nav-links a:hover, .nav-links a.active { color: var(--accent); }
+
+/* --- CONTAINERS & CARDS --- */
+.container {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.card {
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 30px;
+    border: 1px solid rgba(255,255,255,0.05);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+/* --- BUTTONS --- */
+.btn {
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+
+.btn-primary { background: var(--accent); color: #000; }
+.btn-primary:hover { background: var(--accent-hover); transform: translateY(-2px); }
+
+.btn-outline { background: transparent; border: 1px solid var(--accent); color: var(--accent); }
+.btn-outline:hover { background: rgba(245, 158, 11, 0.1); }
+
+/* --- INPUTS --- */
+input, select, textarea {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    background: rgba(15, 23, 42, 0.5);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    border-radius: 8px;
+    color: white;
+    outline: none;
+}
+
+input:focus { border-color: var(--accent); }
+
+/* --- STATUS BADGES --- */
+.badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+.badge-pending { background: rgba(245, 158, 11, 0.2); color: var(--accent); }
+.badge-success { background: rgba(16, 185, 129, 0.2); color: var(--success); }
+
+/* Cart Icon & Badge Styling */
+.cart-link {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: rgba(255,255,255,0.05);
+    padding: 8px 15px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.cart-count {
+    background: var(--accent);
+    color: #000;
+    font-size: 0.7rem;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 10px;
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+}
+
+.cart-link svg {
+    margin-right: 5px;
+    fill: var(--accent);
+}/* Cart Icon & Badge Styling */
+.cart-link {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: rgba(255,255,255,0.05);
+    padding: 8px 15px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.cart-count {
+    background: var(--accent);
+    color: #000;
+    font-size: 0.7rem;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 10px;
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+}
+
+.cart-link svg {
+    margin-right: 5px;
+    fill: var(--accent);
+}

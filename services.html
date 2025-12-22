@@ -3,31 +3,133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NexusFlow | Our Services</title>
+    <title>NexusFlow | Service Catalog</title>
+    <link rel="stylesheet" href="style.css">
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f9; margin: 0; padding: 20px; }
-        .container { max-width: 1000px; margin: auto; }
-        .header { text-align: center; padding: 40px 0; }
-        .service-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-        
-        .service-card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); transition: 0.3s; }
-        .service-card:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.1); }
-        
-        .category { font-size: 12px; color: #ff9900; font-weight: bold; text-transform: uppercase; }
-        .price { font-size: 20px; font-weight: bold; color: #232f3e; margin: 10px 0; }
-        .btn-details { display: block; text-align: center; background: #232f3e; color: white; padding: 10px; border-radius: 6px; text-decoration: none; margin-top: 15px; }
+        .page-header {
+            text-align: center;
+            padding: 60px 20px;
+            background: linear-gradient(to bottom, rgba(245, 158, 11, 0.05), transparent);
+        }
+
+        .service-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            margin-bottom: 50px;
+        }
+
+        .service-card {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .service-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 0;
+            background: var(--accent);
+            transition: height 0.3s ease;
+        }
+
+        .service-card:hover::before {
+            height: 100%;
+        }
+
+        .category-pill {
+            display: inline-block;
+            font-size: 0.7rem;
+            font-weight: 800;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 12px;
+        }
+
+        .service-name {
+            font-size: 1.4rem;
+            margin: 0 0 15px 0;
+            color: var(--text-primary);
+        }
+
+        .service-desc {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+
+        .price-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .price-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            display: block;
+        }
+
+        .price-amount {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        #loading-state {
+            text-align: center;
+            padding: 100px 0;
+            grid-column: 1 / -1;
+        }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="header">
-        <h1>Professional Repair Services</h1>
-        <p>Select a service to see details, duration, and what's included.</p>
+<nav class="navbar">
+    <a href="index.html" class="logo">NEXUS<span style="color:white">FLOW</span></a>
+    <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="shop.html">Shop</a>
+        <a href="services.html" class="active">Services</a>
+        <a href="cart.html" class="cart-link" id="header-cart">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="var(--accent)">
+                <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/>
+            </svg>
+            <span class="cart-count" id="cart-badge">0</span>
+        </a>
     </div>
+</nav>
 
+<header class="page-header">
+    <div class="container">
+        <h1 style="font-size: 3rem; margin-bottom: 10px;">Service <span style="color:var(--accent)">Protocols</span></h1>
+        <p style="color: var(--text-secondary); font-size: 1.1rem;">Precision repair solutions for mission-critical hardware.</p>
+    </div>
+</header>
+
+<div class="container">
     <div id="service-list" class="service-grid">
-        <p style="text-align: center; grid-column: 1/-1;">Loading catalog...</p>
+        <div id="loading-state">
+            <h3 style="color: var(--text-secondary)">Scanning Service Database...</h3>
+        </div>
     </div>
 </div>
 
@@ -35,29 +137,47 @@
     const API_URL = 'https://yskkdnff93.execute-api.us-east-1.amazonaws.com/prod/Services';
 
     window.onload = async function() {
+        updateCartBadge();
         try {
             const res = await fetch(API_URL);
             const services = await res.json();
             const container = document.getElementById('service-list');
 
             if (!services || services.length === 0) {
-                container.innerHTML = "<p>No services currently listed.</p>";
+                container.innerHTML = "<div id='loading-state'><h3>No active service protocols found.</h3></div>";
                 return;
             }
 
             container.innerHTML = services.map(s => `
-                <div class="service-card">
-                    <span class="category">${s.category}</span>
-                    <h3>${s.serviceName}</h3>
-                    <p>${s.shortDescription}</p>
-                    <div class="price">From $${s.basePrice}</div>
-                    <a href="service-details.html?id=${s.serviceId}" class="btn-details">View Details</a>
+                <div class="card service-card">
+                    <div>
+                        <span class="category-pill">${s.category}</span>
+                        <h3 class="service-name">${s.serviceName}</h3>
+                        <p class="service-desc">${s.shortDescription}</p>
+                    </div>
+                    
+                    <div class="price-footer">
+                        <div>
+                            <span class="price-label">Starting at</span>
+                            <span class="price-amount">$${s.basePrice.toFixed(2)}</span>
+                        </div>
+                        <a href="service-details.html?id=${s.serviceId}" class="btn btn-outline" style="padding: 8px 15px; font-size: 0.8rem;">Initialize</a>
+                    </div>
                 </div>
             `).join('');
         } catch (err) {
-            document.getElementById('service-list').innerHTML = "Error loading services.";
+            document.getElementById('service-list').innerHTML = "<div id='loading-state'><h3 style='color:var(--danger)'>Connection Error: Hardware interface not responding.</h3></div>";
         }
     };
+
+    function updateCartBadge() {
+        const cart = JSON.parse(localStorage.getItem('nexus_cart')) || [];
+        const badge = document.getElementById('cart-badge');
+        if(badge) {
+            badge.innerText = cart.length;
+            badge.style.display = cart.length > 0 ? 'block' : 'none';
+        }
+    }
 </script>
 
 </body>

@@ -3,98 +3,177 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NexusFlow | My Profile</title>
-    
+    <title>NexusFlow | Command Center</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aws-sdk/2.1522.0/aws-sdk.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js@6.3.7/dist/amazon-cognito-identity.min.js"></script>
-    
+    <link rel="stylesheet" href="style.css">
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f7f9; padding: 20px; margin: 0; color: #333; }
-        .container { max-width: 1000px; margin: auto; }
-        .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin-bottom: 25px; }
-        
-        .header-flex { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #ff9900; padding-bottom: 15px; margin-bottom: 20px; }
-        h1, h2 { margin: 0; color: #232f3e; }
+        .dashboard-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 30px;
+            margin-top: 30px;
+        }
 
-        .user-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .detail-item { font-size: 15px; }
-        .detail-item strong { color: #555; text-transform: capitalize; margin-right: 5px; }
+        /* Sidebar Profile Card */
+        .profile-sidebar {
+            position: sticky;
+            top: 100px;
+        }
 
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; background: #fff; }
-        th { background: #232f3e; color: white; text-align: left; padding: 15px; font-size: 14px; }
-        td { padding: 15px; border-bottom: 1px solid #eee; vertical-align: top; }
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            background: var(--accent);
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 800;
+            color: #000;
+        }
+
+        .info-group {
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .info-group label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            display: block;
+        }
+
+        .info-group span {
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            word-break: break-all;
+        }
+
+        /* Tables & Lists */
+        .section-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(255,255,255,0.02);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        th {
+            background: rgba(255,255,255,0.05);
+            text-align: left;
+            padding: 15px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
 
         /* Dynamic Status Badges */
-        .status-badge { display: inline-block; padding: 5px 12px; border-radius: 15px; font-size: 12px; font-weight: bold; text-transform: uppercase; }
-        
-        /* Repair Status Styles */
-        .badge-received, .badge-pending { background: #e1f5fe; color: #01579b; }
-        .badge-inrepair, .badge-shipped { background: #fff3e0; color: #e65100; }
-        .badge-ready, .badge-completed { background: #e8f5e9; color: #1b5e20; }
-        .badge-cancelled { background: #ffebee; color: #b71c1c; }
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
 
-        .device-text { font-weight: bold; color: #333; display: block; }
-        .issue-text { font-size: 13px; color: #666; margin-top: 4px; display: block; }
+        .badge-pending, .badge-received { background: rgba(245, 158, 11, 0.1); color: var(--accent); }
+        .badge-completed, .badge-ready { background: rgba(16, 185, 129, 0.1); color: var(--success); }
+        .badge-inrepair, .badge-shipped { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+        .badge-cancelled { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
 
-        .btn-action { background: #ff9900; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; text-decoration: none; font-weight: bold; font-size: 14px; }
-        .btn-logout { background: #d9534f; margin-left: 10px; }
-        .nav-buttons { display: flex; gap: 10px; }
+        .device-meta { font-size: 0.8rem; color: var(--text-secondary); display: block; }
+
+        @media (max-width: 900px) {
+            .dashboard-layout { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
 
+<nav class="navbar">
+    <a href="index.html" class="logo">NEXUS<span style="color:white">FLOW</span></a>
+    <div class="nav-links">
+        <a href="shop.html">Shop</a>
+        <a href="book-repair.html">Book Repair</a>
+        <button onclick="logout()" class="btn btn-outline" style="padding: 8px 15px;">Sign Out</button>
+    </div>
+</nav>
+
 <div class="container">
-    <div class="card">
-        <div class="header-flex">
-            <h1>NexusFlow Profile</h1>
-            <div class="nav-buttons">
-                <a href="shop.html" class="btn-action" style="background:#232f3e;">Back to Shop</a>
-                <a href="book.html" class="btn-action">Book New Repair</a>
-                <button class="btn-action btn-logout" onclick="logout()">Logout</button>
+    <div class="dashboard-layout">
+        
+        <aside class="profile-sidebar">
+            <div class="card" style="text-align: center;">
+                <div class="user-avatar" id="user-initial">U</div>
+                <h3 id="user-name-title" style="margin-bottom: 20px;">User Profile</h3>
+                
+                <div id="user-details-container">
+                    <p style="color:var(--text-secondary)">Loading credentials...</p>
+                </div>
+                
+                <a href="book-repair.html" class="btn btn-primary" style="width: 100%; margin-top: 15px;">New Repair Request</a>
             </div>
-        </div>
-        <div id="user-info" class="user-grid">Loading profile details...</div>
-    </div>
+        </aside>
 
-    <div class="card">
-        <h2>Recent Repair Requests</h2>
-        <div id="booking-status" style="padding: 20px; text-align: center; color: #666;">
-            Fetching latest repair updates...
-        </div>
-        <table id="booking-table" style="display:none;">
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Device Details</th>
-                    <th>Pickup Location</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody id="booking-rows"></tbody>
-        </table>
-    </div>
+        <main class="content-area">
+            
+            <div class="card">
+                <div class="section-title">
+                    <h2>Active <span style="color:var(--accent)">Repairs</span></h2>
+                </div>
+                <div id="repair-loading" style="color:var(--text-secondary); padding: 20px;">Fetching repair status...</div>
+                <table id="repair-table" style="display:none;">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Device / Issue</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="repair-rows"></tbody>
+                </table>
+            </div>
 
-    <div class="card">
-        <h2>Product Order History</h2>
-        <div id="order-status" style="padding: 20px; text-align: center; color: #666;">
-            Fetching latest order updates...
-        </div>
-        <table id="order-table" style="display:none;">
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Order Details</th>
-                    <th>Total</th>
-                    <th>Live Status</th>
-                </tr>
-            </thead>
-            <tbody id="order-rows"></tbody>
-        </table>
+            <div class="card" style="margin-top: 30px;">
+                <div class="section-title">
+                    <h2>Hardware <span style="color:var(--accent)">Orders</span></h2>
+                </div>
+                <div id="order-loading" style="color:var(--text-secondary); padding: 20px;">Checking order history...</div>
+                <table id="order-table" style="display:none;">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>ID & Items</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="order-rows"></tbody>
+                </table>
+            </div>
+
+        </main>
     </div>
 </div>
 
 <script>
-    // 1. CONFIGURATION
     const poolData = { UserPoolId: 'us-east-1_IK57zG64M', ClientId: '668q6c6krjv8b6n81cfc78n9a4' };
     const apiRepairUrl = 'https://yskkdnff93.execute-api.us-east-1.amazonaws.com/prod/bookings';
     const apiOrderUrl = 'https://yskkdnff93.execute-api.us-east-1.amazonaws.com/prod/orders';
@@ -103,112 +182,101 @@
         const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
         const cognitoUser = userPool.getCurrentUser();
 
-        if (cognitoUser != null) {
+        if (cognitoUser) {
             cognitoUser.getSession((err, session) => {
-                if (err || !session.isValid()) {
-                    window.location.href = 'login.html';
-                } else {
-                    displayProfile(cognitoUser);
-                    fetchRepairHistory(session);
-                    
-                    // Get User Attributes to find Email for the order fetch
-                    cognitoUser.getUserAttributes((err, attributes) => {
-                        const emailAttr = attributes.find(a => a.Name === 'email');
-                        if (emailAttr) fetchOrderHistory(emailAttr.Value);
-                    });
-                }
+                if (err || !session.isValid()) window.location.href = 'login.html';
+                
+                // Get Attributes for Sidebar & Order Fetching
+                cognitoUser.getUserAttributes((err, attributes) => {
+                    if (err) return;
+                    const email = attributes.find(a => a.Name === 'email').Value;
+                    renderSidebar(attributes, email);
+                    fetchOrderHistory(email);
+                });
+
+                fetchRepairHistory(session);
             });
         } else {
             window.location.href = 'login.html';
         }
     };
 
-    function displayProfile(cognitoUser) {
-        cognitoUser.getUserAttributes((err, attributes) => {
-            const infoDiv = document.getElementById('user-info');
-            if (err) { infoDiv.innerText = "Error loading profile."; return; }
-            let html = "";
-            attributes.forEach(attr => {
-                const label = attr.Name.replace('custom:', '').replace('_', ' ');
-                if (["email", "family_name", "middle_name", "address", "phone_number"].includes(attr.Name)) {
-                    html += `<div class="detail-item"><strong>${label}:</strong> ${attr.Value}</div>`;
-                }
+    function renderSidebar(attrs, email) {
+        const container = document.getElementById('user-details-container');
+        document.getElementById('user-initial').innerText = email.charAt(0).toUpperCase();
+        
+        const fields = {
+            'email': 'Account Email',
+            'phone_number': 'Mobile',
+            'address': 'Primary Address'
+        };
+
+        container.innerHTML = attrs
+            .filter(a => Object.keys(fields).includes(a.Name))
+            .map(a => `
+                <div class="info-group">
+                    <label>${fields[a.Name]}</label>
+                    <span>${a.Value}</span>
+                </div>
+            `).join('');
+    }
+
+    async function fetchRepairHistory(session) {
+        try {
+            const res = await fetch(apiRepairUrl, {
+                headers: { 'Authorization': session.getIdToken().getJwtToken() }
             });
-            infoDiv.innerHTML = html;
-        });
+            const data = await res.json();
+            document.getElementById('repair-loading').style.display = 'none';
+            
+            if (data.length > 0) {
+                document.getElementById('repair-table').style.display = 'table';
+                document.getElementById('repair-rows').innerHTML = data.map(item => `
+                    <tr>
+                        <td>${item.bookingDate || '---'}</td>
+                        <td>
+                            <strong>${item.brand} ${item.model}</strong>
+                            <span class="device-meta">${item.issueDescription || ''}</span>
+                        </td>
+                        <td><span class="status-badge badge-${(item.status || 'RECEIVED').toLowerCase()}">${item.status || 'RECEIVED'}</span></td>
+                    </tr>
+                `).join('');
+            } else {
+                document.getElementById('repair-loading').innerText = "No active repairs found.";
+                document.getElementById('repair-loading').style.display = 'block';
+            }
+        } catch (e) { console.error(e); }
     }
 
-    function fetchRepairHistory(session) {
-        const idToken = session.getIdToken().getJwtToken();
-        fetch(apiRepairUrl, {
-            method: 'GET',
-            headers: { 'Authorization': idToken, 'Content-Type': 'application/json' }
-        })
-        .then(res => res.json())
-        .then(data => {
-            const statusEl = document.getElementById('booking-status');
-            const tableEl = document.getElementById('booking-table');
-            const rowsEl = document.getElementById('booking-rows');
+    async function fetchOrderHistory(email) {
+        try {
+            const res = await fetch(`${apiOrderUrl}?email=${email}`);
+            const data = await res.json();
+            document.getElementById('order-loading').style.display = 'none';
 
-            if (!data || data.length === 0) {
-                statusEl.innerHTML = "No repairs found.";
+            if (data.length > 0) {
+                document.getElementById('order-table').style.display = 'table';
+                document.getElementById('order-rows').innerHTML = data.map(order => `
+                    <tr>
+                        <td>${new Date(order.createdAt).toLocaleDateString()}</td>
+                        <td>
+                            <strong>#${order.orderId.substring(0, 8)}</strong>
+                            <span class="device-meta">${order.items.map(i => i.name).join(', ')}</span>
+                        </td>
+                        <td>$${order.totalAmount.toFixed(2)}</td>
+                        <td><span class="status-badge badge-${(order.orderStatus || 'PENDING').toLowerCase()}">${order.orderStatus || 'PENDING'}</span></td>
+                    </tr>
+                `).join('');
             } else {
-                statusEl.style.display = 'none';
-                tableEl.style.display = 'table';
-                rowsEl.innerHTML = data.map(item => {
-                    const statusClass = (item.status || 'RECEIVED').toLowerCase().replace(' ', '');
-                    return `
-                        <tr>
-                            <td>${item.bookingDate || 'N/A'}</td>
-                            <td>
-                                <span class="device-text">${item.brand} ${item.model}</span>
-                                <span class="issue-text">${item.issueDescription || ''}</span>
-                            </td>
-                            <td style="font-size: 13px;">${item.pickupAddress || 'N/A'}</td>
-                            <td><span class="status-badge badge-${statusClass}">${item.status || 'RECEIVED'}</span></td>
-                        </tr>
-                    `;
-                }).join('');
+                document.getElementById('order-loading').innerText = "No hardware orders found.";
+                document.getElementById('order-loading').style.display = 'block';
             }
-        });
-    }
-
-    function fetchOrderHistory(email) {
-        fetch(`${apiOrderUrl}?email=${email}`)
-        .then(res => res.json())
-        .then(data => {
-            const statusEl = document.getElementById('order-status');
-            const tableEl = document.getElementById('order-table');
-            const rowsEl = document.getElementById('order-rows');
-
-            if (!data || data.length === 0) {
-                statusEl.innerHTML = "No product orders found.";
-            } else {
-                statusEl.style.display = 'none';
-                tableEl.style.display = 'table';
-                rowsEl.innerHTML = data.map(order => {
-                    const statusClass = (order.orderStatus || 'PENDING').toLowerCase().replace(' ', '');
-                    return `
-                        <tr>
-                            <td>${new Date(order.createdAt).toLocaleDateString()}</td>
-                            <td>
-                                <span class="device-text">Order #${order.orderId.substring(4, 12)}</span>
-                                <span class="issue-text">${order.items.map(i => i.name).join(', ')}</span>
-                            </td>
-                            <td><strong>$${order.totalAmount.toFixed(2)}</strong></td>
-                            <td><span class="status-badge badge-${statusClass}">${order.orderStatus || 'PENDING'}</span></td>
-                        </tr>
-                    `;
-                }).join('');
-            }
-        })
-        .catch(err => { document.getElementById('order-status').innerText = "Update Error."; });
+        } catch (e) { console.error(e); }
     }
 
     function logout() {
         const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
-        const cognitoUser = userPool.getCurrentUser();
-        if (cognitoUser) cognitoUser.signOut();
+        userPool.getCurrentUser()?.signOut();
         window.location.href = 'login.html';
     }
 </script>
