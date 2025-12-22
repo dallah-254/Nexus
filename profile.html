@@ -15,82 +15,51 @@
             margin-top: 30px;
         }
 
-        /* Sidebar Profile Card */
         .profile-sidebar {
             position: sticky;
             top: 100px;
         }
 
         .user-avatar {
-            width: 80px;
-            height: 80px;
+            width: 80px; height: 80px;
             background: var(--accent);
             border-radius: 50%;
             margin: 0 auto 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            font-weight: 800;
-            color: #000;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2rem; font-weight: 800; color: #000;
         }
 
         .info-group {
-            margin-bottom: 15px;
-            padding-bottom: 10px;
+            margin-bottom: 15px; padding-bottom: 10px;
             border-bottom: 1px solid rgba(255,255,255,0.05);
         }
 
         .info-group label {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            color: var(--text-secondary);
-            display: block;
+            font-size: 0.7rem; text-transform: uppercase;
+            color: var(--text-secondary); display: block;
         }
 
         .info-group span {
-            font-size: 0.95rem;
-            color: var(--text-primary);
-            word-break: break-all;
-        }
-
-        /* Tables & Lists */
-        .section-title {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
+            font-size: 0.95rem; color: var(--text-primary); word-break: break-all;
         }
 
         table {
-            width: 100%;
-            border-collapse: collapse;
+            width: 100%; border-collapse: collapse;
             background: rgba(255,255,255,0.02);
-            border-radius: 12px;
-            overflow: hidden;
+            border-radius: 12px; overflow: hidden;
         }
 
         th {
-            background: rgba(255,255,255,0.05);
-            text-align: left;
-            padding: 15px;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            color: var(--text-secondary);
+            background: rgba(255,255,255,0.05); text-align: left;
+            padding: 15px; font-size: 0.8rem;
+            text-transform: uppercase; color: var(--text-secondary);
         }
 
-        td {
-            padding: 15px;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
+        td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); }
 
-        /* Dynamic Status Badges */
         .status-badge {
-            padding: 4px 10px;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
+            padding: 4px 10px; border-radius: 4px;
+            font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
         }
 
         .badge-pending, .badge-received { background: rgba(245, 158, 11, 0.1); color: var(--accent); }
@@ -100,9 +69,7 @@
 
         .device-meta { font-size: 0.8rem; color: var(--text-secondary); display: block; }
 
-        @media (max-width: 900px) {
-            .dashboard-layout { grid-template-columns: 1fr; }
-        }
+        @media (max-width: 900px) { .dashboard-layout { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
@@ -123,52 +90,35 @@
             <div class="card" style="text-align: center;">
                 <div class="user-avatar" id="user-initial">U</div>
                 <h3 id="user-name-title" style="margin-bottom: 20px;">User Profile</h3>
-                
                 <div id="user-details-container">
                     <p style="color:var(--text-secondary)">Loading credentials...</p>
                 </div>
-                
                 <a href="book-repair.html" class="btn btn-primary" style="width: 100%; margin-top: 15px;">New Repair Request</a>
             </div>
         </aside>
 
         <main class="content-area">
-            
             <div class="card">
-                <div class="section-title">
-                    <h2>Active <span style="color:var(--accent)">Repairs</span></h2>
-                </div>
+                <h2>Active <span style="color:var(--accent)">Repairs</span></h2>
                 <div id="repair-loading" style="color:var(--text-secondary); padding: 20px;">Fetching repair status...</div>
                 <table id="repair-table" style="display:none;">
                     <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Device / Issue</th>
-                            <th>Status</th>
-                        </tr>
+                        <tr><th>Date</th><th>Device / Issue</th><th>Status</th></tr>
                     </thead>
                     <tbody id="repair-rows"></tbody>
                 </table>
             </div>
 
             <div class="card" style="margin-top: 30px;">
-                <div class="section-title">
-                    <h2>Hardware <span style="color:var(--accent)">Orders</span></h2>
-                </div>
+                <h2>Hardware <span style="color:var(--accent)">Orders</span></h2>
                 <div id="order-loading" style="color:var(--text-secondary); padding: 20px;">Checking order history...</div>
                 <table id="order-table" style="display:none;">
                     <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>ID & Items</th>
-                            <th>Total</th>
-                            <th>Status</th>
-                        </tr>
+                        <tr><th>Date</th><th>ID & Items</th><th>Total</th><th>Status</th></tr>
                     </thead>
                     <tbody id="order-rows"></tbody>
                 </table>
             </div>
-
         </main>
     </div>
 </div>
@@ -186,31 +136,23 @@
             cognitoUser.getSession((err, session) => {
                 if (err || !session.isValid()) window.location.href = 'login.html';
                 
-                // Get Attributes for Sidebar & Order Fetching
                 cognitoUser.getUserAttributes((err, attributes) => {
                     if (err) return;
-                    const email = attributes.find(a => a.Name === 'email').Value;
+                    const emailAttr = attributes.find(a => a.Name === 'email');
+                    const email = emailAttr ? emailAttr.Value : 'User';
                     renderSidebar(attributes, email);
                     fetchOrderHistory(email);
                 });
-
                 fetchRepairHistory(session);
             });
-        } else {
-            window.location.href = 'login.html';
-        }
+        } else { window.location.href = 'login.html'; }
     };
 
     function renderSidebar(attrs, email) {
         const container = document.getElementById('user-details-container');
         document.getElementById('user-initial').innerText = email.charAt(0).toUpperCase();
         
-        const fields = {
-            'email': 'Account Email',
-            'phone_number': 'Mobile',
-            'address': 'Primary Address'
-        };
-
+        const fields = { 'email': 'Account Email', 'phone_number': 'Mobile', 'address': 'Primary Address' };
         container.innerHTML = attrs
             .filter(a => Object.keys(fields).includes(a.Name))
             .map(a => `
@@ -229,13 +171,16 @@
             const data = await res.json();
             document.getElementById('repair-loading').style.display = 'none';
             
-            if (data.length > 0) {
+            // Safety check: Ensure data is an array
+            const repairs = Array.isArray(data) ? data : [];
+
+            if (repairs.length > 0) {
                 document.getElementById('repair-table').style.display = 'table';
-                document.getElementById('repair-rows').innerHTML = data.map(item => `
+                document.getElementById('repair-rows').innerHTML = repairs.map(item => `
                     <tr>
                         <td>${item.bookingDate || '---'}</td>
                         <td>
-                            <strong>${item.brand} ${item.model}</strong>
+                            <strong>${item.brand || ''} ${item.model || 'Unknown Device'}</strong>
                             <span class="device-meta">${item.issueDescription || ''}</span>
                         </td>
                         <td><span class="status-badge badge-${(item.status || 'RECEIVED').toLowerCase()}">${item.status || 'RECEIVED'}</span></td>
@@ -245,7 +190,9 @@
                 document.getElementById('repair-loading').innerText = "No active repairs found.";
                 document.getElementById('repair-loading').style.display = 'block';
             }
-        } catch (e) { console.error(e); }
+        } catch (e) { 
+            document.getElementById('repair-loading').innerText = "Error loading repairs.";
+        }
     }
 
     async function fetchOrderHistory(email) {
@@ -254,24 +201,33 @@
             const data = await res.json();
             document.getElementById('order-loading').style.display = 'none';
 
-            if (data.length > 0) {
+            // Safety check: Ensure data is an array
+            const orders = Array.isArray(data) ? data : [];
+
+            if (orders.length > 0) {
                 document.getElementById('order-table').style.display = 'table';
-                document.getElementById('order-rows').innerHTML = data.map(order => `
+                document.getElementById('order-rows').innerHTML = orders.map(order => {
+                    const itemsText = Array.isArray(order.items) ? order.items.map(i => i.name).join(', ') : 'Hardware Parts';
+                    const total = typeof order.totalAmount === 'number' ? order.totalAmount.toFixed(2) : order.totalAmount || '0.00';
+                    
+                    return `
                     <tr>
-                        <td>${new Date(order.createdAt).toLocaleDateString()}</td>
+                        <td>${order.createdAt ? new Date(order.createdAt).toLocaleDateString() : '---'}</td>
                         <td>
-                            <strong>#${order.orderId.substring(0, 8)}</strong>
-                            <span class="device-meta">${order.items.map(i => i.name).join(', ')}</span>
+                            <strong>#${(order.orderId || '000000').substring(0, 8)}</strong>
+                            <span class="device-meta">${itemsText}</span>
                         </td>
-                        <td>$${order.totalAmount.toFixed(2)}</td>
+                        <td>$${total}</td>
                         <td><span class="status-badge badge-${(order.orderStatus || 'PENDING').toLowerCase()}">${order.orderStatus || 'PENDING'}</span></td>
-                    </tr>
-                `).join('');
+                    </tr>`;
+                }).join('');
             } else {
                 document.getElementById('order-loading').innerText = "No hardware orders found.";
                 document.getElementById('order-loading').style.display = 'block';
             }
-        } catch (e) { console.error(e); }
+        } catch (e) { 
+            document.getElementById('order-loading').innerText = "Error loading orders.";
+        }
     }
 
     function logout() {

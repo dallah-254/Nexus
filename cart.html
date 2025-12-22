@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NexusFlow | Secure Checkout</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aws-sdk/2.1522.0/aws-sdk.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js@6.3.7/dist/amazon-cognito-identity.min.js"></script>
@@ -11,14 +12,14 @@
             display: grid;
             grid-template-columns: 1.5fr 1fr;
             gap: 30px;
+            margin-top: 30px;
             align-items: start;
         }
 
-        /* Empty Cart Styling */
         #empty-state {
-            display: none; /* Hidden by default */
+            display: none;
             text-align: center;
-            padding: 80px 20px;
+            padding: 100px 20px;
         }
 
         .summary-card {
@@ -26,19 +27,28 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             position: sticky;
             top: 100px;
+            padding: 25px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
         }
 
         .cart-item {
             display: flex;
             justify-content: space-between;
-            padding: 12px 0;
+            align-items: center;
+            padding: 15px 0;
             border-bottom: 1px solid rgba(255,255,255,0.05);
         }
 
-        .product-link {
-            color: var(--text-primary);
-            text-decoration: none;
-            font-size: 0.9rem;
+        .remove-btn {
+            background: none;
+            border: none;
+            color: #ff4d4d;
+            font-size: 0.7rem;
+            cursor: pointer;
+            text-transform: uppercase;
+            margin-top: 5px;
+            padding: 0;
         }
 
         .total-row {
@@ -47,12 +57,13 @@
             border-top: 2px solid var(--accent);
             display: flex;
             justify-content: space-between;
-            font-size: 1.2rem;
+            font-size: 1.4rem;
             font-weight: 800;
         }
 
+        /* Stepper Logic */
         .step { display: none; }
-        .step.active { display: block; animation: fadeIn 0.4s ease; }
+        .step.active { display: block; animation: fadeIn 0.3s ease; }
 
         .progress-stepper {
             display: flex;
@@ -62,16 +73,19 @@
 
         .step-dot {
             width: 35px; height: 35px; border-radius: 50%;
-            background: var(--card-bg); border: 2px solid var(--text-secondary);
+            background: #1a1a1a; border: 2px solid #444;
             display: flex; align-items: center; justify-content: center;
-            font-weight: bold; color: var(--text-secondary);
+            font-weight: bold; color: #888;
         }
 
-        .step-dot.active { border-color: var(--accent); color: var(--accent); }
+        .step-dot.active { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 10px rgba(0,243,255,0.2); }
+        .line { flex-grow: 1; height: 2px; background: #333; align-self: center; margin: 0 10px; }
 
-        .line { flex-grow: 1; height: 2px; background: var(--text-secondary); align-self: center; }
+        input[readonly] { background: rgba(255,255,255,0.05); color: #777; cursor: not-allowed; }
 
-        input[readonly] { background: rgba(255,255,255,0.05); color: var(--text-secondary); cursor: not-allowed; }
+        @media (max-width: 900px) {
+            .checkout-grid { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
@@ -79,22 +93,20 @@
 <nav class="navbar">
     <a href="index.html" class="logo">NEXUS<span style="color:white">FLOW</span></a>
     <div class="nav-links">
-        <a href="index.html">Home</a>
         <a href="shop.html">Shop</a>
-        <a href="book-repair.html">Book Repair</a>
         <a href="profile.html">Profile</a>
     </div>
 </nav>
 
 <div class="container">
-    <div id="empty-state" class="card">
-        <h2 style="font-size: 2rem; margin-bottom: 10px;">Your cart is <span style="color:var(--accent)">empty</span></h2>
-        <p style="color: var(--text-secondary); margin-bottom: 30px;">It looks like you haven't added any professional hardware to your selection yet.</p>
+    <div id="empty-state">
+        <h2 style="font-size: 2.5rem;">Cart is <span style="color:var(--accent)">Empty</span></h2>
+        <p style="color:var(--text-secondary); margin-bottom: 30px;">Initialize your hardware selection to proceed.</p>
         <a href="shop.html" class="btn btn-primary">Return to Shop</a>
     </div>
 
     <div id="checkout-main" style="display: none;">
-        <h1 style="margin-bottom: 30px;">Secure <span style="color:var(--accent)">Checkout</span></h1>
+        <h1 style="margin: 40px 0;">Secure <span style="color:var(--accent)">Checkout</span></h1>
 
         <div class="checkout-grid">
             <div class="card">
@@ -105,42 +117,47 @@
                 </div>
 
                 <div id="step1" class="step active">
-                    <h2 style="margin-bottom: 20px;">Contact Information</h2>
+                    <h3 style="margin-bottom: 20px;">Contact Identification</h3>
                     <label>Full Name</label>
-                    <input type="text" id="name" placeholder="Enter your full name">
-                    <label>Verified Account Email</label>
+                    <input type="text" id="name" placeholder="Legal Name">
+                    
+                    <label>Verified Email</label>
                     <input type="email" id="email" readonly>
-                    <label>Mobile Number</label>
-                    <input type="tel" id="phone" placeholder="e.g. +254...">
-                    <label>City / County</label>
-                    <input type="text" id="location" placeholder="e.g. Nairobi">
+                    
+                    <label>Phone Number</label>
+                    <input type="tel" id="phone" placeholder="+254...">
+                    
                     <button class="btn btn-primary" style="width:100%; margin-top: 20px;" onclick="nextStep()">Continue to Logistics →</button>
                 </div>
 
                 <div id="step2" class="step">
-                    <h2 style="margin-bottom: 20px;">Shipping & Payment</h2>
+                    <h3 style="margin-bottom: 20px;">Shipping & Payment</h3>
                     <label>Delivery Address</label>
-                    <textarea id="address" rows="3" placeholder="Apartment, House Number..."></textarea>
+                    <textarea id="address" rows="3" placeholder="Street, Building, Apartment..."></textarea>
+                    
                     <label>Payment Method</label>
                     <select id="paymentMethod">
-                        <option value="M-Pesa">M-Pesa / Mobile Money</option>
-                        <option value="Card">Credit/Debit Card</option>
+                        <option value="M-Pesa">M-Pesa Express</option>
+                        <option value="Card">Visa / Mastercard</option>
                         <option value="Bank">Bank Transfer</option>
                     </select>
-                    <div style="background: rgba(239, 68, 68, 0.1); padding: 15px; border-radius: 8px; margin: 20px 0;">
-                        <label style="display: flex; gap: 10px; cursor: pointer;">
-                            <input type="checkbox" id="refundAgreed" style="width: auto;"> 
-                            <span style="font-size: 0.85rem;">I acknowledge that specialized hardware parts are non-refundable once installation begins.</span>
+
+                    <div style="background: rgba(255, 255, 255, 0.03); padding: 15px; border-radius: 8px; margin: 25px 0; border: 1px solid rgba(255,255,255,0.05);">
+                        <label style="display: flex; gap: 10px; cursor: pointer; align-items: flex-start;">
+                            <input type="checkbox" id="refundAgreed" style="width: auto; margin-top: 4px;"> 
+                            <span style="font-size: 0.8rem; color: #888;">I acknowledge that technical hardware parts are non-refundable once the order is dispatched.</span>
                         </label>
                     </div>
-                    <button class="btn btn-primary" style="width:100%;" onclick="submitFinalOrder()">Complete Secure Checkout</button>
-                    <button class="btn btn-outline" style="width:100%; margin-top: 10px;" onclick="prevStep()">← Edit Contact Info</button>
+
+                    <button class="btn btn-primary" style="width:100%;" onclick="submitFinalOrder()">Execute Secure Checkout</button>
+                    <button class="btn btn-outline" style="width:100%; margin-top: 10px;" onclick="prevStep()">← Edit Info</button>
                 </div>
             </div>
 
-            <div class="card summary-card">
-                <h3 style="margin-top:0; color:var(--accent)">Order Summary</h3>
-                <div id="cartItemsList"></div>
+            <div class="summary-card">
+                <h3 style="margin-top:0; color:var(--accent); font-size: 0.9rem; letter-spacing: 2px;">ORDER SUMMARY</h3>
+                <div id="cartItemsList">
+                    </div>
                 <div class="total-row">
                     <span>Total</span>
                     <span id="grandTotal" style="color:var(--accent)">$0.00</span>
@@ -151,24 +168,17 @@
 </div>
 
 <script>
+    // 1. Config
     const API_URL = 'https://yskkdnff93.execute-api.us-east-1.amazonaws.com/prod/orders';
     const poolData = { UserPoolId: 'us-east-1_IK57zG64M', ClientId: '668q6c6krjv8b6n81cfc78n9a4' };
 
     window.onload = function() {
-        const cart = JSON.parse(localStorage.getItem('nexus_cart')) || [];
-        
-        if (cart.length === 0) {
-            document.getElementById('empty-state').style.display = 'block';
-            document.getElementById('checkout-main').style.display = 'none';
-        } else {
-            document.getElementById('empty-state').style.display = 'none';
-            document.getElementById('checkout-main').style.display = 'block';
-            renderCartSummary(cart);
-            checkUserSession();
-        }
+        refreshCartUI();
+        initUserSession();
     };
 
-    function checkUserSession() {
+    // 2. User & Session
+    function initUserSession() {
         const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
         const cognitoUser = userPool.getCurrentUser();
         if (cognitoUser) {
@@ -182,17 +192,52 @@
         } else { window.location.href = 'login.html'; }
     }
 
-    function renderCartSummary(cart) {
-        let total = 0;
-        document.getElementById('cartItemsList').innerHTML = cart.map(item => {
-            total += item.price;
-            return `<div class="cart-item"><span>${item.name}</span><strong>$${item.price.toFixed(2)}</strong></div>`;
-        }).join('');
-        document.getElementById('grandTotal').textContent = `$${total.toFixed(2)}`;
+    // 3. Cart Logic
+    function refreshCartUI() {
+        const cart = JSON.parse(localStorage.getItem('nexus_cart')) || [];
+        const main = document.getElementById('checkout-main');
+        const empty = document.getElementById('empty-state');
+
+        if (cart.length === 0) {
+            empty.style.display = 'block';
+            main.style.display = 'none';
+        } else {
+            empty.style.display = 'none';
+            main.style.display = 'block';
+            renderSummary(cart);
+        }
     }
 
+    function renderSummary(cart) {
+        let total = 0;
+        const container = document.getElementById('cartItemsList');
+        
+        container.innerHTML = cart.map((item, index) => {
+            const price = parseFloat(item.price) || 0;
+            total += price;
+            return `
+                <div class="cart-item">
+                    <div>
+                        <div style="font-weight: 600; font-size: 0.9rem;">${item.name || item.productName}</div>
+                        <button class="remove-btn" onclick="removeItem(${index})">Remove</button>
+                    </div>
+                    <strong>$${price.toFixed(2)}</strong>
+                </div>`;
+        }).join('');
+        
+        document.getElementById('grandTotal').innerText = `$${total.toFixed(2)}`;
+    }
+
+    function removeItem(index) {
+        let cart = JSON.parse(localStorage.getItem('nexus_cart')) || [];
+        cart.splice(index, 1);
+        localStorage.setItem('nexus_cart', JSON.stringify(cart));
+        refreshCartUI();
+    }
+
+    // 4. Navigation
     function nextStep() {
-        if(!document.getElementById('name').value) return alert("Name is required.");
+        if(!document.getElementById('name').value) return alert("Please enter your full name.");
         document.getElementById('step1').classList.remove('active');
         document.getElementById('step2').classList.add('active');
         document.getElementById('dot2').classList.add('active');
@@ -204,30 +249,55 @@
         document.getElementById('dot2').classList.remove('active');
     }
 
+    // 5. Submit Order
     async function submitFinalOrder() {
-        if(!document.getElementById('refundAgreed').checked) return alert("Agree to terms.");
+        const btn = event.target;
+        if(!document.getElementById('refundAgreed').checked) return alert("Please acknowledge the hardware policy.");
+
         const cart = JSON.parse(localStorage.getItem('nexus_cart'));
-        const total = cart.reduce((s, i) => s + i.price, 0);
-        
+        const totalAmount = cart.reduce((sum, item) => sum + (parseFloat(item.price) || 0), 0);
+
         const payload = {
+            type: 'order',
             name: document.getElementById('name').value,
             email: document.getElementById('email').value,
             phone: document.getElementById('phone').value,
-            location: document.getElementById('location').value,
             address: document.getElementById('address').value,
             paymentMethod: document.getElementById('paymentMethod').value,
-            cart: cart,
-            total: total
+            items: cart,
+            total: totalAmount.toFixed(2)
         };
 
+        btn.disabled = true;
+        btn.innerText = "Transmitting...";
+
         try {
-            const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
-            if(res.ok) {
+            const res = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await res.json();
+
+            if (data.success || res.ok) {
+                // Save info for success page
+                sessionStorage.setItem('lastOrder', JSON.stringify({
+                    id: data.id,
+                    total: payload.total,
+                    email: payload.email
+                }));
+
                 localStorage.removeItem('nexus_cart');
-                alert("Order Placed!");
-                window.location.href = 'profile.html';
+                window.location.href = 'order-success.html';
+            } else {
+                throw new Error(data.message || "Processor rejected the order.");
             }
-        } catch (e) { alert("Error placing order."); }
+        } catch (e) {
+            alert("Order Error: " + e.message);
+            btn.disabled = false;
+            btn.innerText = "Execute Secure Checkout";
+        }
     }
 </script>
 </body>

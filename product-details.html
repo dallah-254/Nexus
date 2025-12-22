@@ -2,47 +2,44 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>NexusFlow | Product Specs</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexusFlow | Secure Component Details</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        .product-hero {
+        .details-container {
             display: grid;
-            grid-template-columns: 1.2fr 1fr;
+            grid-template-columns: 1fr 1fr;
             gap: 50px;
-            margin-top: 40px;
-            align-items: center;
+            margin-top: 60px;
+            padding-bottom: 100px;
         }
 
-        .image-showcase {
+        .product-visual {
             background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
             padding: 40px;
             display: flex;
-            justify-content: center;
             align-items: center;
-            min-height: 500px;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+            min-height: 400px;
         }
 
-        .image-showcase img {
+        .product-visual img {
             max-width: 100%;
-            height: auto;
-            border-radius: 12px;
-            filter: drop-shadow(0 20px 50px rgba(0,0,0,0.5));
+            max-height: 350px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 20px rgba(0, 243, 255, 0.1));
         }
 
-        .details-panel {
-            padding: 20px;
-        }
-
-        .category-label {
+        .spec-label {
             color: var(--accent);
+            font-size: 0.7rem;
             text-transform: uppercase;
             letter-spacing: 2px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            margin-bottom: 10px;
             display: block;
+            margin-bottom: 5px;
         }
 
         .price-display {
@@ -50,142 +47,171 @@
             font-weight: 800;
             margin: 20px 0;
             color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
         }
 
-        .specs-list {
-            margin: 30px 0;
-            list-style: none;
-            padding: 0;
-        }
-
-        .specs-list li {
-            padding: 12px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            color: var(--text-secondary);
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .specs-list li span {
-            color: var(--text-primary);
-            font-weight: 600;
-        }
-
-        .action-area {
-            display: flex;
-            gap: 15px;
+        .action-zone {
             margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            gap: 20px;
         }
 
-        #loading-overlay {
-            text-align: center;
-            padding: 100px 0;
+        #loading-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .status-pill {
+            display: inline-block;
+            padding: 5px 15px;
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-bottom: 15px;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        @media (max-width: 850px) {
+            .details-container { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
+<div id="loading-screen">
+    <h2 class="loading-pulse">Retrieving Data...</h2>
+</div>
+
 <nav class="navbar">
     <a href="index.html" class="logo">NEXUS<span style="color:white">FLOW</span></a>
     <div class="nav-links">
-        <a href="index.html">Home</a>
         <a href="shop.html">Shop</a>
-        <a href="book-repair.html">Book Repair</a>
-        <a href="profile.html">Profile</a>
-        
-        <a href="cart.html" class="cart-link" id="header-cart">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="var(--accent)">
-                <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/>
-            </svg>
-            <span class="cart-count" id="cart-badge">0</span>
-        </a>
+        <a href="cart.html">Cart (<span id="cart-badge">0</span>)</a>
     </div>
 </nav>
 
 <div class="container">
-    <div id="loading-overlay">
-        <h2 style="color: var(--text-secondary)">Scanning Inventory...</h2>
-    </div>
-
-    <div id="displayArea" style="display: none;">
+    <div class="details-container" id="details-content" style="display: none;">
+        <div class="product-visual">
+            <img id="p-img" src="" alt="Hardware Visual">
         </div>
+
+        <div class="product-info">
+            <div class="status-pill">AUTHENTIC COMPONENT</div>
+            <span class="spec-label" id="p-category">HARDWARE</span>
+            <h1 id="p-name" style="font-size: 2.8rem; margin: 10px 0;">Component Name</h1>
+            
+            <p id="p-description" style="color: var(--text-secondary); line-height: 1.8; font-size: 1.1rem; margin: 20px 0;">
+                Initializing telemetry...
+            </p>
+
+            <div class="price-display">$<span id="p-price">0.00</span></div>
+
+            <div class="action-zone">
+                <button id="add-btn" class="btn btn-primary" style="padding: 15px 40px; min-width: 200px;" onclick="addToCart()">Add to Cart</button>
+                <button class="btn btn-outline" onclick="window.location.href='shop.html'">Exit View</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
-    const API_URL = 'https://yskkdnff93.execute-api.us-east-1.amazonaws.com/prod/products';
-    const params = new URLSearchParams(window.location.search);
-    const idFromUrl = params.get('id');
+    // 1. Setup URL and API Link
+    const urlParams = new URLSearchParams(window.location.search);
+    const productId = urlParams.get('id');
+    const API_URL = `https://yskkdnff93.execute-api.us-east-1.amazonaws.com/prod/products?id=${productId}`;
+
+    // Store product globally once loaded
+    let currentProductData = null;
 
     window.onload = function() {
-        updateHeaderCart();
+        updateBadge();
+        
+        if (!productId) {
+            window.location.href = 'shop.html';
+            return;
+        }
+
         fetch(API_URL)
             .then(res => res.json())
-            .then(products => {
-                const product = products.find(p => p.productId === idFromUrl);
-                document.getElementById('loading-overlay').style.display = 'none';
-                if(product) {
-                    renderProduct(product);
-                    document.getElementById('displayArea').style.display = 'block';
-                } else {
-                    document.getElementById('displayArea').innerHTML = "<h1 style='text-align:center'>404: Hardware Not Found</h1>";
-                    document.getElementById('displayArea').style.display = 'block';
+            .then(product => {
+                if (!product || product.error) {
+                    document.getElementById('loading-screen').innerHTML = "<h2>Component not found.</h2>";
+                    return;
                 }
+
+                // Map data from DynamoDB (handling both naming styles)
+                currentProductData = product;
+                const name = product.name || product.productName || "Unknown Hardware";
+                const price = product.price ? parseFloat(product.price).toFixed(2) : "0.00";
+                const img = product.imageUrl || product.imageURL || 'assets/placeholder.jpg';
+
+                // Update HTML
+                document.getElementById('p-name').innerText = name;
+                document.getElementById('p-price').innerText = price;
+                document.getElementById('p-category').innerText = product.category || "Hardware";
+                document.getElementById('p-description').innerText = product.description || "High-performance specialized hardware part for professional deployment.";
+                document.getElementById('p-img').src = img;
+
+                // Toggle visibility
+                document.getElementById('loading-screen').style.display = 'none';
+                document.getElementById('details-content').style.display = 'grid';
+            })
+            .catch(err => {
+                console.error("Fetch Error:", err);
+                document.getElementById('loading-screen').innerHTML = "<h2>System Link Failure.</h2>";
             });
     };
 
-    function renderProduct(p) {
-        document.getElementById('displayArea').innerHTML = `
-            <div class="product-hero">
-                <div class="image-showcase">
-                    <img src="${p.imageUrl || 'https://via.placeholder.com/600'}" alt="${p.name}">
-                </div>
-                <div class="details-panel">
-                    <span class="category-label">Professional Grade Hardware</span>
-                    <h1 style="font-size: 2.5rem; margin: 0;">${p.name}</h1>
-                    <div class="badge badge-success" style="margin-top: 10px;">In Stock: ${p.stock} Units</div>
-                    
-                    <div class="price-display">$${p.price.toFixed(2)}</div>
-                    
-                    <p style="color: var(--text-secondary); font-size: 1.1rem; line-height: 1.8;">
-                        ${p.description || 'Enterprise-ready component certified for high-performance NexusFlow installations.'}
-                    </p>
+    function addToCart() {
+        if (!currentProductData) return;
 
-                    <ul class="specs-list">
-                        <li>Availability <span>Immediate Dispatch</span></li>
-                        <li>Condition <span>Factory New / Sealed</span></li>
-                        <li>Warranty <span>12 Months NexusCare</span></li>
-                    </ul>
-                    
-                    <div class="action-area">
-                        <button class="btn btn-primary" style="flex: 2; font-size: 1.1rem; padding: 20px;" onclick="addToCart('${p.productId}', '${p.name}', ${p.price})">
-                            Add to System Cart
-                        </button>
-                        <a href="shop.html" class="btn btn-outline" style="flex: 1;">Back to Shop</a>
-                    </div>
-                </div>
-            </div>
-        `;
-    }
-
-    function addToCart(id, name, price) {
+        // Get existing cart or create empty
         let cart = JSON.parse(localStorage.getItem('nexus_cart')) || [];
-        cart.push({ productId: id, name: name, price: price, timestamp: new Date().getTime() });
+        
+        // Add item
+        cart.push({
+            productId: currentProductData.productId || currentProductData.id,
+            name: currentProductData.name || currentProductData.productName,
+            price: parseFloat(currentProductData.price),
+            imageUrl: currentProductData.imageUrl || currentProductData.imageURL
+        });
+
+        // Save back to storage
         localStorage.setItem('nexus_cart', JSON.stringify(cart));
-        updateHeaderCart();
         
-        // Visual confirmation before redirect
-        const btn = document.querySelector('.btn-primary');
-        btn.innerText = "✓ Added to Cart";
-        btn.style.background = "var(--success)";
-        
-        setTimeout(() => { window.location.href = 'cart.html'; }, 800);
+        // Update UI Badge
+        updateBadge();
+
+        // UI Feedback (Change button state instead of redirecting)
+        const btn = document.getElementById('add-btn');
+        const originalText = btn.innerText;
+        btn.innerText = "✓ Added to Selection";
+        btn.style.background = "#10b981";
+        btn.style.borderColor = "#10b981";
+        btn.disabled = true;
+
+        // Reset button after 2 seconds
+        setTimeout(() => {
+            btn.innerText = originalText;
+            btn.style.background = "";
+            btn.style.borderColor = "";
+            btn.disabled = false;
+        }, 2000);
     }
 
-    function updateHeaderCart() {
+    function updateBadge() {
         const cart = JSON.parse(localStorage.getItem('nexus_cart')) || [];
         const badge = document.getElementById('cart-badge');
-        badge.innerText = cart.length;
-        badge.style.display = cart.length > 0 ? 'block' : 'none';
+        if (badge) badge.innerText = cart.length;
     }
 </script>
 </body>

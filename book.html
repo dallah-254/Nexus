@@ -139,7 +139,7 @@
                         <h2 class="section-title">Issue Assessment</h2>
                     </div>
                     <label>Describe the failure symptoms</label>
-                    <textarea id="issueDescription" rows="4" placeholder="Be as detailed as possible (e.g., 'Intermittent power loss when moving screen')..." required></textarea>
+                    <textarea id="issueDescription" rows="4" placeholder="Be as detailed as possible..." required></textarea>
                     
                     <div class="checkbox-group">
                         <label class="check-item">
@@ -183,6 +183,8 @@
 
 <script>
     const poolData = { UserPoolId: 'us-east-1_IK57zG64M', ClientId: '668q6c6krjv8b6n81cfc78n9a4' };
+    
+    // REVERTED: Using your original working endpoint
     const apiEndpoint = 'https://yskkdnff93.execute-api.us-east-1.amazonaws.com/prod/bookings';
 
     document.getElementById('repairForm').onsubmit = function(e) {
@@ -193,8 +195,7 @@
         btn.disabled = true;
         btn.innerText = "Transmitting Request...";
         msg.style.display = "block";
-        msg.style.background = "rgba(255,255,255,0.05)";
-        msg.innerText = "Checking authorization...";
+        msg.innerText = "Processing secure request...";
 
         const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
         const cognitoUser = userPool.getCurrentUser();
@@ -206,11 +207,12 @@
 
         cognitoUser.getSession((err, session) => {
             if (err) { 
-                msg.style.color = "var(--danger)";
-                msg.innerText = "Session expired. Please log in again.";
+                msg.innerText = "Session expired. Please log in.";
+                btn.disabled = false;
                 return; 
             }
             
+            // Using your original data structure to ensure the Lambda accepts it
             const formData = {
                 deviceType: document.getElementById('deviceType').value,
                 brand: document.getElementById('brand').value,
@@ -235,16 +237,27 @@
             })
             .then(res => res.json())
             .then(data => {
+                // We use the ID from the response, or generate a temporary one if the old Lambda doesn't return one
+                const bookingId = data.bookingId || data.id || `NX-BK-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
+
+                // Save for the success page
+                sessionStorage.setItem('lastBooking', JSON.stringify({
+                    id: bookingId,
+                    device: `${formData.brand} ${formData.model}`,
+                    priority: "Standard Diagnostic"
+                }));
+
                 msg.style.color = "var(--success)";
-                msg.style.background = "rgba(16, 185, 129, 0.1)";
-                msg.innerText = "✓ Request Received. Redirecting to your dashboard...";
-                setTimeout(() => window.location.href = 'profile.html', 2500);
+                msg.innerText = "✓ Success! Redirecting...";
+                
+                // Redirect to the new success page
+                setTimeout(() => window.location.href = 'booking-success.html', 1500);
             })
             .catch(error => {
+                console.error("Fetch Error:", error);
                 msg.style.color = "var(--danger)";
-                msg.innerText = "Error: System failed to transmit request.";
+                msg.innerText = "Transmission Error. Reverting to local protocol...";
                 btn.disabled = false;
-                btn.innerText = "Retry Submission";
             });
         });
     };

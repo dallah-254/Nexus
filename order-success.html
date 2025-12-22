@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexusFlow | Transaction Complete</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .success-card {
+            max-width: 600px;
+            margin: 100px auto;
+            text-align: center;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--accent);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .check-icon {
+            font-size: 4rem;
+            color: #10b981;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .order-id-box {
+            background: rgba(0, 243, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--accent);
+            font-size: 1.2rem;
+            margin: 20px 0;
+            border: 1px dashed var(--accent);
+        }
+
+        .details-list {
+            text-align: left;
+            margin: 30px 0;
+            padding: 20px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 10px;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <a href="index.html" class="logo">NEXUS<span style="color:white">FLOW</span></a>
+</nav>
+
+<div class="container">
+    <div class="success-card">
+        <span class="check-icon">✓</span>
+        <h1 style="margin-bottom: 10px;">Order <span style="color:var(--accent)">Verified</span></h1>
+        <p style="color: var(--text-secondary);">Your hardware acquisition protocol has been initiated.</p>
+
+        <div class="order-id-box">
+            ID: <span id="display-id">GENERATING...</span>
+        </div>
+
+        <div class="details-list">
+            <div class="detail-item">
+                <span>Status:</span>
+                <span style="color: #10b981;">Processing</span>
+            </div>
+            <div class="detail-item">
+                <span>Total Amount:</span>
+                <span id="display-total">$0.00</span>
+            </div>
+            <div class="detail-item">
+                <span>Confirmation Sent To:</span>
+                <span id="display-email">---</span>
+            </div>
+        </div>
+
+        <button class="btn btn-primary" onclick="window.location.href='profile.html'" style="width: 100%;">Track Order in Profile</button>
+        <button class="btn btn-outline" onclick="window.location.href='shop.html'" style="width: 100%; margin-top: 15px;">Continue Shopping</button>
+    </div>
+</div>
+
+<script>
+    window.onload = function() {
+        // Retrieve the data saved by the Cart page
+        const orderDataRaw = sessionStorage.getItem('lastOrder');
+        
+        if (!orderDataRaw) {
+            // If someone lands here without an order, send them home
+            window.location.href = 'shop.html';
+            return;
+        }
+
+        try {
+            const orderData = JSON.parse(orderDataRaw);
+            
+            // Map the data to the HTML
+            // Note: We check for 'id' as saved in the cart script
+            document.getElementById('display-id').innerText = orderData.id || "ID-PENDING";
+            document.getElementById('display-total').innerText = "$" + orderData.total;
+            document.getElementById('display-email').innerText = orderData.email;
+
+            // Optional: Clear session after a few minutes or keep it for the receipt
+            // sessionStorage.removeItem('lastOrder'); 
+        } catch (e) {
+            console.error("Error reading order data", e);
+            document.getElementById('display-id').innerText = "ERROR-RTV";
+        }
+    };
+</script>
+</body>
+</html>
