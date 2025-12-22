@@ -16,18 +16,23 @@
         .header-flex { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #ff9900; padding-bottom: 15px; margin-bottom: 20px; }
         h1, h2 { margin: 0; color: #232f3e; }
 
-        /* User Details Styling */
         .user-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .detail-item { font-size: 15px; }
         .detail-item strong { color: #555; text-transform: capitalize; margin-right: 5px; }
 
-        /* Table Styling */
         table { width: 100%; border-collapse: collapse; margin-top: 15px; background: #fff; }
         th { background: #232f3e; color: white; text-align: left; padding: 15px; font-size: 14px; }
         td { padding: 15px; border-bottom: 1px solid #eee; vertical-align: top; }
-        tr:hover { background-color: #f9f9f9; }
 
-        .status-badge { display: inline-block; background: #e1f5fe; color: #01579b; padding: 5px 12px; border-radius: 15px; font-size: 12px; font-weight: bold; text-transform: uppercase; }
+        /* Dynamic Status Badges */
+        .status-badge { display: inline-block; padding: 5px 12px; border-radius: 15px; font-size: 12px; font-weight: bold; text-transform: uppercase; }
+        
+        /* Repair Status Styles */
+        .badge-received, .badge-pending { background: #e1f5fe; color: #01579b; }
+        .badge-inrepair, .badge-shipped { background: #fff3e0; color: #e65100; }
+        .badge-ready, .badge-completed { background: #e8f5e9; color: #1b5e20; }
+        .badge-cancelled { background: #ffebee; color: #b71c1c; }
+
         .device-text { font-weight: bold; color: #333; display: block; }
         .issue-text { font-size: 13px; color: #666; margin-top: 4px; display: block; }
 
@@ -43,6 +48,7 @@
         <div class="header-flex">
             <h1>NexusFlow Profile</h1>
             <div class="nav-buttons">
+                <a href="shop.html" class="btn-action" style="background:#232f3e;">Back to Shop</a>
                 <a href="book.html" class="btn-action">Book New Repair</a>
                 <button class="btn-action btn-logout" onclick="logout()">Logout</button>
             </div>
@@ -53,7 +59,7 @@
     <div class="card">
         <h2>Recent Repair Requests</h2>
         <div id="booking-status" style="padding: 20px; text-align: center; color: #666;">
-            Verifying session and fetching history...
+            Fetching latest repair updates...
         </div>
         <table id="booking-table" style="display:none;">
             <thead>
@@ -67,17 +73,32 @@
             <tbody id="booking-rows"></tbody>
         </table>
     </div>
+
+    <div class="card">
+        <h2>Product Order History</h2>
+        <div id="order-status" style="padding: 20px; text-align: center; color: #666;">
+            Fetching latest order updates...
+        </div>
+        <table id="order-table" style="display:none;">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Order Details</th>
+                    <th>Total</th>
+                    <th>Live Status</th>
+                </tr>
+            </thead>
+            <tbody id="order-rows"></tbody>
+        </table>
+    </div>
 </div>
 
 <script>
     // 1. CONFIGURATION
-    const poolData = { 
-        UserPoolId: 'us-east-1_IK57zG64M', 
-        ClientId: '668q6c6krjv8b6n81cfc78n9a4' 
-    };
-    const apiInvokeUrl = 'https://yskkdnff93.execute-api.us-east-1.amazonaws.com/prod/bookings';
+    const poolData = { UserPoolId: 'us-east-1_IK57zG64M', ClientId: '668q6c6krjv8b6n81cfc78n9a4' };
+    const apiRepairUrl = 'https://yskkdnff93.execute-api.us-east-1.amazonaws.com/prod/bookings';
+    const apiOrderUrl = 'https://yskkdnff93.execute-api.us-east-1.amazonaws.com/prod/orders/get-my-orders';
 
-    // 2. PAGE LOAD LOGIC
     window.onload = function() {
         const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
         const cognitoUser = userPool.getCurrentUser();
@@ -89,6 +110,12 @@
                 } else {
                     displayProfile(cognitoUser);
                     fetchRepairHistory(session);
+                    
+                    // Get User Attributes to find Email for the order fetch
+                    cognitoUser.getUserAttributes((err, attributes) => {
+                        const emailAttr = attributes.find(a => a.Name === 'email');
+                        if (emailAttr) fetchOrderHistory(emailAttr.Value);
+                    });
                 }
             });
         } else {
@@ -96,18 +123,13 @@
         }
     };
 
-    // 3. DISPLAY COGNITO ATTRIBUTES
     function displayProfile(cognitoUser) {
         cognitoUser.getUserAttributes((err, attributes) => {
             const infoDiv = document.getElementById('user-info');
-            if (err) {
-                infoDiv.innerText = "Error loading profile.";
-                return;
-            }
+            if (err) { infoDiv.innerText = "Error loading profile."; return; }
             let html = "";
             attributes.forEach(attr => {
                 const label = attr.Name.replace('custom:', '').replace('_', ' ');
-                // Only show relevant fields
                 if (["email", "family_name", "middle_name", "address", "phone_number"].includes(attr.Name)) {
                     html += `<div class="detail-item"><strong>${label}:</strong> ${attr.Value}</div>`;
                 }
@@ -116,60 +138,73 @@
         });
     }
 
-    // 4. FETCH FROM DYNAMODB VIA API
     function fetchRepairHistory(session) {
         const idToken = session.getIdToken().getJwtToken();
-
-        fetch(apiInvokeUrl, {
+        fetch(apiRepairUrl, {
             method: 'GET',
-            headers: {
-                'Authorization': idToken,
-                'Content-Type': 'application/json'
-            }
+            headers: { 'Authorization': idToken, 'Content-Type': 'application/json' }
         })
-        .then(response => {
-            if (!response.ok) throw new Error("API Status: " + response.status);
-            return response.json();
-        })
+        .then(res => res.json())
         .then(data => {
             const statusEl = document.getElementById('booking-status');
             const tableEl = document.getElementById('booking-table');
             const rowsEl = document.getElementById('booking-rows');
 
             if (!data || data.length === 0) {
-                statusEl.innerHTML = "No repair requests found. <br><br> <a href='book.html'>Click here to book your first repair!</a>";
+                statusEl.innerHTML = "No repairs found.";
             } else {
                 statusEl.style.display = 'none';
                 tableEl.style.display = 'table';
-                
                 rowsEl.innerHTML = data.map(item => {
-                    // Smart display logic for repair fields
-                    const deviceName = (item.brand && item.model) ? `${item.brand} ${item.model}` : (item.deviceType || "Unknown Device");
-                    const displayDate = item.bookingDate || (item.createdAt ? item.createdAt.split('T')[0] : 'N/A');
-                    const location = item.pickupAddress ? `${item.pickupAddress}, ${item.city || ''}` : "Not provided";
-
+                    const statusClass = (item.status || 'RECEIVED').toLowerCase().replace(' ', '');
                     return `
                         <tr>
-                            <td>${displayDate}</td>
+                            <td>${item.bookingDate || 'N/A'}</td>
                             <td>
-                                <span class="device-text">${deviceName}</span>
-                                <span class="issue-text">${item.issueDescription || 'No description provided.'}</span>
+                                <span class="device-text">${item.brand} ${item.model}</span>
+                                <span class="issue-text">${item.issueDescription || ''}</span>
                             </td>
-                            <td style="font-size: 13px;">${location}</td>
-                            <td><span class="status-badge">${item.status || 'RECEIVED'}</span></td>
+                            <td style="font-size: 13px;">${item.pickupAddress || 'N/A'}</td>
+                            <td><span class="status-badge badge-${statusClass}">${item.status || 'RECEIVED'}</span></td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+        });
+    }
+
+    function fetchOrderHistory(email) {
+        fetch(`${apiOrderUrl}?email=${email}`)
+        .then(res => res.json())
+        .then(data => {
+            const statusEl = document.getElementById('order-status');
+            const tableEl = document.getElementById('order-table');
+            const rowsEl = document.getElementById('order-rows');
+
+            if (!data || data.length === 0) {
+                statusEl.innerHTML = "No product orders found.";
+            } else {
+                statusEl.style.display = 'none';
+                tableEl.style.display = 'table';
+                rowsEl.innerHTML = data.map(order => {
+                    const statusClass = (order.orderStatus || 'PENDING').toLowerCase().replace(' ', '');
+                    return `
+                        <tr>
+                            <td>${new Date(order.createdAt).toLocaleDateString()}</td>
+                            <td>
+                                <span class="device-text">Order #${order.orderId.substring(4, 12)}</span>
+                                <span class="issue-text">${order.items.map(i => i.name).join(', ')}</span>
+                            </td>
+                            <td><strong>$${order.totalAmount.toFixed(2)}</strong></td>
+                            <td><span class="status-badge badge-${statusClass}">${order.orderStatus || 'PENDING'}</span></td>
                         </tr>
                     `;
                 }).join('');
             }
         })
-        .catch(error => {
-            console.error("Fetch error:", error);
-            document.getElementById('booking-status').innerHTML = 
-                "<span style='color:red;'>Failed to load repairs. Please ensure API is deployed and CORS is enabled.</span>";
-        });
+        .catch(err => { document.getElementById('order-status').innerText = "Update Error."; });
     }
 
-    // 5. LOGOUT
     function logout() {
         const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
         const cognitoUser = userPool.getCurrentUser();
@@ -177,6 +212,5 @@
         window.location.href = 'login.html';
     }
 </script>
-
 </body>
 </html>
