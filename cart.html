@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>NexusFlow | Secure Checkout</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aws-sdk/2.1522.0/aws-sdk.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js@6.3.7/dist/amazon-cognito-identity.min.js"></script>
+    
     <style>
         body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; padding: 20px; }
         .checkout-box { max-width: 600px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
@@ -24,6 +27,10 @@
         .dot.active { background: #3182ce; }
         
         input, select, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #cbd5e0; border-radius: 6px; box-sizing: border-box; }
+        
+        /* LOCKED EMAIL STYLE */
+        input[readonly] { background-color: #f7fafc; color: #718096; cursor: not-allowed; border: 1px solid #e2e8f0; }
+
         button { width: 100%; padding: 15px; margin-top: 15px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
         .btn-next { background: #3182ce; color: white; }
         .btn-back { background: #edf2f7; color: #4a5568; margin-top: 10px; }
@@ -35,8 +42,7 @@
 <div class="checkout-box">
     <div class="mini-cart">
         <h3 style="margin-top:0;">Order Summary</h3>
-        <div id="cartItemsList">
-            </div>
+        <div id="cartItemsList"></div>
         <div class="total-row">
             <span>Total Amount:</span>
             <span id="grandTotal">$0.00</span>
@@ -52,7 +58,10 @@
     <div id="step1" class="step active">
         <h2>Step 1: Contact Info</h2>
         <input type="text" id="name" placeholder="Full Name">
-        <input type="email" id="email" placeholder="Email Address">
+        
+        <label style="font-size: 0.8rem; color: #718096;">Verified Account Email</label>
+        <input type="email" id="email" placeholder="Fetching account email..." readonly>
+        
         <input type="tel" id="phone" placeholder="Phone Number (e.g. +254...)">
         <input type="text" id="location" placeholder="City / County">
         <button class="btn-next" onclick="nextStep()">Continue to Logistics →</button>
@@ -81,11 +90,37 @@
 
 <script>
     const API_URL = 'https://yskkdnff93.execute-api.us-east-1.amazonaws.com/prod/orders';
+    const poolData = { UserPoolId: 'us-east-1_IK57zG64M', ClientId: '668q6c6krjv8b6n81cfc78n9a4' };
 
-    // Load Cart Data on startup
+    // Load Cart Data and User Session on startup
     window.onload = function() {
         renderCartSummary();
+        checkUserSession();
     };
+
+    function checkUserSession() {
+        const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
+        const cognitoUser = userPool.getCurrentUser();
+
+        if (cognitoUser != null) {
+            cognitoUser.getSession((err, session) => {
+                if (err || !session.isValid()) {
+                    window.location.href = 'login.html';
+                } else {
+                    cognitoUser.getUserAttributes((err, attributes) => {
+                        if (err) return;
+                        const emailAttr = attributes.find(a => a.Name === 'email');
+                        if (emailAttr) {
+                            document.getElementById('email').value = emailAttr.Value;
+                        }
+                    });
+                }
+            });
+        } else {
+            // If not logged in, they shouldn't be here
+            window.location.href = 'login.html';
+        }
+    }
 
     function renderCartSummary() {
         const cart = JSON.parse(localStorage.getItem('nexus_cart')) || [];
@@ -99,7 +134,6 @@
 
         listDiv.innerHTML = cart.map(item => {
             total += item.price;
-            // Link to details page using the productId
             return `
                 <div class="cart-item">
                     <a href="product-details.html?id=${item.productId}" target="_blank" class="product-link">
@@ -139,7 +173,7 @@
 
         const fullPayload = {
             name: document.getElementById('name').value,
-            email: document.getElementById('email').value,
+            email: document.getElementById('email').value, // This is the secured email
             phone: document.getElementById('phone').value,
             location: document.getElementById('location').value,
             address: document.getElementById('address').value,
@@ -158,11 +192,11 @@
             const data = await response.json();
             
             if(response.ok) {
-                alert("SUCCESS! Order " + data.orderId + " has been placed and secured.");
+                alert("SUCCESS! Order has been secured.");
                 localStorage.removeItem('nexus_cart');
                 window.location.href = 'profile.html';
             } else {
-                throw new Error(data.error);
+                throw new Error(data.error || "Order submission failed");
             }
         } catch (err) {
             alert("Order Error: " + err.message);

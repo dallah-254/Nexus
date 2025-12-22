@@ -97,7 +97,7 @@
     // 1. CONFIGURATION
     const poolData = { UserPoolId: 'us-east-1_IK57zG64M', ClientId: '668q6c6krjv8b6n81cfc78n9a4' };
     const apiRepairUrl = 'https://yskkdnff93.execute-api.us-east-1.amazonaws.com/prod/bookings';
-    const apiOrderUrl = 'https://yskkdnff93.execute-api.us-east-1.amazonaws.com/prod/orders/get-my-orders';
+    const apiOrderUrl = 'https://yskkdnff93.execute-api.us-east-1.amazonaws.com/prod/orders';
 
     window.onload = function() {
         const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);

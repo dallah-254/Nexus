@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexusFlow | Our Services</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f9; margin: 0; padding: 20px; }
+        .container { max-width: 1000px; margin: auto; }
+        .header { text-align: center; padding: 40px 0; }
+        .service-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        
+        .service-card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); transition: 0.3s; }
+        .service-card:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.1); }
+        
+        .category { font-size: 12px; color: #ff9900; font-weight: bold; text-transform: uppercase; }
+        .price { font-size: 20px; font-weight: bold; color: #232f3e; margin: 10px 0; }
+        .btn-details { display: block; text-align: center; background: #232f3e; color: white; padding: 10px; border-radius: 6px; text-decoration: none; margin-top: 15px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Professional Repair Services</h1>
+        <p>Select a service to see details, duration, and what's included.</p>
+    </div>
+
+    <div id="service-list" class="service-grid">
+        <p style="text-align: center; grid-column: 1/-1;">Loading catalog...</p>
+    </div>
+</div>
+
+<script>
+    const API_URL = 'https://yskkdnff93.execute-api.us-east-1.amazonaws.com/prod/Services';
+
+    window.onload = async function() {
+        try {
+            const res = await fetch(API_URL);
+            const services = await res.json();
+            const container = document.getElementById('service-list');
+
+            if (!services || services.length === 0) {
+                container.innerHTML = "<p>No services currently listed.</p>";
+                return;
+            }
+
+            container.innerHTML = services.map(s => `
+                <div class="service-card">
+                    <span class="category">${s.category}</span>
+                    <h3>${s.serviceName}</h3>
+                    <p>${s.shortDescription}</p>
+                    <div class="price">From $${s.basePrice}</div>
+                    <a href="service-details.html?id=${s.serviceId}" class="btn-details">View Details</a>
+                </div>
+            `).join('');
+        } catch (err) {
+            document.getElementById('service-list').innerHTML = "Error loading services.";
+        }
+    };
+</script>
+
+</body>
+</html>
