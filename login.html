@@ -4,13 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NexusFlow | Secure Authentication</title>
-    <script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js@6.3.16/dist/amazon-cognito-identity.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aws-sdk/2.1522.0/aws-sdk.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js@6.3.7/dist/amazon-cognito-identity.min.js"></script>
+    
+    <script src="auth-config.js"></script>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="header.css">
+
     <style>
         body {
             display: flex;
             flex-direction: column;
             min-height: 100vh;
+            padding-top: 100px; /* Uniform offset for header */
         }
 
         .auth-wrapper {
@@ -25,6 +32,9 @@
             width: 100%;
             max-width: 400px;
             animation: slideUp 0.5s ease;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-cyan);
+            backdrop-filter: blur(10px);
         }
 
         @keyframes slideUp {
@@ -40,12 +50,7 @@
         .auth-header h2 {
             font-size: 1.8rem;
             margin-bottom: 8px;
-            color: var(--text-primary);
-        }
-
-        .auth-header p {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
+            font-family: 'JetBrains Mono', monospace;
         }
 
         #status {
@@ -53,15 +58,17 @@
             margin-top: 20px;
             font-size: 0.85rem;
             min-height: 20px;
-            padding: 10px;
+            padding: 12px;
             border-radius: 6px;
+            display: none;
+            font-family: 'JetBrains Mono', monospace;
         }
 
         .form-footer {
             text-align: center;
             margin-top: 25px;
             font-size: 0.9rem;
-            color: var(--text-secondary);
+            color: var(--text-dim);
         }
 
         .form-footer a {
@@ -70,33 +77,35 @@
             font-weight: 600;
         }
 
-        .form-footer a:hover {
-            text-decoration: underline;
-        }
-
-        /* Input overrides for login page specifically */
+        /* Input styling to match the "Digital Flow" theme */
         input {
             margin-bottom: 15px;
-            background: rgba(15, 23, 42, 0.8);
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-cyan);
+            color: white;
+            padding: 12px;
+            border-radius: 4px;
+            width: 100%;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-dim);
         }
     </style>
 </head>
 <body>
 
-<nav class="navbar">
-    <a href="index.html" class="logo">NEXUS<span style="color:white">FLOW</span></a>
-    <div class="nav-links">
-        <a href="index.html">Home</a>
-        <a href="shop.html">Shop</a>
-        <a href="book-repair.html">Book Repair</a>
-    </div>
-</nav>
 
 <div class="auth-wrapper">
     <div class="card login-card">
         <div class="auth-header">
-            <h2>Authorized <span style="color:var(--accent)">Access</span></h2>
-            <p>Enter your credentials to manage your tech flow.</p>
+            <h2>Authorized <span class="text-accent">Access</span></h2>
+            <p class="text-dim">Enter your credentials to manage your tech flow.</p>
         </div>
 
         <form id="loginForm">
@@ -119,12 +128,13 @@
     </div>
 </div>
 
+<script src="header.js"></script>
 <script>
-    const poolData = { 
-        UserPoolId: 'us-east-1_IK57zG64M', 
-        ClientId: '668q6c6krjv8b6n81cfc78n9a4' 
-    };
-    const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
+    // Using NEXUS_CONFIG from auth-config.js for uniformity
+    const userPool = new AmazonCognitoIdentity.CognitoUserPool({ 
+        UserPoolId: NEXUS_CONFIG.auth.UserPoolId, 
+        ClientId: NEXUS_CONFIG.auth.ClientId 
+    });
 
     document.getElementById('loginForm').onsubmit = function(e) {
         e.preventDefault();
@@ -133,12 +143,10 @@
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
 
-        // Reset UI
         btn.disabled = true;
         btn.innerText = "Authenticating...";
         status.style.display = "block";
         status.style.background = "rgba(255, 255, 255, 0.05)";
-        status.style.color = "var(--text-secondary)";
         status.innerText = "Verifying with AWS Cloud Security...";
 
         const authDetails = new AmazonCognitoIdentity.AuthenticationDetails({
@@ -151,11 +159,8 @@
 
         cognitoUser.authenticateUser(authDetails, {
             onSuccess: function(result) {
-                const idToken = result.getIdToken().getJwtToken();
-                localStorage.setItem('nexus_id_token', idToken);
-                
-                status.style.color = "var(--success)";
-                status.style.background = "rgba(16, 185, 129, 0.1)";
+                status.style.color = "var(--accent)";
+                status.style.background = "rgba(0, 243, 255, 0.1)";
                 status.innerText = "✓ Access Granted. Redirecting...";
                 
                 setTimeout(() => { window.location.href = 'profile.html'; }, 800);
@@ -163,8 +168,8 @@
             onFailure: function(err) {
                 btn.disabled = false;
                 btn.innerText = "Secure Sign In";
-                status.style.color = "var(--danger)";
-                status.style.background = "rgba(239, 68, 68, 0.1)";
+                status.style.color = "#ff4444";
+                status.style.background = "rgba(255, 68, 68, 0.1)";
                 status.innerText = err.message || "Authentication failed.";
             }
         });

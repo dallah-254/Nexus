@@ -1,0 +1,2080 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart - XS Platform Kenya</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        /* EXACT SAME CSS AS USER DASHBOARD - NO CHANGES */
+        :root {
+            --primary-blue: #2196f3;
+            --accent-blue: #0d8bf2;
+            --primary-text: #333;
+            --secondary-text: #666;
+            --light-bg: #f5f7fa;
+            --success: #4caf50;
+            --warning: #ff9800;
+            --error: #f44336;
+            --border-color: #e0e0e0;
+            --kenya-green: #006600;
+            --kenya-red: #BB0000;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: #f8f9fa;
+            color: var(--primary-text);
+            min-height: 100vh;
+        }
+
+        /* Header Styles - SAME AS DASHBOARD */
+        .main-header {
+            background: white;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            border-bottom: 1px solid var(--light-bg);
+        }
+
+        .logo-and-nav {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--kenya-green);
+            background: linear-gradient(135deg, var(--kenya-green), var(--primary-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .slogan {
+            color: var(--secondary-text);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .main-nav {
+            display: flex;
+            gap: 25px;
+            margin-left: 20px;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--primary-text);
+            font-weight: 500;
+            font-size: 0.95rem;
+            padding: 8px 0;
+            position: relative;
+            transition: color 0.2s;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-blue);
+        }
+
+        .nav-link.active {
+            color: var(--primary-blue);
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--primary-blue);
+            border-radius: 1px;
+        }
+
+        .badge-new {
+            background: var(--kenya-red);
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-left: 5px;
+        }
+
+        .search-and-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .search-bar-top {
+            display: flex;
+            align-items: center;
+            background: var(--light-bg);
+            border-radius: 8px;
+            padding: 10px 15px;
+            min-width: 300px;
+        }
+
+        .search-bar-top i {
+            color: var(--secondary-text);
+            margin-right: 10px;
+        }
+
+        .search-input {
+            border: none;
+            background: none;
+            outline: none;
+            width: 100%;
+            font-size: 0.9rem;
+            color: var(--primary-text);
+        }
+
+        .search-input::placeholder {
+            color: var(--secondary-text);
+        }
+
+        .auth-state {
+            position: relative;
+        }
+
+        .user-profile {
+            position: relative;
+        }
+
+        .user-menu-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--primary-text);
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .user-menu-btn i {
+            font-size: 24px;
+            color: var(--primary-blue);
+        }
+
+        .user-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+            min-width: 200px;
+            margin-top: 10px;
+            z-index: 1001;
+            overflow: hidden;
+        }
+
+        .user-dropdown.active {
+            display: block;
+            animation: fadeIn 0.2s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            text-decoration: none;
+            color: var(--primary-text);
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .dropdown-item:hover {
+            background: var(--light-bg);
+            color: var(--primary-blue);
+        }
+
+        .dropdown-item i {
+            width: 20px;
+            color: var(--secondary-text);
+        }
+
+        .dropdown-item:hover i {
+            color: var(--primary-blue);
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background: var(--border-color);
+            margin: 5px 0;
+        }
+
+        .logout-btn {
+            color: var(--error) !important;
+        }
+
+        .logout-btn i {
+            color: var(--error) !important;
+        }
+
+        .btn-login {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        .btn-login:hover {
+            background: var(--accent-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+        }
+
+        .btn-wishlist, .btn-submit {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .btn-wishlist {
+            background: white;
+            color: var(--primary-text);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-wishlist:hover {
+            background: var(--light-bg);
+            color: var(--primary-blue);
+            border-color: var(--primary-blue);
+        }
+
+        .btn-submit {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        .btn-submit:hover {
+            background: var(--accent-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+        }
+
+        .wishlist-count, .cart-count {
+            background: var(--kenya-red);
+            color: white;
+            font-size: 0.8rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--primary-text);
+            cursor: pointer;
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-panel {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: white;
+            z-index: 2000;
+            overflow-y: auto;
+        }
+
+        .mobile-menu-panel.active {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-100%); }
+            to { transform: translateX(0); }
+        }
+
+        .mobile-menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid var(--light-bg);
+        }
+
+        .mobile-logo {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--kenya-green);
+        }
+
+        .mobile-menu-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--primary-text);
+            cursor: pointer;
+        }
+
+        .mobile-menu-content {
+            padding: 20px;
+        }
+
+        .mobile-auth-state {
+            margin-bottom: 30px;
+        }
+
+        .mobile-logged-in-state {
+            display: none;
+        }
+
+        .mobile-not-logged-in-state {
+            display: none;
+        }
+
+        .mobile-user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--light-bg);
+        }
+
+        .mobile-user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--light-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: var(--primary-blue);
+        }
+
+        .mobile-user-details {
+            flex: 1;
+        }
+
+        .mobile-user-name {
+            font-weight: 600;
+            color: var(--primary-text);
+            margin-bottom: 5px;
+        }
+
+        .mobile-user-email {
+            color: var(--secondary-text);
+            font-size: 0.9rem;
+        }
+
+        .mobile-user-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .mobile-nav-link {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px 15px;
+            text-decoration: none;
+            color: var(--primary-text);
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+
+        .mobile-nav-link:hover {
+            background: var(--light-bg);
+            color: var(--primary-blue);
+        }
+
+        .mobile-nav-link i {
+            width: 20px;
+            color: var(--secondary-text);
+        }
+
+        .mobile-nav-link:hover i {
+            color: var(--primary-blue);
+        }
+
+        .mobile-menu-divider {
+            height: 1px;
+            background: var(--border-color);
+            margin: 15px 0;
+        }
+
+        .mobile-action-btn {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px 15px;
+            background: none;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--primary-text);
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+        }
+
+        .mobile-action-btn:hover {
+            background: var(--light-bg);
+            color: var(--primary-blue);
+            border-color: var(--primary-blue);
+        }
+
+        .mobile-action-btn.logout {
+            color: var(--error);
+            border-color: var(--error);
+        }
+
+        .mobile-action-btn.logout:hover {
+            background: #ffebee;
+        }
+
+        .mobile-nav-section {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            margin-bottom: 30px;
+        }
+
+        .mobile-actions-section {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .mobile-badge-new {
+            background: var(--kenya-red);
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-left: auto;
+        }
+
+        .mobile-wishlist-count, .mobile-cart-count {
+            margin-left: auto;
+            background: var(--kenya-red);
+            color: white;
+            font-size: 0.8rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        /* Main Content */
+        .main-content {
+            min-height: calc(100vh - 150px);
+            padding: 30px;
+        }
+
+        .cart-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--light-bg);
+        }
+
+        .page-header h1 {
+            color: var(--primary-text);
+            margin: 0 0 10px 0;
+            font-size: 2rem;
+        }
+
+        .page-header p {
+            color: var(--secondary-text);
+            margin: 0;
+            font-size: 1.1rem;
+        }
+
+        /* Cart Layout */
+        .cart-layout {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
+        }
+
+        @media (max-width: 992px) {
+            .cart-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Cart Items */
+        .cart-items {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+
+        .cart-item {
+            display: grid;
+            grid-template-columns: 100px 1fr auto;
+            gap: 20px;
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+            align-items: center;
+        }
+
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+
+        .cart-item-image {
+            width: 100px;
+            height: 100px;
+            background: var(--light-bg);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .cart-item-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .cart-item-details {
+            flex: 1;
+        }
+
+        .cart-item-title {
+            color: var(--primary-text);
+            margin: 0 0 5px 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .cart-item-sku {
+            color: var(--secondary-text);
+            font-size: 0.85rem;
+            margin: 0 0 10px 0;
+        }
+
+        .cart-item-price {
+            font-weight: 600;
+            color: var(--primary-text);
+            font-size: 1.1rem;
+        }
+
+        .cart-item-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .quantity-btn {
+            background: none;
+            border: none;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--primary-text);
+            transition: background 0.2s;
+        }
+
+        .quantity-btn:hover {
+            background: var(--light-bg);
+        }
+
+        .quantity-input {
+            width: 50px;
+            height: 40px;
+            border: none;
+            text-align: center;
+            font-size: 1rem;
+            color: var(--primary-text);
+            background: white;
+        }
+
+        .remove-btn {
+            background: none;
+            border: none;
+            color: var(--error);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+
+        .remove-btn:hover {
+            background: #ffebee;
+        }
+
+        /* Cart Summary */
+        .cart-summary {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+            padding: 25px;
+            position: sticky;
+            top: 100px;
+            height: fit-content;
+        }
+
+        .summary-header {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .summary-header h2 {
+            color: var(--primary-text);
+            margin: 0;
+            font-size: 1.4rem;
+        }
+
+        .summary-details {
+            margin-bottom: 25px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            color: var(--secondary-text);
+        }
+
+        .summary-row.total {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary-text);
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .summary-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .checkout-btn {
+            width: 100%;
+            padding: 15px;
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .checkout-btn:hover {
+            background: var(--accent-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+        }
+
+        .continue-shopping-btn {
+            width: 100%;
+            padding: 15px;
+            background: white;
+            color: var(--primary-text);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .continue-shopping-btn:hover {
+            background: var(--light-bg);
+        }
+
+        /* Empty Cart */
+        .empty-cart {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-cart-icon {
+            font-size: 80px;
+            color: var(--light-bg);
+            margin-bottom: 20px;
+        }
+
+        .empty-cart h2 {
+            color: var(--primary-text);
+            margin: 0 0 10px 0;
+            font-size: 1.8rem;
+        }
+
+        .empty-cart p {
+            color: var(--secondary-text);
+            margin: 0 0 30px 0;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Loading State */
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--primary-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Success/Error Messages */
+        .alert-message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert-success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #c8e6c9;
+        }
+
+        .alert-error {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #ffcdd2;
+        }
+
+        .alert-info {
+            background: #e3f2fd;
+            color: var(--primary-blue);
+            border: 1px solid #bbdefb;
+        }
+
+        .alert-warning {
+            background: #fff3e0;
+            color: #f57c00;
+            border: 1px solid #ffe0b2;
+        }
+
+        /* Footer */
+        .main-footer {
+            background: white;
+            border-top: 1px solid var(--border-color);
+            padding: 40px 30px 20px;
+            margin-top: 50px;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 30px;
+        }
+
+        .footer-section h4 {
+            color: var(--primary-text);
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .footer-section p {
+            color: var(--secondary-text);
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: var(--secondary-text);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-blue);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            color: var(--secondary-text);
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .main-nav {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .search-bar-top {
+                min-width: 200px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-top-row {
+                padding: 15px 20px;
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+            
+            .logo-and-nav {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .search-and-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .search-bar-top {
+                flex: 1;
+                min-width: auto;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+            
+            .cart-item {
+                grid-template-columns: 80px 1fr;
+                grid-template-rows: auto auto;
+                gap: 15px;
+            }
+            
+            .cart-item-actions {
+                grid-column: 1 / -1;
+                justify-content: space-between;
+            }
+            
+            .cart-summary {
+                position: relative;
+                top: 0;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .cart-item {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .cart-item-image {
+                margin: 0 auto;
+            }
+            
+            .cart-item-actions {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .quantity-control {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Main Header -->
+    <header class="main-header">
+        <div class="header-top-row">
+            <div class="logo-and-nav">
+                <div class="logo">XS</div>
+                <div class="slogan">Electronics Shop & Repair Services Kenya</div>
+                <nav class="main-nav">
+                    <a href="index.html" class="nav-link">Home</a>
+                    <a href="products.html" class="nav-link">Products</a> 
+                    <a href="services.html" class="nav-link">Services <span class="badge-new">NEW</span></a>
+                    <a href="deals.html" class="nav-link">Deals</a>
+                    <a href="support.html" class="nav-link">Support</a>
+                </nav>
+            </div>
+
+            <div class="search-and-actions">
+                <div class="search-bar-top">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search products, services, or brands..." class="search-input" id="global-search">
+                </div>
+
+                <div class="auth-state">
+                    <!-- Logged In State (Hidden by default) -->
+                    <div class="logged-in-state" id="logged-in-state" style="display: none;">
+                        <div class="user-profile">
+                            <button class="user-menu-btn" id="user-menu-btn" aria-label="Open account menu">
+                                <i class="fas fa-user-circle"></i>
+                                <span id="user-menu-name">Loading...</span>
+                            </button>
+                            <div class="user-dropdown" id="user-dropdown">
+                                <a href="user-dashboard.html" class="dropdown-item">
+                                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                                </a>
+                                <a href="user-dashboard.html?tab=profile" class="dropdown-item">
+                                    <i class="fas fa-user"></i> My Profile
+                                </a>
+                                <a href="user-dashboard.html?tab=orders" class="dropdown-item">
+                                    <i class="fas fa-box"></i> My Orders
+                                </a>
+                                <a href="user-dashboard.html?tab=wishlist" class="dropdown-item">
+                                    <i class="fas fa-heart"></i> Wishlist
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <button class="dropdown-item logout-btn" id="logout-btn">
+                                    <i class="fas fa-sign-out-alt"></i> Logout
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Not Logged In State (Hidden by default) -->
+                    <div class="not-logged-in-state" id="not-logged-in-state" style="display: none;">
+                        <button class="btn-login" onclick="window.location.href='login.html'">
+                            <i class="fas fa-sign-in-alt"></i> Login
+                        </button>
+                    </div>
+                </div>
+
+                <button class="btn-wishlist" id="wishlist-btn" onclick="window.location.href='wishlist.html'">
+                    <i class="fas fa-heart"></i> 
+                    <span class="wishlist-count" id="header-wishlist-count">0</span>
+                </button>
+                
+                <button class="btn-submit" id="cart-btn" onclick="window.location.href='cart.html'">
+                    <i class="fas fa-shopping-cart"></i> Cart <span class="cart-count" id="header-cart-count">0</span>
+                </button>
+                
+                <button class="mobile-menu-btn" id="mobile-menu-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu Panel -->
+        <div class="mobile-menu-panel" id="mobile-menu-panel">
+            <div class="mobile-menu-header">
+                <div class="mobile-logo">XS</div>
+                <button class="mobile-menu-close" id="mobile-menu-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="mobile-menu-content">
+                <div class="mobile-auth-state">
+                    <!-- Mobile Logged In State -->
+                    <div class="mobile-logged-in-state" id="mobile-logged-in-state">
+                        <div class="mobile-user-info">
+                            <div class="mobile-user-avatar">
+                                <i class="fas fa-user-circle"></i>
+                            </div>
+                            <div class="mobile-user-details">
+                                <div class="mobile-user-name" id="mobile-user-name">Loading...</div>
+                                <div class="mobile-user-email" id="mobile-user-email">Loading...</div>
+                            </div>
+                        </div>
+                        
+                        <div class="mobile-user-menu">
+                            <a href="user-dashboard.html" class="mobile-nav-link" onclick="closeMobileMenu();">
+                                <i class="fas fa-tachometer-alt"></i> Dashboard
+                            </a>
+                            <a href="user-dashboard.html?tab=profile" class="mobile-nav-link" onclick="closeMobileMenu();">
+                                <i class="fas fa-user"></i> My Profile
+                            </a>
+                            <a href="user-dashboard.html?tab=orders" class="mobile-nav-link" onclick="closeMobileMenu();">
+                                <i class="fas fa-box"></i> My Orders
+                            </a>
+                            <a href="user-dashboard.html?tab=wishlist" class="mobile-nav-link" onclick="closeMobileMenu();">
+                                <i class="fas fa-heart"></i> Wishlist
+                            </a>
+                            <div class="mobile-menu-divider"></div>
+                            <button class="mobile-action-btn logout" id="mobile-logout-btn">
+                                <i class="fas fa-sign-out-alt"></i> Logout
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Mobile Not Logged In State -->
+                    <div class="mobile-not-logged-in-state" id="mobile-not-logged-in-state">
+                        <div class="mobile-user-info">
+                            <div class="mobile-user-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="mobile-user-details">
+                                <div class="mobile-user-name">Guest User</div>
+                                <div class="mobile-user-email">Login to access your account</div>
+                            </div>
+                        </div>
+                        
+                        <div class="mobile-user-menu">
+                            <button class="mobile-action-btn" onclick="window.location.href='login.html'; closeMobileMenu();">
+                                <i class="fas fa-sign-in-alt"></i> Login
+                            </button>
+                            <button class="mobile-action-btn" onclick="window.location.href='register.html'; closeMobileMenu();">
+                                <i class="fas fa-user-plus"></i> Register
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mobile-nav-section">
+                    <a href="index.html" class="mobile-nav-link" onclick="closeMobileMenu();">
+                        <i class="fas fa-home"></i> Home
+                    </a>
+                    <a href="products.html" class="mobile-nav-link" onclick="closeMobileMenu();">
+                        <i class="fas fa-shopping-bag"></i> Products
+                    </a>
+                    <a href="services.html" class="mobile-nav-link" onclick="closeMobileMenu();">
+                        <i class="fas fa-tools"></i> Services <span class="mobile-badge-new">NEW</span>
+                    </a>
+                    <a href="deals.html" class="mobile-nav-link" onclick="closeMobileMenu();">
+                        <i class="fas fa-tag"></i> Deals
+                    </a>
+                    <a href="support.html" class="mobile-nav-link" onclick="closeMobileMenu();">
+                        <i class="fas fa-headset"></i> Support
+                    </a>
+                </div>
+                
+                <div class="mobile-actions-section">
+                    <button class="mobile-action-btn" onclick="window.location.href='wishlist.html'; closeMobileMenu();">
+                        <i class="fas fa-heart"></i> Wishlist <span class="mobile-wishlist-count" id="mobile-wishlist-count">0</span>
+                    </button>
+                    <button class="mobile-action-btn" onclick="window.location.href='cart.html'; closeMobileMenu();">
+                        <i class="fas fa-shopping-cart"></i> Cart <span class="mobile-cart-count" id="mobile-cart-count">0</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="cart-container">
+            <!-- Alert Area -->
+            <div id="alert-area"></div>
+
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1>Shopping Cart <span id="cart-items-count"></span></h1>
+                <p>Review your items and proceed to checkout</p>
+            </div>
+
+            <!-- Cart Content -->
+            <div id="cart-content">
+                <!-- Loading State -->
+                <div id="cart-loading">
+                    <div class="empty-cart">
+                        <div class="loading-spinner" style="width: 60px; height: 60px; margin: 0 auto 30px;"></div>
+                        <h2>Loading Cart...</h2>
+                        <p>Please wait while we load your cart items</p>
+                    </div>
+                </div>
+
+                <!-- Empty Cart State (Hidden by default) -->
+                <div id="empty-cart" class="empty-cart" style="display: none;">
+                    <div class="empty-cart-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <h2>Your Cart is Empty</h2>
+                    <p>Looks like you haven't added any items to your cart yet. Start shopping to fill it up!</p>
+                    <button class="checkout-btn" onclick="window.location.href='products.html'">
+                        <i class="fas fa-shopping-bag"></i> Start Shopping
+                    </button>
+                </div>
+
+                <!-- Cart with Items (Hidden by default) -->
+                <div id="cart-with-items" style="display: none;">
+                    <div class="cart-layout">
+                        <!-- Cart Items Section -->
+                        <div class="cart-items-section">
+                            <div class="cart-items" id="cart-items-list">
+                                <!-- Cart items loaded dynamically -->
+                            </div>
+                        </div>
+
+                        <!-- Cart Summary Section -->
+                        <div class="cart-summary">
+                            <div class="summary-header">
+                                <h2>Order Summary</h2>
+                            </div>
+                            
+                            <div class="summary-details">
+                                <div class="summary-row">
+                                    <span>Subtotal</span>
+                                    <span id="cart-subtotal">$0.00</span>
+                                </div>
+                                <div class="summary-row">
+                                    <span>Shipping</span>
+                                    <span id="cart-shipping">$0.00</span>
+                                </div>
+                                <div class="summary-row">
+                                    <span>Tax</span>
+                                    <span id="cart-tax">$0.00</span>
+                                </div>
+                                <div class="summary-row total">
+                                    <span>Total</span>
+                                    <span id="cart-total">$0.00</span>
+                                </div>
+                            </div>
+                            
+                            <div class="summary-actions">
+                                <button class="checkout-btn" id="checkout-btn" onclick="cart.checkout()">
+                                    <i class="fas fa-lock"></i> Proceed to Checkout
+                                </button>
+                                <button class="continue-shopping-btn" onclick="window.location.href='products.html'">
+                                    Continue Shopping
+                                </button>
+                            </div>
+                            
+                            <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-color);">
+                                <div style="display: flex; align-items: center; gap: 10px; color: var(--success);">
+                                    <i class="fas fa-shield-alt"></i>
+                                    <span style="font-size: 0.9rem;">Secure checkout • 100% safe & encrypted</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>XS Platform Kenya</h4>
+                <p>Your trusted source for electronics and repair services in Kenya since 2024.</p>
+                <div style="display: flex; gap: 15px; margin-top: 15px;">
+                    <a href="#" style="color: var(--primary-blue);"><i class="fab fa-facebook"></i></a>
+                    <a href="#" style="color: var(--primary-blue);"><i class="fab fa-twitter"></i></a>
+                    <a href="#" style="color: var(--primary-blue);"><i class="fab fa-instagram"></i></a>
+                    <a href="#" style="color: var(--primary-blue);"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <ul class="footer-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="products.html">Products</a></li>
+                    <li><a href="services.html">Services</a></li>
+                    <li><a href="deals.html">Deals</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Account</h4>
+                <ul class="footer-links">
+                    <li><a href="user-dashboard.html">My Dashboard</a></li>
+                    <li><a href="user-dashboard.html?tab=profile">My Profile</a></li>
+                    <li><a href="user-dashboard.html?tab=orders">Order History</a></li>
+                    <li><a href="user-dashboard.html?tab=wishlist">Wishlist</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Support</h4>
+                <ul class="footer-links">
+                    <li><a href="support.html">Help Center</a></li>
+                    <li><a href="user-dashboard.html?tab=support">My Tickets</a></li>
+                    <li><a href="contact.html">Contact Us</a></li>
+                    <li><a href="faq.html">FAQ</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="copyright">
+            &copy; 2024 XS Platform Kenya. All rights reserved. | 
+            <a href="privacy-policy.html" style="color: var(--secondary-text);">Privacy Policy</a> | 
+            <a href="terms.html" style="color: var(--secondary-text);">Terms of Service</a>
+        </div>
+    </footer>
+
+    <script>
+        // DUAL BACKEND API CONFIGURATION
+        const API_CONFIG = {
+            // Auth backend URL (for authentication)
+            AUTH_BASE_URL: 'https://xs-auth-logic4.onrender.com/api',
+            
+            // Customer data backend URL (for cart, wishlist, etc.)
+            CUSTOMER_BACKEND_URL: 'https://your-customer-backend.com/api', // REPLACE WITH ACTUAL URL
+            
+            ENDPOINTS: {
+                // ========== AUTHENTICATION ENDPOINTS (AUTH BACKEND) ==========
+                VALIDATE_TOKEN: '/auth/validate-token',
+                REFRESH_TOKEN: '/auth/refresh-token',
+                CUSTOMER_LOGOUT: '/auth/customer/logout',
+                
+                // ========== CART ENDPOINTS (CUSTOMER BACKEND via Proxy) ==========
+                GET_CART: '/proxy/cart',
+                GET_CART_COUNT: '/proxy/cart/count',
+                ADD_TO_CART: '/proxy/cart/add',
+                UPDATE_CART_ITEM: '/proxy/cart/items/:id',
+                REMOVE_FROM_CART: '/proxy/cart/items/:id',
+                CLEAR_CART: '/proxy/cart/clear',
+                CALCULATE_CART_TOTALS: '/proxy/cart/totals',
+                
+                // ========== WISHLIST ENDPOINTS ==========
+                GET_WISHLIST: '/proxy/wishlist',
+                GET_WISHLIST_COUNT: '/proxy/wishlist/count',
+                ADD_TO_WISHLIST: '/proxy/wishlist',
+                REMOVE_FROM_WISHLIST: '/proxy/wishlist/:id',
+                MOVE_TO_CART: '/proxy/wishlist/:id/move-to-cart',
+                
+                // ========== PROFILE ENDPOINTS ==========
+                GET_PROFILE: '/proxy/customer/profile',
+                
+                // ========== PRODUCT ENDPOINTS ==========
+                GET_PRODUCT: '/proxy/products/:id',
+                
+                // ========== CHECKOUT ENDPOINTS ==========
+                CREATE_CHECKOUT_SESSION: '/proxy/checkout/create-session',
+                CREATE_GUEST_ORDER: '/proxy/checkout/guest-order',
+                
+                // ========== ADDRESS ENDPOINTS ==========
+                GET_ADDRESSES: '/proxy/addresses',
+                GET_DEFAULT_ADDRESS: '/proxy/addresses/default',
+                
+                // ========== PAYMENT METHODS ENDPOINTS ==========
+                GET_PAYMENT_METHODS: '/proxy/payment-methods',
+                GET_DEFAULT_PAYMENT: '/proxy/payment-methods/default'
+            },
+            
+            HEADERS: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-Platform': 'web',
+                'X-Country-Code': 'KE'
+            },
+            
+            TOKEN_CONFIG: {
+                ACCESS_TOKEN_KEY: 'xs_access_token',
+                REFRESH_TOKEN_KEY: 'xs_refresh_token',
+                USER_DATA_KEY: 'xs_user_data',
+                TOKEN_EXPIRY_KEY: 'xs_token_expiry',
+                REMEMBER_ME_KEY: 'xs_remember_me',
+                SESSION_TIMESTAMP: 'xs_session_timestamp'
+            }
+        };
+
+        // Token Manager (SAME AS DASHBOARD)
+        class TokenManager {
+            static getAccessToken() {
+                const rememberMe = localStorage.getItem(API_CONFIG.TOKEN_CONFIG.REMEMBER_ME_KEY) === 'true';
+                return rememberMe 
+                    ? localStorage.getItem(API_CONFIG.TOKEN_CONFIG.ACCESS_TOKEN_KEY)
+                    : sessionStorage.getItem(API_CONFIG.TOKEN_CONFIG.ACCESS_TOKEN_KEY);
+            }
+            
+            static setAccessToken(token, rememberMe = false) {
+                if (rememberMe) {
+                    localStorage.setItem(API_CONFIG.TOKEN_CONFIG.ACCESS_TOKEN_KEY, token);
+                    localStorage.setItem(API_CONFIG.TOKEN_CONFIG.REMEMBER_ME_KEY, 'true');
+                } else {
+                    sessionStorage.setItem(API_CONFIG.TOKEN_CONFIG.ACCESS_TOKEN_KEY, token);
+                    localStorage.removeItem(API_CONFIG.TOKEN_CONFIG.REMEMBER_ME_KEY);
+                }
+            }
+            
+            static getRefreshToken() {
+                return localStorage.getItem(API_CONFIG.TOKEN_CONFIG.REFRESH_TOKEN_KEY);
+            }
+            
+            static setRefreshToken(token) {
+                localStorage.setItem(API_CONFIG.TOKEN_CONFIG.REFRESH_TOKEN_KEY, token);
+            }
+            
+            static getUserData() {
+                const data = localStorage.getItem(API_CONFIG.TOKEN_CONFIG.USER_DATA_KEY);
+                return data ? JSON.parse(data) : null;
+            }
+            
+            static setUserData(data) {
+                localStorage.setItem(API_CONFIG.TOKEN_CONFIG.USER_DATA_KEY, JSON.stringify(data));
+            }
+            
+            static getTokenExpiry() {
+                return localStorage.getItem(API_CONFIG.TOKEN_CONFIG.TOKEN_EXPIRY_KEY);
+            }
+            
+            static setTokenExpiry(expiry) {
+                localStorage.setItem(API_CONFIG.TOKEN_CONFIG.TOKEN_EXPIRY_KEY, expiry);
+            }
+            
+            static clearAll() {
+                localStorage.removeItem(API_CONFIG.TOKEN_CONFIG.ACCESS_TOKEN_KEY);
+                localStorage.removeItem(API_CONFIG.TOKEN_CONFIG.REFRESH_TOKEN_KEY);
+                localStorage.removeItem(API_CONFIG.TOKEN_CONFIG.USER_DATA_KEY);
+                localStorage.removeItem(API_CONFIG.TOKEN_CONFIG.TOKEN_EXPIRY_KEY);
+                localStorage.removeItem(API_CONFIG.TOKEN_CONFIG.REMEMBER_ME_KEY);
+                localStorage.removeItem(API_CONFIG.TOKEN_CONFIG.SESSION_TIMESTAMP);
+                sessionStorage.removeItem(API_CONFIG.TOKEN_CONFIG.ACCESS_TOKEN_KEY);
+            }
+        }
+
+        // API Service (SAME AS DASHBOARD but with cart-specific methods)
+        class ApiService {
+            static async request(endpoint, method = 'GET', data = null, requiresAuth = true, isAuthEndpoint = false) {
+                let baseUrl;
+                if (isAuthEndpoint) {
+                    baseUrl = API_CONFIG.AUTH_BASE_URL;
+                } else {
+                    baseUrl = API_CONFIG.AUTH_BASE_URL; // All requests go through auth backend proxy
+                }
+                
+                const url = `${baseUrl}${endpoint}`;
+                const headers = { ...API_CONFIG.HEADERS };
+                
+                if (requiresAuth) {
+                    const token = TokenManager.getAccessToken();
+                    if (token) {
+                        headers['Authorization'] = `Bearer ${token}`;
+                    } else {
+                        // For cart operations, we might allow guest access
+                        if (endpoint.includes('/cart') && method === 'GET') {
+                            // Allow guest cart access
+                            headers['X-Guest-Session'] = this.getGuestSessionId();
+                        } else {
+                            throw new Error('No authentication token found');
+                        }
+                    }
+                }
+                
+                // For proxy endpoints, add customer backend target header
+                if (!isAuthEndpoint && requiresAuth) {
+                    headers['X-Target-Backend'] = API_CONFIG.CUSTOMER_BACKEND_URL;
+                }
+                
+                const config = {
+                    method,
+                    headers,
+                    credentials: 'include'
+                };
+                
+                if (data && ['POST', 'PUT', 'PATCH', 'DELETE'].includes(method.toUpperCase())) {
+                    config.body = JSON.stringify(data);
+                }
+                
+                try {
+                    const response = await fetch(url, config);
+                    
+                    // Handle 401 - Try to refresh token
+                    if (response.status === 401 && requiresAuth) {
+                        const refreshed = await this.refreshToken();
+                        if (refreshed) {
+                            // Retry with new token
+                            const newToken = TokenManager.getAccessToken();
+                            headers['Authorization'] = `Bearer ${newToken}`;
+                            config.headers = headers;
+                            const retryResponse = await fetch(url, config);
+                            
+                            if (retryResponse.ok) {
+                                return await retryResponse.json();
+                            }
+                        }
+                        throw new Error('Session expired. Please login again.');
+                    }
+                    
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        let errorData;
+                        try {
+                            errorData = JSON.parse(errorText);
+                        } catch {
+                            errorData = { message: `HTTP ${response.status}: ${response.statusText}` };
+                        }
+                        throw new Error(errorData.message || `HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    
+                    return await response.json();
+                } catch (error) {
+                    console.error('API Request Error:', error);
+                    throw error;
+                }
+            }
+            
+            static async refreshToken() {
+                try {
+                    const refreshToken = TokenManager.getRefreshToken();
+                    if (!refreshToken) {
+                        return false;
+                    }
+                    
+                    const response = await fetch(`${API_CONFIG.AUTH_BASE_URL}${API_CONFIG.ENDPOINTS.REFRESH_TOKEN}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({ refresh_token: refreshToken })
+                    });
+                    
+                    if (!response.ok) {
+                        return false;
+                    }
+                    
+                    const result = await response.json();
+                    
+                    if (!result.access_token) {
+                        return false;
+                    }
+                    
+                    const rememberMe = localStorage.getItem(API_CONFIG.TOKEN_CONFIG.REMEMBER_ME_KEY) === 'true';
+                    TokenManager.setAccessToken(result.access_token, rememberMe);
+                    
+                    if (result.refresh_token) {
+                        TokenManager.setRefreshToken(result.refresh_token);
+                    }
+                    
+                    return true;
+                    
+                } catch (error) {
+                    console.error('Refresh token error:', error);
+                    return false;
+                }
+            }
+            
+            static getGuestSessionId() {
+                let guestId = localStorage.getItem('xs_guest_session_id');
+                if (!guestId) {
+                    guestId = 'guest_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                    localStorage.setItem('xs_guest_session_id', guestId);
+                }
+                return guestId;
+            }
+            
+            static decodeJWT(token) {
+                try {
+                    if (!token) return null;
+                    const base64Url = token.split('.')[1];
+                    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                    const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                    }).join(''));
+                    return JSON.parse(jsonPayload);
+                } catch (error) {
+                    console.error('Error decoding JWT:', error);
+                    return null;
+                }
+            }
+            
+            static async logout() {
+                try {
+                    await this.request(API_CONFIG.ENDPOINTS.CUSTOMER_LOGOUT, 'POST', null, true, true);
+                } finally {
+                    TokenManager.clearAll();
+                    localStorage.removeItem('xs_guest_session_id');
+                }
+            }
+            
+            // ========== AUTH METHODS ==========
+            static async validateSession() {
+                try {
+                    const token = TokenManager.getAccessToken();
+                    if (!token) {
+                        return false;
+                    }
+                    
+                    // Try to validate with server
+                    try {
+                        await this.request(API_CONFIG.ENDPOINTS.VALIDATE_TOKEN, 'POST', null, true, true);
+                        return true;
+                    } catch (error) {
+                        // If validation fails, check if we can refresh
+                        const refreshed = await this.refreshToken();
+                        return refreshed;
+                    }
+                    
+                } catch (error) {
+                    console.error('Session validation error:', error);
+                    return false;
+                }
+            }
+            
+            // ========== CART METHODS ==========
+            static async getCart() {
+                try {
+                    return await this.request(API_CONFIG.ENDPOINTS.GET_CART, 'GET', null, false);
+                } catch (error) {
+                    // If we get an auth error, try without auth for guest cart
+                    if (error.message.includes('No authentication token')) {
+                        return await this.request(API_CONFIG.ENDPOINTS.GET_CART, 'GET', null, false);
+                    }
+                    throw error;
+                }
+            }
+            
+            static async getCartCount() {
+                try {
+                    const response = await this.request(API_CONFIG.ENDPOINTS.GET_CART_COUNT, 'GET', null, false);
+                    return response.count || 0;
+                } catch (error) {
+                    console.error('Error getting cart count:', error);
+                    return 0;
+                }
+            }
+            
+            static async updateCartItem(itemId, quantity) {
+                return await this.request(
+                    API_CONFIG.ENDPOINTS.UPDATE_CART_ITEM.replace(':id', itemId),
+                    'PUT',
+                    { quantity }
+                );
+            }
+            
+            static async removeFromCart(itemId) {
+                return await this.request(
+                    API_CONFIG.ENDPOINTS.REMOVE_FROM_CART.replace(':id', itemId),
+                    'DELETE'
+                );
+            }
+            
+            static async clearCart() {
+                return await this.request(API_CONFIG.ENDPOINTS.CLEAR_CART, 'DELETE');
+            }
+            
+            static async calculateCartTotals() {
+                return await this.request(API_CONFIG.ENDPOINTS.CALCULATE_CART_TOTALS, 'GET');
+            }
+            
+            // ========== WISHLIST METHODS ==========
+            static async getWishlistCount() {
+                try {
+                    const response = await this.request(API_CONFIG.ENDPOINTS.GET_WISHLIST_COUNT, 'GET');
+                    return response.count || 0;
+                } catch (error) {
+                    console.error('Error getting wishlist count:', error);
+                    return 0;
+                }
+            }
+            
+            // ========== PROFILE METHODS ==========
+            static async getProfile() {
+                return await this.request(API_CONFIG.ENDPOINTS.GET_PROFILE);
+            }
+            
+            // ========== CHECKOUT METHODS ==========
+            static async createCheckoutSession(cartData) {
+                return await this.request(API_CONFIG.ENDPOINTS.CREATE_CHECKOUT_SESSION, 'POST', cartData);
+            }
+            
+            static async createGuestOrder(orderData) {
+                return await this.request(API_CONFIG.ENDPOINTS.CREATE_GUEST_ORDER, 'POST', orderData, false);
+            }
+        }
+
+        // Cart Application
+        class CartApp {
+            constructor() {
+                this.cartItems = [];
+                this.cartTotals = {
+                    subtotal: 0,
+                    shipping: 0,
+                    tax: 0,
+                    total: 0
+                };
+                this.isAuthenticated = false;
+                this.init();
+            }
+            
+            async init() {
+                this.setupEventListeners();
+                await this.checkAuthentication();
+                await this.loadCart();
+                this.updateHeaderCounts();
+            }
+            
+            async checkAuthentication() {
+                try {
+                    this.isAuthenticated = await ApiService.validateSession();
+                    this.updateAuthUI();
+                    return this.isAuthenticated;
+                } catch (error) {
+                    console.error('Authentication check failed:', error);
+                    this.isAuthenticated = false;
+                    this.updateAuthUI();
+                    return false;
+                }
+            }
+            
+            updateAuthUI() {
+                const loggedInState = document.getElementById('logged-in-state');
+                const notLoggedInState = document.getElementById('not-logged-in-state');
+                const mobileLoggedInState = document.getElementById('mobile-logged-in-state');
+                const mobileNotLoggedInState = document.getElementById('mobile-not-logged-in-state');
+                
+                if (this.isAuthenticated) {
+                    // Show logged in state
+                    loggedInState.style.display = 'block';
+                    notLoggedInState.style.display = 'none';
+                    mobileLoggedInState.style.display = 'block';
+                    mobileNotLoggedInState.style.display = 'none';
+                    
+                    // Load user data
+                    this.loadUserData();
+                } else {
+                    // Show not logged in state
+                    loggedInState.style.display = 'none';
+                    notLoggedInState.style.display = 'block';
+                    mobileLoggedInState.style.display = 'none';
+                    mobileNotLoggedInState.style.display = 'block';
+                }
+            }
+            
+            async loadUserData() {
+                try {
+                    const response = await ApiService.getProfile();
+                    const user = response.user;
+                    
+                    if (user) {
+                        // Update desktop header
+                        const firstName = user.firstName || user.name?.split(' ')[0] || 'User';
+                        document.getElementById('user-menu-name').textContent = firstName;
+                        
+                        // Update mobile header
+                        document.getElementById('mobile-user-name').textContent = 
+                            `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.name || 'User';
+                        document.getElementById('mobile-user-email').textContent = user.email || '';
+                    }
+                } catch (error) {
+                    console.error('Failed to load user data:', error);
+                }
+            }
+            
+            setupEventListeners() {
+                // Toggle user dropdown
+                document.getElementById('user-menu-btn')?.addEventListener('click', () => {
+                    document.getElementById('user-dropdown').classList.toggle('active');
+                });
+                
+                // Close dropdown when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!e.target.closest('.user-profile')) {
+                        document.getElementById('user-dropdown').classList.remove('active');
+                    }
+                });
+                
+                // Logout buttons
+                document.getElementById('logout-btn')?.addEventListener('click', () => this.logout());
+                document.getElementById('mobile-logout-btn')?.addEventListener('click', () => this.logout());
+                
+                // Mobile menu toggle
+                document.getElementById('mobile-menu-btn')?.addEventListener('click', this.toggleMobileMenu);
+                document.getElementById('mobile-menu-close')?.addEventListener('click', this.toggleMobileMenu);
+                
+                // Search
+                document.getElementById('global-search')?.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.performSearch(e.target.value);
+                    }
+                });
+            }
+            
+            toggleMobileMenu() {
+                const mobilePanel = document.getElementById('mobile-menu-panel');
+                mobilePanel.classList.toggle('active');
+            }
+            
+            async logout() {
+                if (confirm('Are you sure you want to logout?')) {
+                    try {
+                        await ApiService.logout();
+                        TokenManager.clearAll();
+                        window.location.href = 'login.html';
+                    } catch (error) {
+                        console.error('Logout failed:', error);
+                        TokenManager.clearAll();
+                        window.location.href = 'login.html';
+                    }
+                }
+            }
+            
+            performSearch(query) {
+                if (!query.trim()) return;
+                window.location.href = `products.html?search=${encodeURIComponent(query)}`;
+            }
+            
+            async loadCart() {
+                try {
+                    // Show loading state
+                    document.getElementById('cart-loading').style.display = 'block';
+                    document.getElementById('empty-cart').style.display = 'none';
+                    document.getElementById('cart-with-items').style.display = 'none';
+                    
+                    const response = await ApiService.getCart();
+                    this.cartItems = response.items || [];
+                    
+                    if (this.cartItems.length === 0) {
+                        this.showEmptyCart();
+                    } else {
+                        this.showCartItems();
+                        await this.calculateTotals();
+                    }
+                    
+                    document.getElementById('cart-loading').style.display = 'none';
+                    
+                } catch (error) {
+                    console.error('Error loading cart:', error);
+                    document.getElementById('cart-loading').style.display = 'none';
+                    
+                    // If it's an auth error and we're not logged in, show empty cart
+                    if (error.message.includes('No authentication token') && !this.isAuthenticated) {
+                        this.showEmptyCart();
+                    } else {
+                        this.showAlert('Failed to load cart. Please try again.', 'error');
+                    }
+                }
+            }
+            
+            showEmptyCart() {
+                document.getElementById('empty-cart').style.display = 'block';
+                document.getElementById('cart-with-items').style.display = 'none';
+                document.getElementById('cart-items-count').textContent = '';
+            }
+            
+            showCartItems() {
+                const cartItemsList = document.getElementById('cart-items-list');
+                const itemCount = this.cartItems.length;
+                
+                // Update cart count in header
+                document.getElementById('cart-items-count').textContent = `(${itemCount} item${itemCount !== 1 ? 's' : ''})`;
+                
+                // Render cart items
+                cartItemsList.innerHTML = this.cartItems.map(item => `
+                    <div class="cart-item" data-id="${item.id}">
+                        <div class="cart-item-image">
+                            ${item.image ? 
+                                `<img src="${item.image}" alt="${item.name}">` :
+                                `<i class="fas fa-box" style="font-size: 40px; color: var(--secondary-text);"></i>`
+                            }
+                        </div>
+                        <div class="cart-item-details">
+                            <h3 class="cart-item-title">${item.name || 'Product'}</h3>
+                            ${item.sku ? `<p class="cart-item-sku">SKU: ${item.sku}</p>` : ''}
+                            <div class="cart-item-price">$${(item.price || 0).toFixed(2)}</div>
+                        </div>
+                        <div class="cart-item-actions">
+                            <div class="quantity-control">
+                                <button class="quantity-btn" onclick="cart.updateQuantity('${item.id}', ${item.quantity - 1})">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <input type="number" class="quantity-input" value="${item.quantity}" 
+                                       min="1" max="99" 
+                                       onchange="cart.updateQuantity('${item.id}', this.value)">
+                                <button class="quantity-btn" onclick="cart.updateQuantity('${item.id}', ${item.quantity + 1})">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                            <button class="remove-btn" onclick="cart.removeItem('${item.id}')">
+                                <i class="fas fa-trash"></i> Remove
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+                
+                document.getElementById('empty-cart').style.display = 'none';
+                document.getElementById('cart-with-items').style.display = 'block';
+            }
+            
+            async updateQuantity(itemId, newQuantity) {
+                try {
+                    newQuantity = parseInt(newQuantity);
+                    if (newQuantity < 1) newQuantity = 1;
+                    if (newQuantity > 99) newQuantity = 99;
+                    
+                    await ApiService.updateCartItem(itemId, newQuantity);
+                    
+                    // Update local cart
+                    const item = this.cartItems.find(i => i.id === itemId);
+                    if (item) {
+                        item.quantity = newQuantity;
+                    }
+                    
+                    await this.calculateTotals();
+                    this.updateHeaderCounts();
+                    
+                } catch (error) {
+                    console.error('Error updating quantity:', error);
+                    this.showAlert('Failed to update quantity', 'error');
+                    // Reload cart to get correct state
+                    await this.loadCart();
+                }
+            }
+            
+            async removeItem(itemId) {
+                if (!confirm('Remove this item from cart?')) return;
+                
+                try {
+                    await ApiService.removeFromCart(itemId);
+                    
+                    // Remove from local cart
+                    this.cartItems = this.cartItems.filter(item => item.id !== itemId);
+                    
+                    if (this.cartItems.length === 0) {
+                        this.showEmptyCart();
+                    } else {
+                        this.showCartItems();
+                        await this.calculateTotals();
+                    }
+                    
+                    this.updateHeaderCounts();
+                    this.showAlert('Item removed from cart', 'success');
+                    
+                } catch (error) {
+                    console.error('Error removing item:', error);
+                    this.showAlert('Failed to remove item', 'error');
+                }
+            }
+            
+            async calculateTotals() {
+                try {
+                    const response = await ApiService.calculateCartTotals();
+                    this.cartTotals = response.totals || {
+                        subtotal: 0,
+                        shipping: 0,
+                        tax: 0,
+                        total: 0
+                    };
+                    
+                    // Update UI
+                    document.getElementById('cart-subtotal').textContent = `$${this.cartTotals.subtotal.toFixed(2)}`;
+                    document.getElementById('cart-shipping').textContent = `$${this.cartTotals.shipping.toFixed(2)}`;
+                    document.getElementById('cart-tax').textContent = `$${this.cartTotals.tax.toFixed(2)}`;
+                    document.getElementById('cart-total').textContent = `$${this.cartTotals.total.toFixed(2)}`;
+                    
+                } catch (error) {
+                    console.error('Error calculating totals:', error);
+                    // Calculate locally as fallback
+                    this.calculateLocalTotals();
+                }
+            }
+            
+            calculateLocalTotals() {
+                const subtotal = this.cartItems.reduce((sum, item) => {
+                    return sum + (item.price || 0) * (item.quantity || 1);
+                }, 0);
+                
+                const shipping = subtotal > 100 ? 0 : 10; // Free shipping over $100
+                const tax = subtotal * 0.16; // 16% VAT
+                const total = subtotal + shipping + tax;
+                
+                this.cartTotals = { subtotal, shipping, tax, total };
+                
+                // Update UI
+                document.getElementById('cart-subtotal').textContent = `$${subtotal.toFixed(2)}`;
+                document.getElementById('cart-shipping').textContent = `$${shipping.toFixed(2)}`;
+                document.getElementById('cart-tax').textContent = `$${tax.toFixed(2)}`;
+                document.getElementById('cart-total').textContent = `$${total.toFixed(2)}`;
+            }
+            
+            async updateHeaderCounts() {
+                try {
+                    const [cartCount, wishlistCount] = await Promise.all([
+                        ApiService.getCartCount(),
+                        ApiService.getWishlistCount()
+                    ]);
+                    
+                    // Update desktop counts
+                    document.getElementById('header-cart-count').textContent = cartCount;
+                    document.getElementById('header-wishlist-count').textContent = wishlistCount;
+                    
+                    // Update mobile counts
+                    document.getElementById('mobile-cart-count').textContent = cartCount;
+                    document.getElementById('mobile-wishlist-count').textContent = wishlistCount;
+                    
+                } catch (error) {
+                    console.error('Error updating header counts:', error);
+                }
+            }
+            
+            async checkout() {
+                if (this.cartItems.length === 0) {
+                    this.showAlert('Your cart is empty', 'error');
+                    return;
+                }
+                
+                const checkoutBtn = document.getElementById('checkout-btn');
+                const originalText = checkoutBtn.innerHTML;
+                
+                try {
+                    checkoutBtn.disabled = true;
+                    checkoutBtn.innerHTML = '<span class="loading-spinner"></span> Processing...';
+                    
+                    if (this.isAuthenticated) {
+                        // Create checkout session for logged in users
+                        const response = await ApiService.createCheckoutSession({
+                            items: this.cartItems,
+                            totals: this.cartTotals
+                        });
+                        
+                        if (response.checkoutUrl) {
+                            window.location.href = response.checkoutUrl;
+                        } else {
+                            // Redirect to checkout page
+                            window.location.href = 'checkout.html';
+                        }
+                    } else {
+                        // Redirect to login for guest users
+                        const proceed = confirm('Please login or register to proceed with checkout. Would you like to login now?');
+                        if (proceed) {
+                            window.location.href = 'login.html?redirect=checkout.html';
+                        }
+                    }
+                    
+                } catch (error) {
+                    console.error('Checkout error:', error);
+                    this.showAlert('Failed to proceed to checkout', 'error');
+                } finally {
+                    checkoutBtn.disabled = false;
+                    checkoutBtn.innerHTML = originalText;
+                }
+            }
+            
+            showAlert(message, type = 'info') {
+                const alertArea = document.getElementById('alert-area');
+                const alert = document.createElement('div');
+                alert.className = `alert-message alert-${type}`;
+                alert.innerHTML = `
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'}"></i>
+                    <span>${message}</span>
+                    <button style="margin-left: auto; background: none; border: none; cursor: pointer; color: inherit;" onclick="this.parentElement.remove()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                
+                alertArea.appendChild(alert);
+                
+                setTimeout(() => {
+                    if (alert.parentNode) {
+                        alert.parentNode.removeChild(alert);
+                    }
+                }, 5000);
+            }
+        }
+
+        // Initialize cart when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            window.cart = new CartApp();
+            
+            // Global function for mobile menu
+            window.closeMobileMenu = function() {
+                document.getElementById('mobile-menu-panel').classList.remove('active');
+            };
+        });
+    </script>
+</body>
+</html>

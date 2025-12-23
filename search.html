@@ -3,125 +3,170 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NexusFlow | Search Inventory</title>
+    <title>NexusFlow | Inventory Search</title>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aws-sdk/2.1522.0/aws-sdk.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js@6.3.7/dist/amazon-cognito-identity.min.js"></script>
+    <script src="auth-config.js"></script>
+    
     <link rel="stylesheet" href="style.css">
     <style>
-        .search-container { margin-top: 50px; text-align: center; }
-        .search-box {
-            width: 100%; max-width: 600px;
-            padding: 15px 25px;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid var(--accent);
-            border-radius: 30px;
+        .search-hero { padding: 60px 20px; text-align: center; }
+        
+        /* Flex wrapper for Search and Home button */
+        .search-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            max-width: 850px;
+            margin: 20px auto;
+        }
+
+        .home-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-cyan);
+            color: var(--accent);
+            padding: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .home-btn:hover {
+            background: var(--accent);
+            color: black;
+        }
+
+        .main-search-box { flex-grow: 1; }
+
+        .main-search-box input {
+            width: 100%;
+            padding: 18px 25px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-cyan);
+            border-radius: 8px;
             color: white;
             font-size: 1.1rem;
             outline: none;
+            font-family: 'JetBrains Mono', monospace;
         }
-        .results-grid {
+
+        .inventory-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 25px;
-            margin-top: 40px;
-        }
-        /* Product Card Styles */
-        .product-card {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 15px;
+            max-width: 1200px;
+            margin: 0 auto;
             padding: 20px;
+        }
+
+        .product-item {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 20px;
+            border-radius: 12px;
             transition: 0.3s;
             cursor: pointer;
-            text-align: left;
         }
-        .product-card:hover { border-color: var(--accent); transform: translateY(-5px); }
-        .product-card img {
-            width: 100%; height: 200px;
+
+        .product-item:hover {
+            border-color: var(--accent);
+            transform: translateY(-5px);
+        }
+
+        .product-item img {
+            width: 100%;
+            height: 200px;
             object-fit: contain;
-            border-radius: 10px;
+            background: #000;
+            border-radius: 8px;
             margin-bottom: 15px;
-            background: #111;
         }
-        .price-tag { color: var(--accent); font-weight: bold; font-size: 1.2rem; }
     </style>
 </head>
 <body>
 
-<nav class="navbar">
-    <a href="index.html" class="logo">NEXUS<span style="color:white">FLOW</span></a>
-    <div class="nav-links">
-        <a href="shop.html">Shop</a>
-        <a href="cart.html">Cart</a>
-    </div>
-</nav>
+<div id="nexus-header-wrapper"></div>
 
-<div class="container">
-    <div class="search-container">
-        <h1>Global <span style="color:var(--accent)">Inventory Search</span></h1>
-        <input type="text" id="searchInput" class="search-box" placeholder="Search by name, category, or spec..." onkeyup="handleSearch()">
-    </div>
+<div class="search-hero">
+    <h1>Inventory <span class="text-accent">Search</span></h1>
+    
+    <div class="search-controls">
+        <button class="home-btn" onclick="returnToOrigin()" title="Back to previous page">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+        </button>
 
-    <div id="status-msg" style="margin-top: 20px; color: #888; text-align: center;"></div>
-    <div class="results-grid" id="searchResults"></div>
+        <div class="main-search-box">
+            <input type="text" id="pageSearchInput" placeholder="Filter hardware..." onkeyup="runLocalSearch()">
+        </div>
+    </div>
 </div>
+
+<div class="results-info" id="searchStatus" style="text-align:center; color: var(--text-dim);">Initializing Registry...</div>
+<div class="inventory-grid" id="inventoryDisplay"></div>
 
 <script>
     const API_URL = 'https://yskkdnff93.execute-api.us-east-1.amazonaws.com/prod/products';
-    let allProducts = [];
+    let masterInventory = [];
 
-    // Fetch products once on load
+    // HOME BUTTON LOGIC
+    function returnToOrigin() {
+        // If there is a browser history, go back. Otherwise, default to index.
+        if (document.referrer.includes(window.location.hostname)) {
+            window.history.back();
+        } else {
+            window.location.href = 'index.html';
+        }
+    }
+
     window.onload = async () => {
+        const status = document.getElementById('searchStatus');
         try {
-            const res = await fetch(API_URL);
-            allProducts = await res.json();
-            document.getElementById('status-msg').innerText = "System Ready. Search active.";
+            const response = await fetch(API_URL);
+            masterInventory = await response.json();
+            
+            const params = new URLSearchParams(window.location.search);
+            const query = params.get('q');
+            
+            if (query) {
+                document.getElementById('pageSearchInput').value = decodeURIComponent(query);
+                runLocalSearch();
+            } else {
+                renderItems(masterInventory);
+                status.innerText = `Registry ready. ${masterInventory.length} items loaded.`;
+            }
         } catch (err) {
-            document.getElementById('status-msg').innerText = "Database Link Error.";
+            status.innerText = "Connection to central registry failed.";
         }
     };
 
-    function handleSearch() {
-        const query = document.getElementById('searchInput').value.toLowerCase();
-        const resultsContainer = document.getElementById('searchResults');
-        
-        if (query.length < 2) {
-            resultsContainer.innerHTML = "";
-            return;
-        }
-
-        const filtered = allProducts.filter(p => 
-            (p.name || p.productName || "").toLowerCase().includes(query) ||
-            (p.category || "").toLowerCase().includes(query) ||
-            (p.description || "").toLowerCase().includes(query)
+    function runLocalSearch() {
+        const term = document.getElementById('pageSearchInput').value.toLowerCase();
+        const filtered = masterInventory.filter(item => 
+            (item.name || item.productName || "").toLowerCase().includes(term) ||
+            (item.category || "").toLowerCase().includes(term)
         );
-
-        renderResults(filtered);
+        renderItems(filtered);
     }
 
-    function renderResults(products) {
-        const container = document.getElementById('searchResults');
-        
-        if (products.length === 0) {
-            container.innerHTML = "<p style='grid-column: 1/-1; text-align: center;'>No components found matching your query.</p>";
-            return;
-        }
-
-        container.innerHTML = products.map(p => {
-            const id = p.productId || p.id;
-            const name = p.name || p.productName;
-            const price = parseFloat(p.price).toFixed(2);
-            const img = p.imageUrl || p.imageURL || 'https://via.placeholder.com/300?text=NexusFlow';
-
-            return `
-                <div class="product-card" onclick="window.location.href='product-details.html?id=${id}'">
-                    <img src="${img}" 
-                         alt="${name}" 
-                         onerror="this.onerror=null; this.src='https://via.placeholder.com/300?text=No+Image+Found';">
-                    <div style="font-size: 0.8rem; color: var(--accent);">${p.category || 'HARDWARE'}</div>
-                    <h3 style="margin: 5px 0;">${name}</h3>
-                    <div class="price-tag">$${price}</div>
-                </div>
-            `;
-        }).join('');
+    function renderItems(items) {
+        const container = document.getElementById('inventoryDisplay');
+        container.innerHTML = items.map(item => `
+            <div class="product-item" onclick="window.location.href='product-details.html?id=${item.productId || item.id}'">
+                <img src="${item.imageUrl || 'https://via.placeholder.com/300'}" alt="Item">
+                <div style="color:var(--accent); font-size:0.7rem;">${item.category || 'HARDWARE'}</div>
+                <h3 style="margin:10px 0;">${item.name || item.productName}</h3>
+                <div style="font-weight:bold;">$${parseFloat(item.price).toFixed(2)}</div>
+            </div>
+        `).join('');
     }
 </script>
 </body>

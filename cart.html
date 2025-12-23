@@ -4,13 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NexusFlow | Secure Checkout</title>
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aws-sdk/2.1522.0/aws-sdk.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js@6.3.7/dist/amazon-cognito-identity.min.js"></script>
+    
+    <script src="auth-config.js"></script>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="header.css">
+    
     <style>
+        body { padding-top: 100px; } /* Offset for fixed header */
+
         .checkout-grid {
             display: grid;
-            grid-template-columns: 1.5fr 1fr;
+            grid-template-columns: 1.4fr 0.8fr;
             gap: 30px;
             margin-top: 30px;
             align-items: start;
@@ -19,16 +26,16 @@
         #empty-state {
             display: none;
             text-align: center;
-            padding: 100px 20px;
+            padding: 120px 20px;
         }
 
         .summary-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-cyan);
             position: sticky;
-            top: 100px;
+            top: 120px;
             padding: 25px;
-            border-radius: 15px;
+            border-radius: 12px;
             backdrop-filter: blur(10px);
         }
 
@@ -43,156 +50,161 @@
         .remove-btn {
             background: none;
             border: none;
-            color: #ff4d4d;
-            font-size: 0.7rem;
+            color: var(--danger);
+            font-size: 0.65rem;
             cursor: pointer;
             text-transform: uppercase;
-            margin-top: 5px;
-            padding: 0;
+            font-family: 'JetBrains Mono', monospace;
+            padding: 5px 0;
+            opacity: 0.7;
         }
+        .remove-btn:hover { opacity: 1; text-decoration: underline; }
 
         .total-row {
-            margin-top: 20px;
+            margin-top: 25px;
             padding-top: 20px;
-            border-top: 2px solid var(--accent);
+            border-top: 1px solid var(--accent);
             display: flex;
             justify-content: space-between;
-            font-size: 1.4rem;
+            font-size: 1.5rem;
             font-weight: 800;
+            font-family: 'JetBrains Mono', monospace;
         }
 
         /* Stepper Logic */
         .step { display: none; }
-        .step.active { display: block; animation: fadeIn 0.3s ease; }
+        .step.active { display: block; animation: fadeIn 0.4s ease; }
 
         .progress-stepper {
             display: flex;
             justify-content: space-between;
             margin-bottom: 40px;
+            max-width: 400px;
         }
 
         .step-dot {
             width: 35px; height: 35px; border-radius: 50%;
-            background: #1a1a1a; border: 2px solid #444;
+            background: #111; border: 1px solid #333;
             display: flex; align-items: center; justify-content: center;
-            font-weight: bold; color: #888;
+            font-weight: bold; color: #444; font-size: 0.8rem;
         }
 
-        .step-dot.active { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 10px rgba(0,243,255,0.2); }
-        .line { flex-grow: 1; height: 2px; background: #333; align-self: center; margin: 0 10px; }
+        .step-dot.active { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); }
+        .line { flex-grow: 1; height: 1px; background: #222; align-self: center; margin: 0 10px; }
 
-        input[readonly] { background: rgba(255,255,255,0.05); color: #777; cursor: not-allowed; }
-
-        @media (max-width: 900px) {
+        @media (max-width: 950px) {
             .checkout-grid { grid-template-columns: 1fr; }
+            .summary-card { position: static; margin-top: 20px; }
         }
     </style>
 </head>
 <body>
 
-<nav class="navbar">
-    <a href="index.html" class="logo">NEXUS<span style="color:white">FLOW</span></a>
-    <div class="nav-links">
-        <a href="shop.html">Shop</a>
-        <a href="profile.html">Profile</a>
-    </div>
-</nav>
+<div id="nexus-header-wrapper"></div>
 
 <div class="container">
     <div id="empty-state">
-        <h2 style="font-size: 2.5rem;">Cart is <span style="color:var(--accent)">Empty</span></h2>
-        <p style="color:var(--text-secondary); margin-bottom: 30px;">Initialize your hardware selection to proceed.</p>
-        <a href="shop.html" class="btn btn-primary">Return to Shop</a>
+        <h2 style="font-size: 3rem; margin-bottom: 10px;">Cart <span class="text-accent">Void</span></h2>
+        <p class="text-dim" style="margin-bottom: 40px;">No hardware signatures detected in your current session.</p>
+        <a href="shop.html" class="btn btn-primary">Initialize Procurement</a>
     </div>
 
     <div id="checkout-main" style="display: none;">
-        <h1 style="margin: 40px 0;">Secure <span style="color:var(--accent)">Checkout</span></h1>
+        <h1 style="margin: 40px 0 20px;">Secure <span class="text-accent">Deployment</span></h1>
+        <p class="text-dim" style="margin-bottom: 40px;">Finalize your inventory request and logistics parameters.</p>
 
         <div class="checkout-grid">
             <div class="card">
                 <div class="progress-stepper">
-                    <div id="dot1" class="step-dot active">1</div>
+                    <div id="dot1" class="step-dot active">01</div>
                     <div class="line"></div>
-                    <div id="dot2" class="step-dot">2</div>
+                    <div id="dot2" class="step-dot">02</div>
                 </div>
 
                 <div id="step1" class="step active">
-                    <h3 style="margin-bottom: 20px;">Contact Identification</h3>
-                    <label>Full Name</label>
-                    <input type="text" id="name" placeholder="Legal Name">
+                    <h3 class="mono" style="margin-bottom: 25px; font-size: 1rem;">[01] USER IDENTIFICATION</h3>
                     
-                    <label>Verified Email</label>
-                    <input type="email" id="email" readonly>
+                    <label>Assigned Name</label>
+                    <input type="text" id="name" placeholder="Enter Full Name" style="margin-bottom: 20px;">
                     
-                    <label>Phone Number</label>
-                    <input type="tel" id="phone" placeholder="+254...">
+                    <label>Verified Access Email</label>
+                    <input type="email" id="email" readonly style="margin-bottom: 20px; opacity: 0.6;">
                     
-                    <button class="btn btn-primary" style="width:100%; margin-top: 20px;" onclick="nextStep()">Continue to Logistics →</button>
+                    <label>Comm Link (Phone)</label>
+                    <input type="tel" id="phone" placeholder="+254..." style="margin-bottom: 30px;">
+                    
+                    <button class="btn btn-primary" style="width:100%;" onclick="nextStep()">Continue to Logistics →</button>
                 </div>
 
                 <div id="step2" class="step">
-                    <h3 style="margin-bottom: 20px;">Shipping & Payment</h3>
-                    <label>Delivery Address</label>
-                    <textarea id="address" rows="3" placeholder="Street, Building, Apartment..."></textarea>
+                    <h3 class="mono" style="margin-bottom: 25px; font-size: 1rem;">[02] LOGISTICS & BILLING</h3>
                     
-                    <label>Payment Method</label>
-                    <select id="paymentMethod">
-                        <option value="M-Pesa">M-Pesa Express</option>
-                        <option value="Card">Visa / Mastercard</option>
-                        <option value="Bank">Bank Transfer</option>
+                    <label>Deployment Coordinates (Address)</label>
+                    <textarea id="address" rows="3" placeholder="Building, Street, City..." style="margin-bottom: 20px;"></textarea>
+                    
+                    <label>Payment Protocol</label>
+                    <select id="paymentMethod" style="margin-bottom: 30px;">
+                        <option value="M-Pesa">M-Pesa Instant Express</option>
+                        <option value="Card">Global Credit / Debit</option>
+                        <option value="Bank">Direct Wire Transfer</option>
                     </select>
 
-                    <div style="background: rgba(255, 255, 255, 0.03); padding: 15px; border-radius: 8px; margin: 25px 0; border: 1px solid rgba(255,255,255,0.05);">
-                        <label style="display: flex; gap: 10px; cursor: pointer; align-items: flex-start;">
+                    <div style="background: rgba(0, 243, 255, 0.03); padding: 20px; border-radius: 8px; margin-bottom: 30px; border: 1px solid var(--border-cyan);">
+                        <label style="display: flex; gap: 12px; cursor: pointer; align-items: flex-start; text-transform: none;">
                             <input type="checkbox" id="refundAgreed" style="width: auto; margin-top: 4px;"> 
-                            <span style="font-size: 0.8rem; color: #888;">I acknowledge that technical hardware parts are non-refundable once the order is dispatched.</span>
+                            <span style="font-size: 0.8rem; color: #aaa;">I acknowledge that technical hardware components are non-refundable once the deployment (shipping) process is initiated.</span>
                         </label>
                     </div>
 
                     <button class="btn btn-primary" style="width:100%;" onclick="submitFinalOrder()">Execute Secure Checkout</button>
-                    <button class="btn btn-outline" style="width:100%; margin-top: 10px;" onclick="prevStep()">← Edit Info</button>
+                    <button class="btn btn-outline" style="width:100%; margin-top: 15px; border: none;" onclick="prevStep()">← Adjust Identification</button>
                 </div>
             </div>
 
             <div class="summary-card">
-                <h3 style="margin-top:0; color:var(--accent); font-size: 0.9rem; letter-spacing: 2px;">ORDER SUMMARY</h3>
+                <h3 class="mono" style="margin-top:0; color:var(--accent); font-size: 0.75rem; letter-spacing: 2px; margin-bottom: 20px;">INVENTORY SUMMARY</h3>
                 <div id="cartItemsList">
                     </div>
                 <div class="total-row">
-                    <span>Total</span>
-                    <span id="grandTotal" style="color:var(--accent)">$0.00</span>
+                    <span style="font-size: 0.9rem; color: #666; font-weight: 400;">TOTAL</span>
+                    <span id="grandTotal" class="text-accent">$0.00</span>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
+<script src="header.js"></script>
 <script>
-    // 1. Config
-    const API_URL = 'https://yskkdnff93.execute-api.us-east-1.amazonaws.com/prod/orders';
-    const poolData = { UserPoolId: 'us-east-1_IK57zG64M', ClientId: '668q6c6krjv8b6n81cfc78n9a4' };
-
+    // 1. SESSION GUARD & INITIALIZATION
     window.onload = function() {
+        const userPool = new AmazonCognitoIdentity.CognitoUserPool({
+            UserPoolId: NEXUS_CONFIG.auth.UserPoolId,
+            ClientId: NEXUS_CONFIG.auth.ClientId
+        });
+        const cognitoUser = userPool.getCurrentUser();
+
+        if (!cognitoUser) {
+            window.location.href = 'login.html?redirect=checkout.html';
+            return;
+        }
+
+        cognitoUser.getSession((err, session) => {
+            if (err || !session.isValid()) {
+                window.location.href = 'login.html';
+                return;
+            }
+            // Pre-fill email from Cognito
+            cognitoUser.getUserAttributes((err, attrs) => {
+                const emailAttr = attrs.find(a => a.Name === 'email');
+                if (emailAttr) document.getElementById('email').value = emailAttr.Value;
+            });
+        });
+
         refreshCartUI();
-        initUserSession();
     };
 
-    // 2. User & Session
-    function initUserSession() {
-        const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
-        const cognitoUser = userPool.getCurrentUser();
-        if (cognitoUser) {
-            cognitoUser.getSession((err, session) => {
-                if (err || !session.isValid()) window.location.href = 'login.html';
-                cognitoUser.getUserAttributes((err, attrs) => {
-                    const email = attrs.find(a => a.Name === 'email');
-                    if (email) document.getElementById('email').value = email.Value;
-                });
-            });
-        } else { window.location.href = 'login.html'; }
-    }
-
-    // 3. Cart Logic
+    // 2. CART UI LOGIC
     function refreshCartUI() {
         const cart = JSON.parse(localStorage.getItem('nexus_cart')) || [];
         const main = document.getElementById('checkout-main');
@@ -218,10 +230,10 @@
             return `
                 <div class="cart-item">
                     <div>
-                        <div style="font-weight: 600; font-size: 0.9rem;">${item.name || item.productName}</div>
-                        <button class="remove-btn" onclick="removeItem(${index})">Remove</button>
+                        <div class="mono" style="font-size: 0.85rem;">${item.name}</div>
+                        <button class="remove-btn" onclick="removeItem(${index})">De-list</button>
                     </div>
-                    <strong>$${price.toFixed(2)}</strong>
+                    <strong class="mono">$${price.toFixed(2)}</strong>
                 </div>`;
         }).join('');
         
@@ -233,11 +245,16 @@
         cart.splice(index, 1);
         localStorage.setItem('nexus_cart', JSON.stringify(cart));
         refreshCartUI();
+        // Update header badge
+        if(window.updateHeaderBadges) updateHeaderBadges();
     }
 
-    // 4. Navigation
+    // 3. NAVIGATION STEPS
     function nextStep() {
-        if(!document.getElementById('name').value) return alert("Please enter your full name.");
+        if(!document.getElementById('name').value) {
+            NexusUtils.showAlert("Identification Name Required", "warning");
+            return;
+        }
         document.getElementById('step1').classList.remove('active');
         document.getElementById('step2').classList.add('active');
         document.getElementById('dot2').classList.add('active');
@@ -249,10 +266,13 @@
         document.getElementById('dot2').classList.remove('active');
     }
 
-    // 5. Submit Order
+    // 4. ORDER SUBMISSION
     async function submitFinalOrder() {
         const btn = event.target;
-        if(!document.getElementById('refundAgreed').checked) return alert("Please acknowledge the hardware policy.");
+        if(!document.getElementById('refundAgreed').checked) {
+            NexusUtils.showAlert("Policy acknowledgement required", "error");
+            return;
+        }
 
         const cart = JSON.parse(localStorage.getItem('nexus_cart'));
         const totalAmount = cart.reduce((sum, item) => sum + (parseFloat(item.price) || 0), 0);
@@ -269,10 +289,10 @@
         };
 
         btn.disabled = true;
-        btn.innerText = "Transmitting...";
+        btn.innerText = "Transmitting Signal...";
 
         try {
-            const res = await fetch(API_URL, {
+            const res = await fetch(NEXUS_CONFIG.api.baseUrl + '/orders', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
@@ -280,21 +300,18 @@
 
             const data = await res.json();
 
-            if (data.success || res.ok) {
-                // Save info for success page
+            if (res.ok) {
                 sessionStorage.setItem('lastOrder', JSON.stringify({
-                    id: data.id,
-                    total: payload.total,
-                    email: payload.email
+                    id: data.orderId || data.id || 'NX-' + Math.floor(Math.random()*9000),
+                    total: payload.total
                 }));
-
                 localStorage.removeItem('nexus_cart');
                 window.location.href = 'order-success.html';
             } else {
-                throw new Error(data.message || "Processor rejected the order.");
+                throw new Error("Deployment Rejected by Server.");
             }
         } catch (e) {
-            alert("Order Error: " + e.message);
+            NexusUtils.showAlert(e.message, "error");
             btn.disabled = false;
             btn.innerText = "Execute Secure Checkout";
         }

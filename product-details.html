@@ -4,8 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NexusFlow | Secure Component Details</title>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aws-sdk/2.1522.0/aws-sdk.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js@6.3.7/dist/amazon-cognito-identity.min.js"></script>
+    
+    <script src="auth-config.js"></script>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="header.css">
+
     <style>
+        body { padding-top: 100px; } /* Uniform offset for header */
+
         .details-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -16,7 +25,7 @@
 
         .product-visual {
             background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border-cyan);
             border-radius: 20px;
             padding: 40px;
             display: flex;
@@ -30,7 +39,7 @@
             max-width: 100%;
             max-height: 350px;
             object-fit: contain;
-            filter: drop-shadow(0 0 20px rgba(0, 243, 255, 0.1));
+            filter: drop-shadow(0 0 20px rgba(0, 243, 255, 0.2));
         }
 
         .spec-label {
@@ -40,6 +49,7 @@
             letter-spacing: 2px;
             display: block;
             margin-bottom: 5px;
+            font-family: 'JetBrains Mono', monospace;
         }
 
         .price-display {
@@ -71,12 +81,13 @@
         .status-pill {
             display: inline-block;
             padding: 5px 15px;
-            background: rgba(16, 185, 129, 0.1);
-            color: #10b981;
+            background: rgba(0, 243, 255, 0.05);
+            color: var(--accent);
             border-radius: 20px;
             font-size: 0.8rem;
             margin-bottom: 15px;
-            border: 1px solid rgba(16, 185, 129, 0.2);
+            border: 1px solid var(--border-cyan);
+            font-family: 'JetBrains Mono', monospace;
         }
 
         @media (max-width: 850px) {
@@ -90,13 +101,7 @@
     <h2 class="loading-pulse">Retrieving Data...</h2>
 </div>
 
-<nav class="navbar">
-    <a href="index.html" class="logo">NEXUS<span style="color:white">FLOW</span></a>
-    <div class="nav-links">
-        <a href="shop.html">Shop</a>
-        <a href="cart.html">Cart (<span id="cart-badge">0</span>)</a>
-    </div>
-</nav>
+<div id="nexus-header-wrapper"></div>
 
 <div class="container">
     <div class="details-container" id="details-content" style="display: none;">
@@ -109,7 +114,7 @@
             <span class="spec-label" id="p-category">HARDWARE</span>
             <h1 id="p-name" style="font-size: 2.8rem; margin: 10px 0;">Component Name</h1>
             
-            <p id="p-description" style="color: var(--text-secondary); line-height: 1.8; font-size: 1.1rem; margin: 20px 0;">
+            <p id="p-description" class="text-dim" style="line-height: 1.8; font-size: 1.1rem; margin: 20px 0;">
                 Initializing telemetry...
             </p>
 
@@ -117,24 +122,21 @@
 
             <div class="action-zone">
                 <button id="add-btn" class="btn btn-primary" style="padding: 15px 40px; min-width: 200px;" onclick="addToCart()">Add to Cart</button>
-                <button class="btn btn-outline" onclick="window.location.href='shop.html'">Exit View</button>
+                <button class="btn btn-outline" style="border:none" onclick="window.location.href='shop.html'">Exit View</button>
             </div>
         </div>
     </div>
 </div>
 
+<script src="header.js"></script>
 <script>
-    // 1. Setup URL and API Link
     const urlParams = new URLSearchParams(window.location.search);
     const productId = urlParams.get('id');
     const API_URL = `https://yskkdnff93.execute-api.us-east-1.amazonaws.com/prod/products?id=${productId}`;
 
-    // Store product globally once loaded
     let currentProductData = null;
 
     window.onload = function() {
-        updateBadge();
-        
         if (!productId) {
             window.location.href = 'shop.html';
             return;
@@ -148,20 +150,17 @@
                     return;
                 }
 
-                // Map data from DynamoDB (handling both naming styles)
                 currentProductData = product;
                 const name = product.name || product.productName || "Unknown Hardware";
                 const price = product.price ? parseFloat(product.price).toFixed(2) : "0.00";
                 const img = product.imageUrl || product.imageURL || 'assets/placeholder.jpg';
 
-                // Update HTML
                 document.getElementById('p-name').innerText = name;
                 document.getElementById('p-price').innerText = price;
                 document.getElementById('p-category').innerText = product.category || "Hardware";
                 document.getElementById('p-description').innerText = product.description || "High-performance specialized hardware part for professional deployment.";
                 document.getElementById('p-img').src = img;
 
-                // Toggle visibility
                 document.getElementById('loading-screen').style.display = 'none';
                 document.getElementById('details-content').style.display = 'grid';
             })
@@ -174,10 +173,8 @@
     function addToCart() {
         if (!currentProductData) return;
 
-        // Get existing cart or create empty
         let cart = JSON.parse(localStorage.getItem('nexus_cart')) || [];
         
-        // Add item
         cart.push({
             productId: currentProductData.productId || currentProductData.id,
             name: currentProductData.name || currentProductData.productName,
@@ -185,33 +182,22 @@
             imageUrl: currentProductData.imageUrl || currentProductData.imageURL
         });
 
-        // Save back to storage
         localStorage.setItem('nexus_cart', JSON.stringify(cart));
         
-        // Update UI Badge
-        updateBadge();
+        // Update header badges if the function exists in header.js
+        if(window.updateHeaderBadges) updateHeaderBadges();
 
-        // UI Feedback (Change button state instead of redirecting)
         const btn = document.getElementById('add-btn');
         const originalText = btn.innerText;
         btn.innerText = "✓ Added to Selection";
         btn.style.background = "#10b981";
-        btn.style.borderColor = "#10b981";
         btn.disabled = true;
 
-        // Reset button after 2 seconds
         setTimeout(() => {
             btn.innerText = originalText;
             btn.style.background = "";
-            btn.style.borderColor = "";
             btn.disabled = false;
         }, 2000);
-    }
-
-    function updateBadge() {
-        const cart = JSON.parse(localStorage.getItem('nexus_cart')) || [];
-        const badge = document.getElementById('cart-badge');
-        if (badge) badge.innerText = cart.length;
     }
 </script>
 </body>

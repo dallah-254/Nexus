@@ -1,0 +1,252 @@
+/* --- NEXUSFLOW COMPREHENSIVE HEADER SYSTEM --- */
+:root {
+    --nexus-cyan: #00f3ff;
+    --nexus-dark: #0a0a0a;
+    --nexus-card: #141414;
+    --nexus-glass: blur(15px);
+    --nexus-border: rgba(0, 243, 255, 0.15);
+    --text-main: #ffffff;
+    --text-dim: #888888;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 1. LAYOUT RESET & CONTAINER */
+#nexus-header-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 10000;
+    background: var(--nexus-dark);
+    backdrop-filter: var(--nexus-glass);
+    border-bottom: 1px solid var(--nexus-border);
+}
+
+.header-top-row {
+    max-width: 1440px;
+    margin: 0 auto;
+    height: 80px;
+    padding: 0 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+}
+
+/* 2. LOGO & SLOGAN */
+.brand-group {
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    min-width: 180px;
+}
+
+.brand-logo {
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: #fff;
+    letter-spacing: 2px;
+    line-height: 1;
+}
+
+.brand-logo span { color: var(--nexus-cyan); text-shadow: 0 0 10px rgba(0, 243, 255, 0.3); }
+
+.brand-slogan {
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 4px;
+}
+
+/* 3. SEARCH BAR SYSTEM */
+.search-container {
+    flex: 1;
+    max-width: 500px;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-input {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 10px 20px 10px 45px;
+    border-radius: 25px;
+    color: #fff;
+    font-size: 0.9rem;
+    transition: var(--transition);
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--nexus-cyan);
+    background: rgba(0, 243, 255, 0.05);
+    box-shadow: 0 0 15px rgba(0, 243, 255, 0.1);
+}
+
+.search-icon-btn {
+    position: absolute;
+    left: 15px;
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+/* 4. NAVIGATION LINKS */
+.main-nav {
+    display: flex;
+    gap: 25px;
+}
+
+.nav-item {
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: var(--transition);
+}
+
+.nav-item:hover, .nav-item.active {
+    color: var(--nexus-cyan);
+}
+
+/* 5. ACTION ICONS (Wishlist, Cart, Profile) */
+.action-cluster {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.icon-btn {
+    position: relative;
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 1.3rem;
+    cursor: pointer;
+    transition: var(--transition);
+    padding: 5px;
+}
+
+.icon-btn:hover { color: var(--nexus-cyan); }
+
+.badge {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    background: var(--nexus-cyan);
+    color: #000;
+    font-size: 10px;
+    font-weight: 800;
+    min-width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 6. LOGIN BUTTON & PROFILE DROP */
+.auth-zone {
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    padding-left: 20px;
+}
+
+.login-btn {
+    background: transparent;
+    border: 1px solid var(--nexus-cyan);
+    color: var(--nexus-cyan);
+    padding: 8px 22px;
+    border-radius: 5px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.login-btn:hover {
+    background: var(--nexus-cyan);
+    color: #000;
+    box-shadow: 0 0 20px rgba(0, 243, 255, 0.4);
+}
+
+/* 7. DROPDOWN PANEL (Profile) */
+.profile-dropdown {
+    position: absolute;
+    top: 90%;
+    right: 40px;
+    width: 240px;
+    background: var(--nexus-card);
+    border: 1px solid var(--nexus-border);
+    border-radius: 12px;
+    padding: 10px 0;
+    display: none; /* JS Controlled */
+    flex-direction: column;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.8);
+}
+
+.profile-dropdown.active { display: flex; animation: navFadeIn 0.3s ease; }
+
+.dropdown-link {
+    padding: 12px 20px;
+    color: #ccc;
+    text-decoration: none;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.dropdown-link:hover { background: rgba(0, 243, 255, 0.05); color: var(--nexus-cyan); }
+
+/* 8. MOBILE HAMBURGER & RESPONSIVE */
+.mobile-toggle {
+    display: none;
+    font-size: 1.5rem;
+    color: #fff;
+    cursor: pointer;
+}
+
+@media (max-width: 1024px) {
+    .main-nav { display: none; }
+    .search-container { max-width: 300px; }
+    .brand-slogan { display: none; }
+}
+
+@media (max-width: 768px) {
+    .search-container { display: none; } /* Hide search on very small screens, put in mobile menu */
+    .mobile-toggle { display: block; }
+    .header-top-row { padding: 0 20px; height: 70px; }
+    .auth-zone { display: none; } /* Moved to mobile menu */
+    
+    .action-cluster { gap: 12px; }
+    .brand-logo { font-size: 1.3rem; }
+}
+
+/* 9. ANIMATIONS */
+@keyframes navFadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Mobile Sidebar Panel */
+.mobile-side-panel {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 280px;
+    height: 100%;
+    background: var(--nexus-dark);
+    z-index: 11000;
+    transition: 0.4s ease;
+    padding: 40px 20px;
+    border-left: 1px solid var(--nexus-border);
+}
+
+.mobile-side-panel.active { right: 0; }

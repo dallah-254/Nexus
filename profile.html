@@ -4,10 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NexusFlow | Command Center</title>
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aws-sdk/2.1522.0/aws-sdk.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js@6.3.7/dist/amazon-cognito-identity.min.js"></script>
+    
+    <script src="auth-config.js"></script>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="header.css">
+
     <style>
+        body { padding-top: 100px; } /* Uniform offset for header */
+
         .dashboard-layout {
             display: grid;
             grid-template-columns: 280px 1fr;
@@ -17,7 +24,7 @@
 
         .profile-sidebar {
             position: sticky;
-            top: 100px;
+            top: 120px;
         }
 
         .user-avatar {
@@ -27,16 +34,19 @@
             margin: 0 auto 20px;
             display: flex; align-items: center; justify-content: center;
             font-size: 2rem; font-weight: 800; color: #000;
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.2);
         }
 
         .info-group {
             margin-bottom: 15px; padding-bottom: 10px;
             border-bottom: 1px solid rgba(255,255,255,0.05);
+            text-align: left;
         }
 
         .info-group label {
             font-size: 0.7rem; text-transform: uppercase;
-            color: var(--text-secondary); display: block;
+            color: var(--text-dim); display: block;
+            font-family: 'JetBrains Mono', monospace;
         }
 
         .info-group span {
@@ -45,14 +55,15 @@
 
         table {
             width: 100%; border-collapse: collapse;
-            background: rgba(255,255,255,0.02);
+            background: rgba(255,255,255,0.01);
             border-radius: 12px; overflow: hidden;
         }
 
         th {
-            background: rgba(255,255,255,0.05); text-align: left;
+            background: rgba(255,255,255,0.03); text-align: left;
             padding: 15px; font-size: 0.8rem;
-            text-transform: uppercase; color: var(--text-secondary);
+            text-transform: uppercase; color: var(--text-dim);
+            font-family: 'JetBrains Mono', monospace;
         }
 
         td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); }
@@ -60,47 +71,46 @@
         .status-badge {
             padding: 4px 10px; border-radius: 4px;
             font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+            font-family: 'JetBrains Mono', monospace;
         }
 
-        .badge-pending, .badge-received { background: rgba(245, 158, 11, 0.1); color: var(--accent); }
-        .badge-completed, .badge-ready { background: rgba(16, 185, 129, 0.1); color: var(--success); }
+        .badge-pending, .badge-received { background: rgba(0, 243, 255, 0.1); color: var(--accent); }
+        .badge-completed, .badge-ready { background: rgba(16, 185, 129, 0.1); color: #10b981; }
         .badge-inrepair, .badge-shipped { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
-        .badge-cancelled { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
+        .badge-cancelled { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
 
-        .device-meta { font-size: 0.8rem; color: var(--text-secondary); display: block; }
+        .device-meta { font-size: 0.8rem; color: var(--text-dim); display: block; margin-top: 4px; }
 
-        @media (max-width: 900px) { .dashboard-layout { grid-template-columns: 1fr; } }
+        .card h2 { font-family: 'JetBrains Mono', monospace; font-size: 1.5rem; margin-bottom: 20px; }
+
+        @media (max-width: 900px) { .dashboard-layout { grid-template-columns: 1fr; } .profile-sidebar { position: static; } }
+        .profile-dropdown{
+            display: none;
+        }
     </style>
 </head>
 <body>
 
-<nav class="navbar">
-    <a href="index.html" class="logo">NEXUS<span style="color:white">FLOW</span></a>
-    <div class="nav-links">
-        <a href="shop.html">Shop</a>
-        <a href="book-repair.html">Book Repair</a>
-        <button onclick="logout()" class="btn btn-outline" style="padding: 8px 15px;">Sign Out</button>
-    </div>
-</nav>
+<div id="nexus-header-wrapper"></div>
 
 <div class="container">
     <div class="dashboard-layout">
         
         <aside class="profile-sidebar">
-            <div class="card" style="text-align: center;">
+            <div class="card" style="text-align: center; border: 1px solid var(--border-cyan);">
                 <div class="user-avatar" id="user-initial">U</div>
-                <h3 id="user-name-title" style="margin-bottom: 20px;">User Profile</h3>
+                <h3 id="user-name-title" style="margin-bottom: 20px;">Operator Profile</h3>
                 <div id="user-details-container">
-                    <p style="color:var(--text-secondary)">Loading credentials...</p>
+                    <p class="text-dim">Loading credentials...</p>
                 </div>
                 <a href="book-repair.html" class="btn btn-primary" style="width: 100%; margin-top: 15px;">New Repair Request</a>
             </div>
         </aside>
 
         <main class="content-area">
-            <div class="card">
-                <h2>Active <span style="color:var(--accent)">Repairs</span></h2>
-                <div id="repair-loading" style="color:var(--text-secondary); padding: 20px;">Fetching repair status...</div>
+            <div class="card" style="border: 1px solid rgba(255,255,255,0.05);">
+                <h2>Active <span class="text-accent">Repairs</span></h2>
+                <div id="repair-loading" class="text-dim" style="padding: 20px;">Fetching repair status...</div>
                 <table id="repair-table" style="display:none;">
                     <thead>
                         <tr><th>Date</th><th>Device / Issue</th><th>Status</th></tr>
@@ -109,9 +119,9 @@
                 </table>
             </div>
 
-            <div class="card" style="margin-top: 30px;">
-                <h2>Hardware <span style="color:var(--accent)">Orders</span></h2>
-                <div id="order-loading" style="color:var(--text-secondary); padding: 20px;">Checking order history...</div>
+            <div class="card" style="margin-top: 30px; border: 1px solid rgba(255,255,255,0.05);">
+                <h2>Hardware <span class="text-accent">Orders</span></h2>
+                <div id="order-loading" class="text-dim" style="padding: 20px;">Checking order history...</div>
                 <table id="order-table" style="display:none;">
                     <thead>
                         <tr><th>Date</th><th>ID & Items</th><th>Total</th><th>Status</th></tr>
@@ -123,8 +133,13 @@
     </div>
 </div>
 
+<script src="header.js"></script>
 <script>
-    const poolData = { UserPoolId: 'us-east-1_IK57zG64M', ClientId: '668q6c6krjv8b6n81cfc78n9a4' };
+    // Use config from auth-config.js
+    const poolData = { 
+        UserPoolId: NEXUS_CONFIG.auth.UserPoolId, 
+        ClientId: NEXUS_CONFIG.auth.ClientId 
+    };
     const apiRepairUrl = 'https://yskkdnff93.execute-api.us-east-1.amazonaws.com/prod/bookings';
     const apiOrderUrl = 'https://yskkdnff93.execute-api.us-east-1.amazonaws.com/prod/orders';
 
@@ -134,7 +149,10 @@
 
         if (cognitoUser) {
             cognitoUser.getSession((err, session) => {
-                if (err || !session.isValid()) window.location.href = 'login.html';
+                if (err || !session.isValid()) {
+                    window.location.href = 'login.html';
+                    return;
+                }
                 
                 cognitoUser.getUserAttributes((err, attributes) => {
                     if (err) return;
@@ -145,14 +163,21 @@
                 });
                 fetchRepairHistory(session);
             });
-        } else { window.location.href = 'login.html'; }
+        } else { 
+            window.location.href = 'login.html'; 
+        }
     };
 
     function renderSidebar(attrs, email) {
         const container = document.getElementById('user-details-container');
         document.getElementById('user-initial').innerText = email.charAt(0).toUpperCase();
         
-        const fields = { 'email': 'Account Email', 'phone_number': 'Mobile', 'address': 'Primary Address' };
+        const fields = { 
+            'email': 'System ID / Email', 
+            'phone_number': 'Comms / Mobile', 
+            'address': 'Shipping Vector' 
+        };
+
         container.innerHTML = attrs
             .filter(a => Object.keys(fields).includes(a.Name))
             .map(a => `
@@ -171,14 +196,13 @@
             const data = await res.json();
             document.getElementById('repair-loading').style.display = 'none';
             
-            // Safety check: Ensure data is an array
             const repairs = Array.isArray(data) ? data : [];
 
             if (repairs.length > 0) {
                 document.getElementById('repair-table').style.display = 'table';
                 document.getElementById('repair-rows').innerHTML = repairs.map(item => `
                     <tr>
-                        <td>${item.bookingDate || '---'}</td>
+                        <td class="text-dim">${item.bookingDate || '---'}</td>
                         <td>
                             <strong>${item.brand || ''} ${item.model || 'Unknown Device'}</strong>
                             <span class="device-meta">${item.issueDescription || ''}</span>
@@ -187,11 +211,10 @@
                     </tr>
                 `).join('');
             } else {
-                document.getElementById('repair-loading').innerText = "No active repairs found.";
-                document.getElementById('repair-loading').style.display = 'block';
+                document.getElementById('repair-loading').innerText = "No active repair protocols found.";
             }
         } catch (e) { 
-            document.getElementById('repair-loading').innerText = "Error loading repairs.";
+            document.getElementById('repair-loading').innerText = "Telemetry Link Error.";
         }
     }
 
@@ -201,39 +224,31 @@
             const data = await res.json();
             document.getElementById('order-loading').style.display = 'none';
 
-            // Safety check: Ensure data is an array
             const orders = Array.isArray(data) ? data : [];
 
             if (orders.length > 0) {
                 document.getElementById('order-table').style.display = 'table';
                 document.getElementById('order-rows').innerHTML = orders.map(order => {
-                    const itemsText = Array.isArray(order.items) ? order.items.map(i => i.name).join(', ') : 'Hardware Parts';
+                    const itemsText = Array.isArray(order.items) ? order.items.map(i => i.name).join(', ') : 'Hardware Acquisition';
                     const total = typeof order.totalAmount === 'number' ? order.totalAmount.toFixed(2) : order.totalAmount || '0.00';
                     
                     return `
                     <tr>
-                        <td>${order.createdAt ? new Date(order.createdAt).toLocaleDateString() : '---'}</td>
+                        <td class="text-dim">${order.createdAt ? new Date(order.createdAt).toLocaleDateString() : '---'}</td>
                         <td>
                             <strong>#${(order.orderId || '000000').substring(0, 8)}</strong>
                             <span class="device-meta">${itemsText}</span>
                         </td>
-                        <td>$${total}</td>
+                        <td class="text-accent">$${total}</td>
                         <td><span class="status-badge badge-${(order.orderStatus || 'PENDING').toLowerCase()}">${order.orderStatus || 'PENDING'}</span></td>
                     </tr>`;
                 }).join('');
             } else {
-                document.getElementById('order-loading').innerText = "No hardware orders found.";
-                document.getElementById('order-loading').style.display = 'block';
+                document.getElementById('order-loading').innerText = "No hardware order signals detected.";
             }
         } catch (e) { 
-            document.getElementById('order-loading').innerText = "Error loading orders.";
+            document.getElementById('order-loading').innerText = "Order Retrieval Failure.";
         }
-    }
-
-    function logout() {
-        const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
-        userPool.getCurrentUser()?.signOut();
-        window.location.href = 'login.html';
     }
 </script>
 </body>

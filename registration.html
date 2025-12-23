@@ -4,9 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NexusFlow | Create Profile</title>
-    <script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js@6.3.16/dist/amazon-cognito-identity.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aws-sdk/2.1522.0/aws-sdk.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js@6.3.7/dist/amazon-cognito-identity.min.js"></script>
+    
+    <script src="auth-config.js"></script>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="header.css">
+
     <style>
+        body { padding-top: 100px; } /* Uniform offset for header */
+
         .auth-container {
             display: flex;
             justify-content: center;
@@ -19,6 +27,14 @@
             width: 100%;
             max-width: 550px;
             animation: fadeIn 0.5s ease;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-cyan);
+            backdrop-filter: blur(10px);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         /* 2-Column Grid for Form */
@@ -30,45 +46,58 @@
 
         .full-width { grid-column: span 2; }
 
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-dim);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        input {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(0, 243, 255, 0.2);
+            color: white;
+            padding: 12px;
+            border-radius: 4px;
+            width: 100%;
+        }
+
         #statusMsg {
             text-align: center;
             margin-top: 20px;
             font-size: 0.85rem;
             min-height: 20px;
-            padding: 10px;
+            padding: 12px;
             border-radius: 6px;
             display: none;
+            font-family: 'JetBrains Mono', monospace;
         }
 
         hr {
             border: 0;
-            border-top: 1px solid rgba(255,255,255,0.05);
+            border-top: 1px solid rgba(0, 243, 255, 0.1);
             margin: 20px 0;
             grid-column: span 2;
+        }
+
+        .signup-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.8rem;
+            margin: 0;
         }
     </style>
 </head>
 <body>
 
-<nav class="navbar">
-    <a href="index.html" class="logo">NEXUS<span style="color:white">FLOW</span></a>
-    <div class="nav-links">
-        <a href="shop.html">Shop</a>
-        <a href="book-repair.html">Book Repair</a>
-        <a href="cart.html" class="cart-link">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="var(--accent)">
-                <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/>
-            </svg>
-            <span class="cart-count" id="cart-badge">0</span>
-        </a>
-    </div>
-</nav>
 
 <div class="auth-container">
     <div class="card signup-card">
         <div style="text-align: center; margin-bottom: 30px;">
-            <h2 style="margin: 0;">System <span style="color:var(--accent)">Registration</span></h2>
-            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 8px;">Create your secure NexusFlow hardware profile.</p>
+            <h2 class="signup-title">System <span class="text-accent">Registration</span></h2>
+            <p class="text-dim" style="font-size: 0.9rem; margin-top: 8px;">Create your secure NexusFlow hardware profile.</p>
         </div>
 
         <form id="regForm" class="registration-grid">
@@ -110,29 +139,21 @@
 
         <div id="statusMsg"></div>
 
-        <div style="text-align: center; margin-top: 25px; font-size: 0.9rem; color: var(--text-secondary);">
-            Already have an account? <a href="login.html" style="color:var(--accent); text-decoration: none; font-weight: 700;">Sign In</a>
+        <div style="text-align: center; margin-top: 25px; font-size: 0.9rem; color: var(--text-dim);">
+            Already have an account? <a href="login.html" class="text-accent" style="text-decoration: none; font-weight: 700;">Sign In</a>
         </div>
     </div>
 </div>
 
+<script src="header.js"></script>
 <script>
+    // Use config from auth-config.js
     const poolData = { 
-        UserPoolId: 'us-east-1_IK57zG64M', 
-        ClientId: '668q6c6krjv8b6n81cfc78n9a4' 
+        UserPoolId: NEXUS_CONFIG.auth.UserPoolId, 
+        ClientId: NEXUS_CONFIG.auth.ClientId 
     };
 
     window.onload = function() {
-        updateCartBadge();
-        
-        if (typeof AmazonCognitoIdentity === 'undefined') {
-            const status = document.getElementById('statusMsg');
-            status.style.display = "block";
-            status.style.color = "var(--danger)";
-            status.innerText = "Error: AWS Cloud SDK failed to load.";
-            return;
-        }
-
         const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
 
         document.getElementById('regForm').onsubmit = function(e) {
@@ -143,7 +164,7 @@
             
             status.style.display = "block";
             status.style.background = "rgba(255, 255, 255, 0.05)";
-            status.style.color = "var(--text-secondary)";
+            status.style.color = "var(--text-dim)";
             status.innerText = "Synchronizing with AWS Cognito...";
             btn.disabled = true;
 
@@ -165,14 +186,14 @@
             userPool.signUp(email, password, attributeList, null, function(err, result) {
                 if (err) {
                     status.style.background = "rgba(239, 68, 68, 0.1)";
-                    status.style.color = "var(--danger)";
+                    status.style.color = "#ff4444";
                     status.innerText = err.message || "Registration failed.";
                     btn.disabled = false;
                     return;
                 }
                 
                 status.style.background = "rgba(16, 185, 129, 0.1)";
-                status.style.color = "var(--success)";
+                status.style.color = "#10b981";
                 status.innerText = "Profile created. Verify your email to activate.";
                 
                 localStorage.setItem('nexusEmail', email);
@@ -180,16 +201,6 @@
             });
         };
     };
-
-    function updateCartBadge() {
-        const cart = JSON.parse(localStorage.getItem('nexus_cart')) || [];
-        const badge = document.getElementById('cart-badge');
-        if(badge) {
-            badge.innerText = cart.length;
-            badge.style.display = cart.length > 0 ? 'block' : 'none';
-        }
-    }
 </script>
-
 </body>
 </html>

@@ -2,48 +2,76 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>NexusFlow | Premium Tech Services</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexusFlow | High-Performance Tech Ecosystem</title>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aws-sdk/2.1522.0/aws-sdk.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js@6.3.7/dist/amazon-cognito-identity.min.js"></script>
+    
+    <script src="auth-config.js"></script>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="header.css">
+    
+    <style>
+        body { padding-top: 100px; } /* Matches Cart Page */
+
+        .hero-section { text-align: center; padding: 80px 20px; }
+        .hero-h1 { font-size: clamp(2.5rem, 8vw, 4rem); margin-bottom: 20px; line-height: 1.1; }
+        .hero-sub { color: var(--text-dim); font-size: 1.15rem; max-width: 700px; margin: 0 auto 40px; }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 60px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-cyan);
+            padding: 35px 25px;
+            border-radius: 12px;
+        }
+
+        .feature-card h3 {
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+    </style>
 </head>
 <body>
 
-<nav class="navbar">
-    <a href="index.html" class="logo">NEXUS<span style="color:white">FLOW</span></a>
-    <div class="nav-links">
-        <a href="index.html" class="active">Home</a>
-        <a href="shop.html">Shop</a>
-        <a href="book-repair.html">Book Repair</a>
-        <a href="profile.html">Profile</a>
-        <a href="admin.html">Admin</a>
-    </div>
-</nav>
+<div id="nexus-header-wrapper"></div>
 
-<div class="container" style="text-align: center; margin-top: 100px;">
-    <h1 style="font-size: 3.5rem; margin-bottom: 10px;">Engineering Your <span style="color:var(--accent)">Digital Flow</span></h1>
-    <p style="color: var(--text-secondary); font-size: 1.2rem; max-width: 600px; margin: auto;">
-        Expert hardware repairs, specialized parts inventory, and seamless service management for professional environments.
-    </p>
-    
-    <div style="margin-top: 40px; display: flex; gap: 20px; justify-content: center;">
-        <a href="shop.html" class="btn btn-primary">Browse Shop</a>
-        <a href="book-repair.html" class="btn btn-outline">Request Repair</a>
-    </div>
+<div class="container">
+    <section class="hero-section">
+        <h1 class="hero-h1">Engineering Your <br><span class="text-accent">Digital Flow</span></h1>
+        <p class="hero-sub">High-precision hardware repairs, specialized component procurement, and seamless logistics management.</p>
+        
+        <div style="display: flex; gap: 20px; justify-content: center;">
+            <a href="shop.html" class="btn btn-primary">Initialize Shop</a>
+            <a href="book-repair.html" class="btn btn-outline">Request Service</a>
+        </div>
 
-    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-top: 80px;">
-        <div class="card">
-            <h3 style="color:var(--accent)">Fast Turnaround</h3>
-            <p style="font-size: 0.9rem; color: var(--text-secondary)">Most diagnostics completed within 24 hours of receipt.</p>
+        <div class="features-grid">
+            <div class="feature-card">
+                <h3 class="text-accent">[01] DIAGNOSTICS</h3>
+                <p class="text-dim">Automated intake systems ensure hardware assessment within 24 hours.</p>
+            </div>
+            <div class="feature-card">
+                <h3 class="text-accent">[02] INVENTORY</h3>
+                <p class="text-dim">Direct access to a high-tier inventory of specialized computer hardware.</p>
+            </div>
+            <div class="feature-card">
+                <h3 class="text-accent">[03] TRACKING</h3>
+                <p class="text-dim">Real-time status updates via your secure profile portal.</p>
+            </div>
         </div>
-        <div class="card">
-            <h3 style="color:var(--accent)">Genuine Parts</h3>
-            <p style="font-size: 0.9rem; color: var(--text-secondary)">Direct sourcing for specialized computer and mobile hardware.</p>
-        </div>
-        <div class="card">
-            <h3 style="color:var(--accent)">Live Tracking</h3>
-            <p style="font-size: 0.9rem; color: var(--text-secondary)">Monitor your repair or order status in real-time through your portal.</p>
-        </div>
-    </div>
+    </section>
 </div>
+
+<script src="header.js"></script>
 
 </body>
 </html>
