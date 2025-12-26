@@ -34,12 +34,9 @@
             animation: slideUp 0.5s ease;
             background: rgba(255, 255, 255, 0.02);
             border: 1px solid var(--border-cyan);
+            padding: 40px;
+            border-radius: 20px;
             backdrop-filter: blur(10px);
-        }
-
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
         }
 
         .auth-header {
@@ -47,54 +44,67 @@
             margin-bottom: 30px;
         }
 
-        .auth-header h2 {
-            font-size: 1.8rem;
-            margin-bottom: 8px;
-            font-family: 'JetBrains Mono', monospace;
+        .auth-header h1 {
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
         }
 
-        #status {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 0.85rem;
-            min-height: 20px;
-            padding: 12px;
-            border-radius: 6px;
-            display: none;
-            font-family: 'JetBrains Mono', monospace;
+        .input-group {
+            margin-bottom: 20px;
         }
 
-        .form-footer {
-            text-align: center;
-            margin-top: 25px;
-            font-size: 0.9rem;
+        .input-group label {
+            display: block;
+            font-size: 0.7rem;
+            text-transform: uppercase;
             color: var(--text-dim);
+            margin-bottom: 8px;
+            letter-spacing: 1px;
         }
 
-        .form-footer a {
-            color: var(--accent);
-            text-decoration: none;
-            font-weight: 600;
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 243, 255, 0.2);
+            border-radius: 4px;
+            color: #fff;
+            outline: none;
+            transition: all 0.3s;
         }
 
-        /* Input styling to match the "Digital Flow" theme */
-        input {
-            margin-bottom: 15px;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid var(--border-cyan);
-            color: white;
+        .input-group input:focus {
+            border-color: var(--accent);
+            background: rgba(0, 243, 255, 0.05);
+        }
+
+        .btn-auth {
+            width: 100%;
+            padding: 14px;
+            background: var(--accent);
+            color: #000;
+            border: none;
+            border-radius: 4px;
+            font-weight: 800;
+            text-transform: uppercase;
+            cursor: pointer;
+            letter-spacing: 1px;
+            margin-top: 10px;
+        }
+
+        #login-status {
+            margin-top: 20px;
             padding: 12px;
             border-radius: 4px;
-            width: 100%;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 8px;
             font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--text-dim);
+            display: none;
+            text-align: center;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
@@ -102,43 +112,56 @@
 
 
 <div class="auth-wrapper">
-    <div class="card login-card">
+    <div class="login-card">
         <div class="auth-header">
-            <h2>Authorized <span class="text-accent">Access</span></h2>
-            <p class="text-dim">Enter your credentials to manage your tech flow.</p>
+            <h1 class="text-accent">IDENTITY_CHECK</h1>
+            <p class="text-dim" style="font-size: 0.8rem;">Enter credentials to access the Nexus.</p>
         </div>
 
-        <form id="loginForm">
-            <label>Corporate / Personal Email</label>
-            <input type="email" id="email" placeholder="name@company.com" required>
-            
-            <label>Password</label>
-            <input type="password" id="password" placeholder="••••••••" required>
-            
-            <button type="submit" id="loginBtn" class="btn btn-primary" style="width: 100%; margin-top: 10px; font-size: 1rem;">
-                Secure Sign In
-            </button>
+        <form id="loginForm" onsubmit="handleLogin(event)">
+            <div class="input-group">
+                <label>Operator Email</label>
+                <input type="email" id="email" required placeholder="name@domain.com">
+            </div>
+            <div class="input-group">
+                <label>Security Key</label>
+                <input type="password" id="password" required placeholder="••••••••">
+            </div>
+
+            <button type="submit" class="btn-auth" id="loginBtn">Secure Sign In</button>
         </form>
 
-        <div id="status"></div>
+        <div id="login-status"></div>
 
-        <div class="form-footer">
-            Don't have an account? <a href="registration.html">Create Access Profile</a>
+        <div style="margin-top: 25px; text-align: center; font-size: 0.8rem;">
+            <span class="text-dim">New Operator?</span>
+            <a href="registration.html" class="text-accent" style="text-decoration: none; margin-left: 5px;">Initialize Enrollment</a>
         </div>
     </div>
 </div>
 
 <script src="header.js"></script>
 <script>
-    // Using NEXUS_CONFIG from auth-config.js for uniformity
-    const userPool = new AmazonCognitoIdentity.CognitoUserPool({ 
-        UserPoolId: NEXUS_CONFIG.auth.UserPoolId, 
-        ClientId: NEXUS_CONFIG.auth.ClientId 
-    });
+    const poolData = {
+        UserPoolId: NEXUS_CONFIG.auth.UserPoolId,
+        ClientId: NEXUS_CONFIG.auth.ClientId
+    };
+    const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
+    const cognitoUser = userPool.getCurrentUser();
 
-    document.getElementById('loginForm').onsubmit = function(e) {
-        e.preventDefault();
-        const status = document.getElementById('status');
+    // --- NEW: AUTO-REDIRECT IF ALREADY LOGGED IN ---
+    if (cognitoUser) {
+        cognitoUser.getSession((err, session) => {
+            if (!err && session.isValid()) {
+                window.location.href = 'profile.html';
+            }
+        });
+    }
+
+    function handleLogin(event) {
+        event.preventDefault();
+        
+        const status = document.getElementById('login-status');
         const btn = document.getElementById('loginBtn');
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
@@ -153,12 +176,18 @@
             Username: email, Password: password
         });
 
-        const cognitoUser = new AmazonCognitoIdentity.CognitoUser({
+        const user = new AmazonCognitoIdentity.CognitoUser({
             Username: email, Pool: userPool
         });
 
-        cognitoUser.authenticateUser(authDetails, {
+        user.authenticateUser(authDetails, {
             onSuccess: function(result) {
+                const userEmail = result.getIdToken().payload.email;
+                const fullName = result.getIdToken().payload.name || userEmail.split('@')[0];
+                
+                localStorage.setItem('nexusEmail', userEmail);
+                localStorage.setItem('nexusUserFullname', fullName);
+
                 status.style.color = "var(--accent)";
                 status.style.background = "rgba(0, 243, 255, 0.1)";
                 status.innerText = "✓ Access Granted. Redirecting...";
@@ -170,10 +199,10 @@
                 btn.innerText = "Secure Sign In";
                 status.style.color = "#ff4444";
                 status.style.background = "rgba(255, 68, 68, 0.1)";
-                status.innerText = err.message || "Authentication failed.";
+                status.innerText = "Error: " + (err.message || "Invalid credentials");
             }
         });
-    };
+    }
 </script>
 </body>
 </html>

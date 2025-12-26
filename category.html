@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexusFlow | Category View</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js@6.3.7/dist/amazon-cognito-identity.min.js"></script>
+    <script src="auth-config.js"></script>
+    <script src="header.js" defer></script>
+
+    <style>
+        :root {
+            --n-cyan: #00f3ff;
+            --n-bg: #0a0a0a;
+            --n-border: rgba(0, 243, 255, 0.15);
+            --n-panel: rgba(255, 255, 255, 0.03);
+            --accent: #00f3ff;
+        }
+
+        body { background: var(--n-bg); color: white; margin: 0; font-family: 'Inter', sans-serif; padding-top: 140px; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+
+        .category-header {
+            border-left: 4px solid var(--accent);
+            padding-left: 20px;
+            margin-bottom: 40px;
+        }
+        .category-header h1 { 
+            font-family: 'JetBrains Mono', monospace; 
+            text-transform: uppercase; 
+            margin: 0; 
+            font-size: 2rem; 
+            letter-spacing: 2px;
+        }
+        .category-header p { color: var(--n-text-dim); font-size: 0.9rem; margin-top: 5px; }
+
+        /* Product Grid */
+        .nexus-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+            gap: 30px; 
+        }
+        
+        .product-card {
+            background: var(--n-panel); border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px; padding: 20px; transition: 0.3s;
+            display: flex; flex-direction: column;
+        }
+        .product-card:hover { border-color: var(--accent); transform: translateY(-5px); }
+
+        .product-link { text-decoration: none; color: inherit; display: block; }
+        .product-image { 
+            width: 100%; height: 220px; object-fit: contain; 
+            background: #000; margin-bottom: 15px; border-radius: 8px; 
+        }
+        .product-name { font-size: 1.1rem; font-weight: 600; margin-bottom: 10px; height: 2.8rem; overflow: hidden; }
+        .product-price { font-size: 1.3rem; font-weight: 800; color: var(--accent); margin-bottom: 20px; }
+
+        .card-actions { display: flex; gap: 10px; margin-top: auto; }
+        .btn-action {
+            flex: 1; padding: 12px; font-size: 0.8rem; border-radius: 6px;
+            cursor: pointer; transition: 0.2s; font-family: 'JetBrains Mono';
+            text-transform: uppercase; font-weight: 700;
+        }
+        .btn-cart { background: var(--accent); color: #000; border: none; }
+        .btn-cart:hover { background: #fff; }
+        .btn-wish { background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1); }
+        
+        .loader { text-align: center; padding: 100px; color: var(--n-cyan); font-family: 'JetBrains Mono'; }
+        
+        #nexus-toast {
+            position: fixed; bottom: 30px; right: 30px;
+            padding: 15px 25px; background: #111;
+            border-left: 4px solid var(--n-cyan);
+            border-radius: 4px; color: white;
+            font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;
+            z-index: 9999; display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="nexus-header-wrapper"></div>
+    <div id="nexus-toast"></div>
+
+    <main class="container">
+        <header class="category-header" id="cat-header">
+            <h1 id="category-title">Loading...</h1>
+            <p id="item-count">Scanning database...</p>
+        </header>
+
+        <div class="nexus-grid" id="product-list">
+            </div>
+    </main>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const targetCat = urlParams.get('cat'); // Gets the category name from URL
+        let categoryProducts = [];
+
+        async function loadCategoryItems() {
+            const grid = document.getElementById('product-list');
+            const title = document.getElementById('category-title');
+            const counter = document.getElementById('item-count');
+
+            if (!targetCat) {
+                grid.innerHTML = '<div class="loader">ERROR: NO_CATEGORY_SPECIFIED</div>';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${NEXUS_CONFIG.api.baseUrl}/products`);
+                const allProducts = await response.json();
+
+                // Logic: Filter products where category matches URL (case-insensitive)
+                categoryProducts = allProducts.filter(p => 
+                    (p.category || "Hardware").toLowerCase() === targetCat.toLowerCase()
+                );
+
+                title.innerText = targetCat.replace(/_/g, ' ');
+                counter.innerText = `${categoryProducts.length} ITEMS_DETECTED`;
+
+                if (categoryProducts.length === 0) {
+                    grid.innerHTML = '<div class="loader">NO_PRODUCTS_FOUND_IN_THIS_SECTOR</div>';
+                    return;
+                }
+
+                grid.innerHTML = categoryProducts.map(p => `
+                    <div class="product-card">
+                        <a href="product-details.html?id=${p.productId}" class="product-link">
+                            <img src="${p.imageUrl || 'https://via.placeholder.com/300'}" class="product-image">
+                            <div class="product-name">${p.name}</div>
+                            <div class="product-price">$${p.price.toFixed(2)}</div>
+                        </a>
+                        <div class="card-actions">
+                            <button class="btn-action btn-cart" onclick="quickAdd('${p.productId}')">Buy_Now</button>
+                            <button class="btn-action btn-wish" onclick="quickWish('${p.productId}')">♥</button>
+                        </div>
+                    </div>
+                `).join('');
+
+            } catch (err) {
+                console.error(err);
+                grid.innerHTML = '<div class="loader">CRITICAL_FETCH_ERROR</div>';
+            }
+        }
+
+        // --- Shared Logic From Index ---
+        function showToast(msg) {
+            const t = document.getElementById('nexus-toast');
+            t.innerText = msg; t.style.display = 'block';
+            setTimeout(() => t.style.display = 'none', 3000);
+        }
+
+        function quickAdd(id) {
+            const p = categoryProducts.find(item => item.productId === id);
+            if (!p) return;
+            let cart = JSON.parse(localStorage.getItem('nexus_cart')) || [];
+            cart.push({ productId: p.productId, name: p.name, price: p.price, imageUrl: p.imageUrl });
+            localStorage.setItem('nexus_cart', JSON.stringify(cart));
+            if (window.updateHeaderBadges) window.updateHeaderBadges();
+            showToast(`${p.name} ADDED_TO_CART`);
+        }
+
+        function quickWish(id) {
+            let wish = JSON.parse(localStorage.getItem('nexus_wishlist')) || [];
+            if (!wish.includes(id)) {
+                wish.push(id);
+                localStorage.setItem('nexus_wishlist', JSON.stringify(wish));
+                if (window.updateHeaderBadges) window.updateHeaderBadges();
+                showToast("ID_SAVED_TO_WISHLIST");
+            } else {
+                showToast("ID_ALREADY_EXISTS");
+            }
+        }
+
+        window.onload = loadCategoryItems;
+    </script>
+</body>
+</html>

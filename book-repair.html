@@ -15,6 +15,9 @@
     <style>
         body { padding-top: 100px; } /* Offset for fixed header */
 
+        /* Prevent flashing of content before login check */
+        #main-content { display: none; }
+
         .repair-container {
             max-width: 900px;
             margin: 0 auto;
@@ -111,7 +114,7 @@
 
 <div id="nexus-header-wrapper"></div>
 
-<div class="repair-container">
+<div id="main-content" class="repair-container">
     <div style="margin-bottom: 50px;">
         <h1 style="font-size: 2.5rem; letter-spacing: -1px;">Hardware <span style="color:var(--nexus-cyan)">Recovery</span></h1>
         <p style="color: #666;">Initiate a technical diagnostic request for your malfunctioning gear.</p>
@@ -188,7 +191,7 @@
                 </div>
             </div>
 
-            <button type="submit" id="submitBtn" class="login-btn" style="width: 100%; margin-top: 20px; height: 60px; font-size: 1rem;">
+            <button type="submit" id="submitBtn" class="btn btn-primary" style="width: 100%; margin-top: 20px; height: 60px; font-size: 1rem;">
                 TRANSMIT RECOVERY REQUEST
             </button>
         </form>
@@ -202,18 +205,25 @@
 
 <script src="header.js"></script>
 <script>
-    // 1. SESSION GUARD: Check login before doing anything
-    window.onload = function() {
-        const userPool = new AmazonCognitoIdentity.CognitoUserPool({
-            UserPoolId: NEXUS_CONFIG.auth.UserPoolId,
-            ClientId: NEXUS_CONFIG.auth.ClientId
-        });
-        const cognitoUser = userPool.getCurrentUser();
+    // 1. SESSION GUARD: Check login immediately
+    const userPool = new AmazonCognitoIdentity.CognitoUserPool({
+        UserPoolId: NEXUS_CONFIG.auth.UserPoolId,
+        ClientId: NEXUS_CONFIG.auth.ClientId
+    });
+    const cognitoUser = userPool.getCurrentUser();
 
-        if (!cognitoUser) {
-            window.location.href = 'login.html?redirect=book-repair.html';
-        }
-    };
+    if (!cognitoUser) {
+        window.location.href = 'login.html?redirect=book-repair.html';
+    } else {
+        // Show content only if user is logged in
+        cognitoUser.getSession((err, session) => {
+            if (err || !session.isValid()) {
+                window.location.href = 'login.html';
+            } else {
+                document.getElementById('main-content').style.display = 'block';
+            }
+        });
+    }
 
     // 2. FORM SUBMISSION
     document.getElementById('repairForm').onsubmit = function(e) {
@@ -225,14 +235,8 @@
         btn.disabled = true;
         overlay.style.display = "flex";
 
-        const userPool = new AmazonCognitoIdentity.CognitoUserPool({
-            UserPoolId: NEXUS_CONFIG.auth.UserPoolId,
-            ClientId: NEXUS_CONFIG.auth.ClientId
-        });
-        const cognitoUser = userPool.getCurrentUser();
-
         cognitoUser.getSession((err, session) => {
-            if (err) { 
+            if (err || !session.isValid()) { 
                 NexusUtils.showAlert("Session Expired", "error");
                 window.location.href = 'login.html';
                 return; 
