@@ -3,141 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NexusFlow | Service Hub</title>
+    <title>NexusFlow | Service Intelligence</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aws-sdk/2.1522.0/aws-sdk.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js@6.3.7/dist/amazon-cognito-identity.min.js"></script>
+    
     <script src="auth-config.js"></script>
     <script src="header.js" defer></script>
-    
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="header.css">
+    
     <style>
-        :root {
-            --n-cyan: #00f3ff;
-            --n-bg: #0a0a0a;
-            --n-border: rgba(0, 243, 255, 0.2);
-            --n-panel: rgba(255, 255, 255, 0.03);
+        :root { 
+            --accent: #00f3ff; 
+            --bg: #0a0a0a; 
+            --panel: rgba(255,255,255,0.03); 
+            --border: rgba(0,243,255,0.15); 
         }
+        
+        body { background: var(--bg); color: white; font-family: 'Inter', sans-serif; padding-top: 140px; margin: 0; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
 
-        body { 
-            background: var(--n-bg); 
-            color: white; 
-            margin: 0; 
-            font-family: 'Inter', sans-serif; 
-            padding-top: 100px; 
-            scroll-behavior: smooth; 
-        }
-
-        .container { max-width: 1400px; margin: 0 auto; padding: 0 20px; }
-
-        /* Page Header */
-        .page-header {
-            text-align: center;
-            padding: 40px 20px;
-        }
-
-        .page-header h1 {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 2rem;
-            letter-spacing: 4px;
-            color: var(--n-cyan);
-            margin: 0;
-        }
-
-        /* 2-Row Category Grid Navigation */
-        .category-menu-container {
-            background: var(--n-panel);
-            border: 1px solid var(--n-border);
-            padding: 20px;
-            margin-bottom: 50px;
-            border-radius: 8px;
-        }
-
-        .category-grid-nav {
-            display: grid;
-            /* Creates 5 columns on desktop, wrapping to 2 rows for 10 categories */
-            grid-template-columns: repeat(5, 1fr); 
-            gap: 10px;
-        }
-
-        .nav-tab {
+        /* --- CONTROL PANEL (Search + Filter) --- */
+        .control-panel {
             background: rgba(255, 255, 255, 0.02);
-            border: 1px solid var(--n-border);
-            color: #888;
-            padding: 12px 5px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            text-align: center;
-            cursor: pointer;
-            transition: 0.3s ease;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .nav-tab.active, .nav-tab:hover {
-            color: var(--n-cyan);
-            border-color: var(--n-cyan);
-            background: rgba(0, 243, 255, 0.1);
-            box-shadow: 0 0 10px rgba(0, 243, 255, 0.15);
-        }
-
-        /* Responsive rows */
-        @media (max-width: 1024px) { .category-grid-nav { grid-template-columns: repeat(3, 1fr); } }
-        @media (max-width: 600px) { .category-grid-nav { grid-template-columns: repeat(2, 1fr); } }
-
-        /* Service Cards */
-        .service-grid {
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 50px;
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-template-columns: 1fr auto;
             gap: 20px;
-            margin-bottom: 60px;
+            align-items: center;
         }
 
-        .category-group-section {
-            margin-bottom: 80px;
-            scroll-margin-top: 120px;
-        }
-
-        .section-label {
+        .search-box { position: relative; }
+        .service-search-input {
+            width: 100%;
+            background: #000;
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 15px 20px 15px 45px;
+            border-radius: 8px;
+            color: var(--accent);
             font-family: 'JetBrains Mono', monospace;
-            color: var(--n-cyan);
+            font-size: 0.9rem;
+            outline: none;
+            transition: 0.3s;
+        }
+        .service-search-input:focus { border-color: var(--accent); box-shadow: 0 0 15px rgba(0,243,255,0.1); }
+        .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #444; }
+
+        /* --- CATEGORY SECTIONING --- */
+        .category-block { margin-bottom: 60px; }
+        .category-title {
+            font-family: 'JetBrains Mono', monospace;
             font-size: 1.2rem;
+            letter-spacing: 2px;
+            color: #fff;
             margin-bottom: 25px;
             display: flex;
             align-items: center;
             gap: 15px;
         }
-
-        .section-label::after {
+        .category-title::after {
             content: "";
-            flex-grow: 1;
+            flex: 1;
             height: 1px;
-            background: linear-gradient(to right, var(--n-border), transparent);
+            background: linear-gradient(90deg, var(--border), transparent);
         }
 
+        /* --- SERVICE CARDS (Marketing Optimized) --- */
+        .nexus-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; }
+        
         .service-card {
-            background: var(--n-panel);
-            border: 1px solid var(--n-border);
-            padding: 25px;
+            background: var(--panel);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 24px;
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            transition: 0.3s;
+            text-decoration: none;
+            color: inherit;
         }
 
         .service-card:hover {
-            border-color: var(--n-cyan);
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(0, 243, 255, 0.03);
+            border-color: var(--accent);
+            transform: translateY(-5px);
         }
 
-        .service-name { font-family: 'JetBrains Mono'; font-size: 1rem; margin: 0 0 10px 0; }
-        .service-desc { font-size: 0.85rem; color: #aaa; line-height: 1.5; margin-bottom: 20px; }
-        
-        .card-footer {
+        .service-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--accent);
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            opacity: 0.8;
+        }
+
+        .service-name {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.1rem;
+            margin: 0 0 15px 0;
+            line-height: 1.3;
+        }
+
+        .activity-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 20px;
+        }
+
+        .pill {
+            font-size: 0.65rem;
+            background: rgba(255,255,255,0.05);
+            padding: 4px 10px;
+            border-radius: 4px;
+            color: #aaa;
+        }
+
+        .service-footer {
+            margin-top: auto;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -145,127 +132,112 @@
             border-top: 1px solid rgba(255,255,255,0.05);
         }
 
-        .price-tag { color: var(--n-cyan); font-weight: bold; font-family: 'JetBrains Mono'; }
-        .btn-init { background: #fff; color: #000; padding: 8px 15px; text-decoration: none; font-size: 0.7rem; font-weight: 900; }
+        .price { font-weight: 700; color: #fff; }
+        .price span { font-size: 0.7rem; color: #666; font-weight: 400; margin-right: 4px; }
 
-        .hidden { display: none; }
-        #loading-state { text-align: center; padding: 100px; font-family: 'JetBrains Mono'; color: var(--n-cyan); }
+        .init-link {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--accent);
+            text-decoration: underline;
+        }
+
+        #loader { text-align: center; padding: 100px; font-family: 'JetBrains Mono'; color: var(--accent); }
     </style>
 </head>
 <body>
 
-<div id="nexus-header-wrapper"></div>
+    <div id="nexus-header-wrapper"></div>
 
+    <main class="container">
+        <div class="control-panel">
+            <div class="search-box">
+                <span class="search-icon">⚡</span>
+                <input type="text" id="serviceSearch" class="service-search-input" 
+                       placeholder="SCAN_SYSTEM_PROTOCOLS..." oninput="handleSearch()">
+            </div>
+            <div id="status-tag" style="font-family: 'JetBrains Mono'; font-size: 0.7rem; color: #444;">
+                SYSTEM_STABLE // DATA_SYNCED
+            </div>
+        </div>
 
-<main class="container">
-    <div class="category-menu-container">
-        <nav class="category-grid-nav" id="tab-bar">
-            <a href="javascript:void(0)" class="nav-tab active" onclick="showView('all')">ALL_PROTOCOLS</a>
-            </nav>
-    </div>
+        <div id="loader">ACCESSING_CENTRAL_REGISTRY...</div>
+        <div id="service-display-area"></div>
+    </main>
 
-    <div id="loading-state">SYNCHRONIZING_DATA_STREAM...</div>
+    <script>
+        let rawData = [];
 
-    <div id="view-all" class="service-grid"></div>
-
-    <div id="view-categorized" class="hidden"></div>
-</main>
-
-<script>
-    const ORIGINAL_API = 'https://yskkdnff93.execute-api.us-east-1.amazonaws.com/prod/Services';
-    const CATEGORY_API = 'https://yskkdnff93.execute-api.us-east-1.amazonaws.com/prod/service-categories';
-
-    async function initPage() {
-        try {
-            const [resAll, resCat] = await Promise.all([
-                fetch(ORIGINAL_API),
-                fetch(CATEGORY_API)
-            ]);
-
-            const allData = await resAll.json();
-            const catData = await resCat.json();
-
-            document.getElementById('loading-state').style.display = 'none';
-            renderAll(allData);
-            renderCategorized(catData);
-        } catch (err) {
-            document.getElementById('loading-state').innerHTML = "UPLINK_ERROR: Check Backend Status";
+        async function load() {
+            try {
+                const res = await fetch(`${NEXUS_CONFIG.api.baseUrl}/services`);
+                rawData = await res.json();
+                document.getElementById('loader').style.display = 'none';
+                renderCategorized(rawData);
+            } catch (e) {
+                document.getElementById('loader').innerHTML = `<span style="color:#ff4444">LINK_FAILURE</span>`;
+            }
         }
-    }
 
-    function renderAll(data) {
-        document.getElementById('view-all').innerHTML = data.map(s => createCard(s)).join('');
-    }
+        function handleSearch() {
+            const query = document.getElementById('serviceSearch').value.toLowerCase();
+            const filtered = rawData.filter(s => 
+                s.serviceName.toLowerCase().includes(query) || 
+                (s.serviceCategory && s.serviceCategory.toLowerCase().includes(query))
+            );
+            renderCategorized(filtered);
+        }
 
-    function renderCategorized(data) {
-        const container = document.getElementById('view-categorized');
-        const tabBar = document.getElementById('tab-bar');
+        function renderCategorized(data) {
+            const container = document.getElementById('service-display-area');
+            container.innerHTML = '';
 
-        const groups = data.reduce((acc, item) => {
-            const cat = item.serviceCategory || "General";
-            if (!acc[cat]) acc[cat] = [];
-            acc[cat].push(item);
-            return acc;
-        }, {});
+            // Grouping logic
+            const groups = data.reduce((acc, item) => {
+                const cat = item.serviceCategory || "GENERAL_OPERATIONS";
+                if (!acc[cat]) acc[cat] = [];
+                acc[cat].push(item);
+                return acc;
+            }, {});
 
-        Object.keys(groups).forEach(catName => {
-            // Add Tab to the Grid
-            const tab = document.createElement('a');
-            tab.className = 'nav-tab';
-            tab.innerText = catName;
-            tab.onclick = (e) => {
-                document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-                e.currentTarget.classList.add('active');
-                showView(catName);
-            };
-            tabBar.appendChild(tab);
+            for (const [category, services] of Object.entries(groups)) {
+                const section = document.createElement('div');
+                section.className = 'category-block';
+                
+                // Only show 10 if we're not searching, otherwise show all matches
+                const isSearching = document.getElementById('serviceSearch').value.length > 0;
+                const displayItems = isSearching ? services : services.slice(0, 10);
 
-            // Add Section
-            const section = document.createElement('div');
-            section.id = `section-${catName.replace(/\s+/g, '-')}`;
-            section.className = 'category-group-section hidden';
-            section.innerHTML = `
-                <div class="section-label">${catName}</div>
-                <div class="service-grid">${groups[catName].map(s => createCard(s)).join('')}</div>
+                section.innerHTML = `
+                    <div class="category-title">${category.toUpperCase()}</div>
+                    <div class="nexus-grid">
+                        ${displayItems.map(s => renderServiceCard(s)).join('')}
+                    </div>
+                `;
+                container.appendChild(section);
+            }
+        }
+
+        function renderServiceCard(s) {
+            const activities = s.activities ? s.activities.slice(0, 3).map(a => `<span class="pill">${a}</span>`).join('') : '';
+            return `
+                <a href="service-details.html?id=${s.serviceId}" class="service-card">
+                    <div class="service-tag">${s.serviceId}</div>
+                    <h3 class="service-name">${s.serviceName}</h3>
+                    
+                    <div class="activity-preview">
+                        ${activities}
+                    </div>
+
+                    <div class="service-footer">
+                        <div class="price"><span>FROM</span>$${parseFloat(s.basePrice || 0).toFixed(2)}</div>
+                        <span class="init-link">INITIALIZE_UNIT</span>
+                    </div>
+                </a>
             `;
-            container.appendChild(section);
-        });
-    }
-
-    function createCard(s) {
-        const name = s.serviceName || s.name || "Unknown";
-        const price = s.basePrice || s.price || 0;
-        const id = s.serviceId || s.productId;
-        return `
-            <div class="service-card">
-                <div>
-                    <h3 class="service-name">${name}</h3>
-                    <p class="service-desc">${s.shortDescription || s.description || ''}</p>
-                </div>
-                <div class="card-footer">
-                    <span class="price-tag">$${parseFloat(price).toFixed(2)}</span>
-                    <a href="service-details.html?id=${id}" class="btn-init">INITIALIZE</a>
-                </div>
-            </div>`;
-    }
-
-    function showView(target) {
-        const viewAll = document.getElementById('view-all');
-        const viewCat = document.getElementById('view-categorized');
-        
-        if (target === 'all') {
-            viewAll.classList.remove('hidden');
-            viewCat.classList.add('hidden');
-        } else {
-            viewAll.classList.add('hidden');
-            viewCat.classList.remove('hidden');
-            document.querySelectorAll('.category-group-section').forEach(sec => sec.classList.add('hidden'));
-            document.getElementById(`section-${target.replace(/\s+/g, '-')}`).classList.remove('hidden');
         }
-    }
 
-    window.onload = initPage;
-</script>
-
+        window.onload = load;
+    </script>
 </body>
 </html>

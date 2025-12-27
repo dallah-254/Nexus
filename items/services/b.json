@@ -1,0 +1,379 @@
+{
+  "NexusServices": [
+    {
+      "PutRequest": {
+        "Item": {
+          "serviceId": { "S": "LAP-020" },
+          "serviceName": { "S": "MacBook Pro Screen Replacement" },
+          "serviceCategory": { "S": "Laptop Repair" },
+          "basePrice": { "N": "450.00" },
+          "shortDescription": { "S": "Full Retina display assembly swap." },
+          "longDescription": { "S": "Replacement of the entire top clamshell assembly with a Grade-A Retina panel. Includes TrueTone sensor transfer." },
+          "activities": { "L": [{ "S": "TrueTone Programming" }, { "S": "Hinge Torque Calibration" }] },
+          "duration": { "S": "2 Hours" },
+          "warranty": { "S": "1 Year" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "serviceId": { "S": "LAP-021" },
+          "serviceName": { "S": "Laptop Fan & Heatsink Flush" },
+          "serviceCategory": { "S": "Laptop Repair" },
+          "basePrice": { "N": "65.00" },
+          "shortDescription": { "S": "Internal dust and debris extraction." },
+          "longDescription": { "S": "Deep cleaning of the cooling system to prevent thermal throttling and extend component lifespan." },
+          "activities": { "L": [{ "S": "Compressed Air Flush" }, { "S": "Bearing Lubrication" }] },
+          "duration": { "S": "1 Hour" },
+          "warranty": { "S": "30 Days" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "serviceId": { "S": "LAP-022" },
+          "serviceName": { "S": "Windows OS Clean Install" },
+          "serviceCategory": { "S": "Laptop Repair" },
+          "basePrice": { "N": "80.00" },
+          "shortDescription": { "S": "Fresh OS setup with driver optimization." },
+          "longDescription": { "S": "Full wipe and reinstall of Windows 11. Includes all critical hardware drivers and system optimizations." },
+          "activities": { "L": [{ "S": "Driver Benchmarking" }, { "S": "Bloatware Removal" }] },
+          "duration": { "S": "3 Hours" },
+          "warranty": { "S": "90 Days" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "serviceId": { "S": "LAP-023" },
+          "serviceName": { "S": "Laptop RAM Memory Upgrade" },
+          "serviceCategory": { "S": "Laptop Repair" },
+          "basePrice": { "N": "40.00" },
+          "shortDescription": { "S": "Labor for high-speed RAM install." },
+          "longDescription": { "S": "Upgrading system memory to improve multitasking. (Price is for labor; hardware extra)." },
+          "activities": { "L": [{ "S": "MemTest86 Validation" }, { "S": "Dual-Channel Check" }] },
+          "duration": { "S": "30 Mins" },
+          "warranty": { "S": "Lifetime" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "serviceId": { "S": "LAP-024" },
+          "serviceName": { "S": "MacBook Battery Replacement" },
+          "serviceCategory": { "S": "Laptop Repair" },
+          "basePrice": { "N": "149.00" },
+          "shortDescription": { "S": "Original capacity battery swap." },
+          "longDescription": { "S": "Safe removal of adhesive-bonded batteries and installation of premium cells for all MacBook models." },
+          "activities": { "L": [{ "S": "Adhesive Neutralization" }, { "S": "SMC Reset" }] },
+          "duration": { "S": "2 Hours" },
+          "warranty": { "S": "1 Year" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "serviceId": { "S": "GME-020" },
+          "serviceName": { "S": "PS5 Disk Drive Repair" },
+          "serviceCategory": { "S": "Gaming Systems" },
+          "basePrice": { "N": "110.00" },
+          "shortDescription": { "S": "Fix for disk ejection or read errors." },
+          "longDescription": { "S": "Repairing the mechanical loading system or replacing the laser pickup on PlayStation 5 consoles." },
+          "activities": { "L": [{ "S": "Roller Cleaning" }, { "S": "Laser Power Tuning" }] },
+          "duration": { "S": "24 Hours" },
+          "warranty": { "S": "6 Months" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "serviceId": { "S": "GME-021" },
+          "serviceName": { "S": "Xbox Series S/X Power Supply" },
+          "serviceCategory": { "S": "Gaming Systems" },
+          "basePrice": { "N": "135.00" },
+          "shortDescription": { "S": "Internal PSU replacement." },
+          "longDescription": { "S": "Fixes consoles that won't turn on or shut down randomly. Replacement of the internal power board." },
+          "activities": { "L": [{ "S": "Voltage Ripple Test" }, { "S": "Surge Check" }] },
+          "duration": { "S": "2 Hours" },
+          "warranty": { "S": "180 Days" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "serviceId": { "S": "GME-022" },
+          "serviceName": { "S": "Nintendo Switch OLED Screen" },
+          "serviceCategory": { "S": "Gaming Systems" },
+          "basePrice": { "N": "155.00" },
+          "shortDescription": { "S": "OLED panel module replacement." },
+          "longDescription": { "S": "High-precision replacement of the Switch OLED display module. Restores vivid colors and touch." },
+          "activities": { "L": [{ "S": "Digitizer Bonding" }, { "S": "Brightness Uniformity" }] },
+          "duration": { "S": "3 Hours" },
+          "warranty": { "S": "1 Year" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "serviceId": { "S": "GME-023" },
+          "serviceName": { "S": "Console Liquid Metal Refresh" },
+          "serviceCategory": { "S": "Gaming Systems" },
+          "basePrice": { "N": "85.00" },
+          "shortDescription": { "S": "Thermal interface maintenance." },
+          "longDescription": { "S": "Teardown and re-application of Sony-spec liquid metal to solve PS5 'Overheating' warnings." },
+          "activities": { "L": [{ "S": "Oxidized Spot Removal" }, { "S": "Barrier Leak Check" }] },
+          "duration": { "S": "4 Hours" },
+          "warranty": { "S": "1 Year" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "serviceId": { "S": "LAP-025" },
+          "serviceName": { "S": "Laptop Wi-Fi Card Upgrade" },
+          "serviceCategory": { "S": "Laptop Repair" },
+          "basePrice": { "N": "55.00" },
+          "shortDescription": { "S": "Wi-Fi 6E / Bluetooth 5.3 upgrade." },
+          "longDescription": { "S": "Replacing internal M.2 network cards to support the latest wireless standards and speeds." },
+          "activities": { "L": [{ "S": "Antenna Gain Check" }, { "S": "Throughput Test" }] },
+          "duration": { "S": "1 Hour" },
+          "warranty": { "S": "Lifetime" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "serviceId": { "S": "GME-024" },
+          "serviceName": { "S": "Retro Cartridge Battery" },
+          "serviceCategory": { "S": "Gaming Systems" },
+          "basePrice": { "N": "15.00" },
+          "shortDescription": { "S": "Save-game battery replacement." },
+          "longDescription": { "S": "Solder-based replacement of CR2025/2032 batteries in Pokémon and other retro game cartridges." },
+          "activities": { "L": [{ "S": "Voltage Check" }, { "S": "Solder Bead Reflow" }] },
+          "duration": { "S": "15 Mins" },
+          "warranty": { "S": "1 Year" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "serviceId": { "S": "LAP-026" },
+          "serviceName": { "S": "Laptop Chassis Replacement" },
+          "serviceCategory": { "S": "Laptop Repair" },
+          "basePrice": { "N": "120.00" },
+          "shortDescription": { "S": "Structural frame swap." },
+          "longDescription": { "S": "Transferring all components to a new bottom or top case to fix cracks or dented enclosures." },
+          "activities": { "L": [{ "S": "Component Migration" }, { "S": "Screw Port Integrity" }] },
+          "duration": { "S": "4 Hours" },
+          "warranty": { "S": "90 Days" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "serviceId": { "S": "GME-025" },
+          "serviceName": { "S": "PS5/Xbox SSD Expansion" },
+          "serviceCategory": { "S": "Gaming Systems" },
+          "basePrice": { "N": "30.00" },
+          "shortDescription": { "S": "Installation of M.2 NVMe storage." },
+          "longDescription": { "S": "Professional installation of high-speed storage and heatsink for console memory expansion." },
+          "activities": { "L": [{ "S": "Read Speed Verify" }, { "S": "Firmware Update" }] },
+          "duration": { "S": "20 Mins" },
+          "warranty": { "S": "Lifetime" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "serviceId": { "S": "LAP-027" },
+          "serviceName": { "S": "Touchscreen Digitizer Repair" },
+          "serviceCategory": { "S": "Laptop Repair" },
+          "basePrice": { "N": "210.00" },
+          "shortDescription": { "S": "Touch-glass module replacement." },
+          "longDescription": { "S": "Repairing erratic touch or broken glass on 2-in-1 laptops (Surface, Lenovo Yoga, etc.)." },
+          "activities": { "L": [{ "S": "Multi-touch Test" }, { "S": "Pen Pressure Sync" }] },
+          "duration": { "S": "3 Hours" },
+          "warranty": { "S": "180 Days" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "serviceId": { "S": "GME-026" },
+          "serviceName": { "S": "Gaming PC Custom Cooling" },
+          "serviceCategory": { "S": "Gaming Systems" },
+          "basePrice": { "N": "140.00" },
+          "shortDescription": { "S": "AIO Liquid Cooler installation." },
+          "longDescription": { "S": "Upgrading PC cooling to All-In-One liquid systems for better thermal management under load." },
+          "activities": { "L": [{ "S": "Pump Speed Control" }, { "S": "Leak Stress Test" }] },
+          "duration": { "S": "2 Hours" },
+          "warranty": { "S": "1 Year" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "serviceId": { "S": "LAP-028" },
+          "serviceName": { "S": "Laptop Camera Privacy Shield" },
+          "serviceCategory": { "S": "Laptop Repair" },
+          "basePrice": { "N": "25.00" },
+          "shortDescription": { "S": "Physical shutter installation." },
+          "longDescription": { "S": "Professional installation of a low-profile mechanical slider for webcam privacy." },
+          "activities": { "L": [{ "S": "Lens Cleaning" }, { "S": "Adhesion Test" }] },
+          "duration": { "S": "10 Mins" },
+          "warranty": { "S": "No Warranty" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "serviceId": { "S": "GME-027" },
+          "serviceName": { "S": "Elite Controller Paddle Fix" },
+          "serviceCategory": { "S": "Gaming Systems" },
+          "basePrice": { "N": "45.00" },
+          "shortDescription": { "S": "Rear button tactile repair." },
+          "longDescription": { "S": "Fixing non-responsive rear paddles on Xbox Elite or SCUF professional controllers." },
+          "activities": { "L": [{ "S": "Tactile Switch Swap" }, { "S": "Paddle Tension" }] },
+          "duration": { "S": "1 Hour" },
+          "warranty": { "S": "90 Days" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "serviceId": { "S": "LAP-029" },
+          "serviceName": { "S": "Laptop Audio Jack Repair" },
+          "serviceCategory": { "S": "Laptop Repair" },
+          "basePrice": { "N": "75.00" },
+          "shortDescription": { "S": "Fix for broken headphone plugs." },
+          "longDescription": { "S": "Replacing the 3.5mm audio jack module. Fixes static or sound only in one ear." },
+          "activities": { "L": [{ "S": "Stereo Balance Test" }, { "S": "TRRS Pin Check" }] },
+          "duration": { "S": "2 Hours" },
+          "warranty": { "S": "180 Days" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "serviceId": { "S": "GME-028" },
+          "serviceName": { "S": "Wii U GamePad Screen" },
+          "serviceCategory": { "S": "Gaming Systems" },
+          "basePrice": { "N": "95.00" },
+          "shortDescription": { "S": "LCD and digitizer swap." },
+          "longDescription": { "S": "Repairing the tablet controller for the Wii U system. Restores video and touch control." },
+          "activities": { "L": [{ "S": "Range Sync" }, { "S": "Touch Calib" }] },
+          "duration": { "S": "2 Hours" },
+          "warranty": { "S": "90 Days" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "serviceId": { "S": "LAP-030" },
+          "serviceName": { "S": "Laptop CMOS Battery" },
+          "serviceCategory": { "S": "Laptop Repair" },
+          "basePrice": { "N": "35.00" },
+          "shortDescription": { "S": "System clock/settings fix." },
+          "longDescription": { "S": "Fixes BIOS reset issues and 'Time Not Set' errors by replacing the internal coin cell." },
+          "activities": { "L": [{ "S": "BIOS Setting Save" }, { "S": "Voltage Check" }] },
+          "duration": { "S": "30 Mins" },
+          "warranty": { "S": "1 Year" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "serviceId": { "S": "GME-029" },
+          "serviceName": { "S": "PS4/Xbox Internal Dusting" },
+          "serviceCategory": { "S": "Gaming Systems" },
+          "basePrice": { "N": "40.00" },
+          "shortDescription": { "S": "High-pressure air cleaning." },
+          "longDescription": { "S": "Preventative maintenance to keep old-gen consoles running quiet and cool." },
+          "activities": { "L": [{ "S": "Fan Deep Clean" }, { "S": "Intake Clearing" }] },
+          "duration": { "S": "30 Mins" },
+          "warranty": { "S": "No Warranty" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "serviceId": { "S": "LAP-031" },
+          "serviceName": { "S": "MacBook USB-C Port Board" },
+          "serviceCategory": { "S": "Laptop Repair" },
+          "basePrice": { "N": "95.00" },
+          "shortDescription": { "S": "Modular charging port fix." },
+          "longDescription": { "S": "Replacing the modular USB-C power boards on MacBook Pro/Air models." },
+          "activities": { "L": [{ "S": "Power Delivery Test" }, { "S": "Thunderbolt Verify" }] },
+          "duration": { "S": "1 Hour" },
+          "warranty": { "S": "180 Days" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "serviceId": { "S": "GME-030" },
+          "serviceName": { "S": "PC Power Supply Upgrade" },
+          "serviceCategory": { "S": "Gaming Systems" },
+          "basePrice": { "N": "60.00" },
+          "shortDescription": { "S": "Installation of high-wattage PSU." },
+          "longDescription": { "S": "Professional cable management and installation of 750W+ Gold rated power units." },
+          "activities": { "L": [{ "S": "Cable Routing" }, { "S": "Full Load Stability" }] },
+          "duration": { "S": "1 Hour" },
+          "warranty": { "S": "1 Year" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "serviceId": { "S": "LAP-032" },
+          "serviceName": { "S": "Laptop Microphone Array" },
+          "serviceCategory": { "S": "Laptop Repair" },
+          "basePrice": { "N": "85.00" },
+          "shortDescription": { "S": "Internal mic module fix." },
+          "longDescription": { "S": "Replacing the internal noise-canceling microphone array. Restores clear audio for Zoom/Teams." },
+          "activities": { "L": [{ "S": "Phase Alignment" }, { "S": "Ambient Filter Test" }] },
+          "duration": { "S": "2 Hours" },
+          "warranty": { "S": "90 Days" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "serviceId": { "S": "GME-031" },
+          "serviceName": { "S": "Nintendo Switch Fan Replacement" },
+          "serviceCategory": { "S": "Gaming Systems" },
+          "basePrice": { "N": "70.00" },
+          "shortDescription": { "S": "Silent internal cooler swap." },
+          "longDescription": { "S": "Fixes the loud buzzing or high-pitched whine from the Switch cooling fan." },
+          "activities": { "L": [{ "S": "Heat Sink Flush" }, { "S": "Load Test" }] },
+          "duration": { "S": "1 Hour" },
+          "warranty": { "S": "180 Days" }
+        }
+      }
+    }
+  ]
+}
