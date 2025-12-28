@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NexusFlow | Create Profile</title>
+    <title>Nexus | Create Account</title>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aws-sdk/2.1522.0/aws-sdk.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js@6.3.7/dist/amazon-cognito-identity.min.js"></script>
@@ -13,141 +13,188 @@
     <link rel="stylesheet" href="header.css">
 
     <style>
-        body { padding-top: 100px; } /* Uniform offset for header */
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-light: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+        }
+
+        body { 
+            background: var(--bg-light); 
+            color: var(--text-main); 
+            font-family: 'Inter', sans-serif; 
+            margin: 0; 
+            padding-top: 80px; 
+        }
 
         .auth-container {
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 80vh;
+            min-height: calc(100vh - 80px);
             padding: 40px 20px;
         }
 
         .signup-card {
             width: 100%;
             max-width: 550px;
-            animation: fadeIn 0.5s ease;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid var(--border-cyan);
-            backdrop-filter: blur(10px);
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+            animation: fadeIn 0.4s ease-out;
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(15px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* 2-Column Grid for Form */
         .registration-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            gap: 20px;
         }
 
         .full-width { grid-column: span 2; }
+
+        .form-group { display: flex; flex-direction: column; }
 
         label {
             display: block;
             margin-bottom: 8px;
             font-size: 0.75rem;
+            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--text-dim);
-            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
         }
 
         input {
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(0, 243, 255, 0.2);
-            color: white;
-            padding: 12px;
-            border-radius: 4px;
-            width: 100%;
+            background: #fff;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
 
         #statusMsg {
             text-align: center;
             margin-top: 20px;
-            font-size: 0.85rem;
-            min-height: 20px;
-            padding: 12px;
-            border-radius: 6px;
+            font-size: 0.9rem;
+            padding: 14px;
+            border-radius: 8px;
             display: none;
-            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
         }
 
         hr {
             border: 0;
-            border-top: 1px solid rgba(0, 243, 255, 0.1);
-            margin: 20px 0;
+            border-top: 1px solid var(--border-color);
+            margin: 10px 0;
             grid-column: span 2;
         }
 
         .signup-title {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 1.8rem;
+            font-size: 2rem;
+            font-weight: 800;
             margin: 0;
+            color: var(--text-main);
+        }
+
+        .btn-submit {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 10px;
+        }
+
+        .btn-submit:hover { background: var(--primary-hover); }
+        .btn-submit:disabled { background: #cbd5e1; cursor: not-allowed; }
+
+        @media (max-width: 500px) {
+            .registration-grid { grid-template-columns: 1fr; }
+            .registration-grid div { grid-column: span 1 !important; }
         }
     </style>
 </head>
 <body>
 
+<div id="nexus-header-wrapper"></div>
 
 <div class="auth-container">
-    <div class="card signup-card">
-        <div style="text-align: center; margin-bottom: 30px;">
-            <h2 class="signup-title">System <span class="text-accent">Registration</span></h2>
-            <p class="text-dim" style="font-size: 0.9rem; margin-top: 8px;">Create your secure NexusFlow hardware profile.</p>
+    <div class="signup-card">
+        <div style="text-align: center; margin-bottom: 35px;">
+            <h2 class="signup-title">Create <span style="color: var(--primary);">Account</span></h2>
+            <p style="color: var(--text-muted); margin-top: 10px;">Join the Nexus network for professional hardware solutions.</p>
         </div>
 
         <form id="regForm" class="registration-grid">
-            <div>
-                <label>Middle Name</label>
-                <input type="text" id="middleName" placeholder="e.g. Alexander" required>
+            <div class="form-group">
+                <label for="middleName">First Name</label>
+                <input type="text" id="middleName" placeholder="Enter first name" required>
             </div>
-            <div>
-                <label>Family Name</label>
-                <input type="text" id="familyName" placeholder="e.g. Smith" required>
+            <div class="form-group">
+                <label for="familyName">Last Name</label>
+                <input type="text" id="familyName" placeholder="Enter last name" required>
             </div>
             
-            <div class="full-width">
-                <label>Email Address</label>
+            <div class="form-group full-width">
+                <label for="email">Email Address</label>
                 <input type="email" id="email" placeholder="name@company.com" required>
             </div>
 
-            <div class="full-width">
-                <label>Phone Number (International)</label>
-                <input type="tel" id="phone" placeholder="+2547..." required>
+            <div class="form-group full-width">
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" placeholder="+1234567890" required>
             </div>
 
-            <div class="full-width">
-                <label>Physical Address</label>
-                <input type="text" id="address" placeholder="Building, Street, City" required>
+            <div class="form-group full-width">
+                <label for="address">Shipping Address</label>
+                <input type="text" id="address" placeholder="Street, City, Country" required>
             </div>
 
             <hr>
 
-            <div class="full-width">
-                <label>Secure Password</label>
-                <input type="password" id="password" placeholder="••••••••" required>
+            <div class="form-group full-width">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Min. 8 characters" required>
             </div>
 
-            <button type="submit" id="submitBtn" class="btn btn-primary full-width" style="padding: 15px; font-size: 1rem; margin-top: 10px;">
-                Initialize Profile
+            <button type="submit" id="submitBtn" class="btn-submit full-width">
+                Create Account
             </button>
         </form>
 
         <div id="statusMsg"></div>
 
-        <div style="text-align: center; margin-top: 25px; font-size: 0.9rem; color: var(--text-dim);">
-            Already have an account? <a href="login.html" class="text-accent" style="text-decoration: none; font-weight: 700;">Sign In</a>
+        <div style="text-align: center; margin-top: 30px; font-size: 0.95rem; color: var(--text-muted);">
+            Already have an account? <a href="login.html" style="color: var(--primary); text-decoration: none; font-weight: 700;">Sign In</a>
         </div>
     </div>
 </div>
 
 <script src="header.js"></script>
 <script>
-    // Use config from auth-config.js
     const poolData = { 
         UserPoolId: NEXUS_CONFIG.auth.UserPoolId, 
         ClientId: NEXUS_CONFIG.auth.ClientId 
@@ -163,9 +210,9 @@
             const btn = document.getElementById('submitBtn');
             
             status.style.display = "block";
-            status.style.background = "rgba(255, 255, 255, 0.05)";
-            status.style.color = "var(--text-dim)";
-            status.innerText = "Synchronizing with AWS Cognito...";
+            status.style.background = "#eff6ff";
+            status.style.color = "#1e40af";
+            status.innerText = "Connecting to secure vault...";
             btn.disabled = true;
 
             const email = document.getElementById('email').value;
@@ -185,19 +232,19 @@
 
             userPool.signUp(email, password, attributeList, null, function(err, result) {
                 if (err) {
-                    status.style.background = "rgba(239, 68, 68, 0.1)";
-                    status.style.color = "#ff4444";
-                    status.innerText = err.message || "Registration failed.";
+                    status.style.background = "#fef2f2";
+                    status.style.color = "#991b1b";
+                    status.innerText = err.message || "Registration encountered an error.";
                     btn.disabled = false;
                     return;
                 }
                 
-                status.style.background = "rgba(16, 185, 129, 0.1)";
-                status.style.color = "#10b981";
-                status.innerText = "Profile created. Verify your email to activate.";
+                status.style.background = "#ecfdf5";
+                status.style.color = "#065f46";
+                status.innerText = "Account created. Please check your email for a verification code.";
                 
                 localStorage.setItem('nexusEmail', email);
-                setTimeout(() => { window.location.href = 'verify.html'; }, 2000);
+                setTimeout(() => { window.location.href = 'verify.html'; }, 2500);
             });
         };
     };

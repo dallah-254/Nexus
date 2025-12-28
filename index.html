@@ -3,100 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NexusFlow | Home</title>
+    <title>Nexus | Professional Technical Solutions</title>
     
     <script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js@6.3.7/dist/amazon-cognito-identity.min.js"></script>
     <script src="auth-config.js"></script>
     <script src="header.js" defer></script>
+        <script src="footer.js" defer></script>
+    <link rel="stylesheet" href="style.css">
 
     <style>
         :root {
-            --n-cyan: #00f3ff;
-            --n-bg: #0a0a0a;
-            --n-border: rgba(0, 243, 255, 0.15);
-            --n-panel: rgba(255, 255, 255, 0.03);
-            --accent: #00f3ff;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-light: #f1f5f9;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --border-color: #cbd5e1;
         }
 
-        body { background: var(--n-bg); color: white; margin: 0; font-family: 'Inter', sans-serif; padding-top: 120px; }
-        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        body { 
+            background: var(--bg-light); 
+            color: var(--text-main); 
+            margin: 0; 
+            font-family: 'Inter', sans-serif; 
+            /* REDUCED SPACE FROM HEADER (Was 130px) */
+            padding-top: 120px; 
+        }
 
-        /* --- THE NEXUS SWITCH --- */
+        .container { max-width: 1400px; margin: 0 auto; padding: 0 20px; }
+
+        /* --- COMPACT MODE SWITCH --- */
         .mode-switch-container {
-            display: flex; justify-content: center; margin-bottom: 50px;
+            display: flex; 
+            justify-content: center; 
+            margin-bottom: 20px; /* REDUCED SPACE (Was 40px) */
         }
         .mode-switch {
-            background: #111; border: 1px solid var(--n-border);
-            padding: 5px; border-radius: 50px; display: flex; gap: 5px;
-            box-shadow: 0 0 20px rgba(0, 243, 255, 0.1);
+            background: #e2e8f0; 
+            padding: 2px; 
+            border-radius: 50px; 
+            display: flex; 
+            border: 1px solid var(--border-color);
+            transform: scale(0.9); /* Subtly smaller scale */
         }
         .switch-btn {
-            padding: 12px 30px; border-radius: 50px; border: none;
-            background: transparent; color: #666; cursor: pointer;
-            font-family: 'JetBrains Mono', monospace; font-weight: 700;
-            text-transform: uppercase; transition: 0.3s;
+            padding: 6px 20px; 
+            border-radius: 50px; 
+            border: none;
+            background: transparent; 
+            color: var(--text-muted); 
+            cursor: pointer;
+            font-weight: 700; 
+            font-size: 0.8rem;
+            transition: all 0.2s ease;
         }
         .switch-btn.active {
-            background: var(--accent); color: #000;
-            box-shadow: 0 0 15px var(--accent);
+            background: var(--primary); 
+            color: white;
+            box-shadow: 0 2px 6px rgba(37, 99, 235, 0.2);
         }
-
-        #nexus-toast {
-            position: fixed; bottom: 30px; right: 30px;
-            padding: 15px 25px; background: #111;
-            border-left: 4px solid var(--n-cyan);
-            border-radius: 4px; color: white;
-            font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            z-index: 9999; display: none;
-            animation: slideIn 0.3s ease-out;
-        }
-
-        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
         /* Sections */
-        .category-section { margin-bottom: 60px; }
+        .category-section { margin-bottom: 30px; } /* Tightened sections */
         .section-header {
             display: flex; justify-content: space-between; align-items: center;
-            border-left: 4px solid var(--accent); padding-left: 15px; margin-bottom: 25px;
+            border-left: 3px solid var(--primary); padding-left: 12px; margin-bottom: 15px;
         }
-        .section-header h2 { font-family: 'JetBrains Mono', monospace; text-transform: uppercase; margin: 0; font-size: 1.4rem; }
-        .view-more-link { color: var(--accent); text-decoration: none; font-size: 0.8rem; font-family: 'JetBrains Mono'; text-transform: uppercase; }
+        .section-header h2 { text-transform: capitalize; margin: 0; font-size: 1.1rem; font-weight: 800; color: var(--text-main); }
+        .view-more-link { color: var(--primary); text-decoration: none; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
 
-        .nexus-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
+        /* EXTRA COMPACT GRID */
+        .nexus-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); 
+            gap: 15px; 
+        }
         
-        /* Shared Card Base */
+        /* Smaller Card Design */
         .nexus-card {
-            background: var(--n-panel); border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 12px; padding: 20px; transition: 0.3s;
-            display: flex; flex-direction: column; position: relative;
+            background: var(--card-bg); border: 1px solid var(--border-color);
+            border-radius: 10px; padding: 12px; transition: all 0.3s ease;
+            display: flex; flex-direction: column;
         }
-        .nexus-card:hover { border-color: var(--accent); transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,243,255,0.1); }
+        .nexus-card:hover { 
+            transform: translateY(-3px); 
+            box-shadow: 0 8px 15px -5px rgba(0,0,0,0.1);
+        }
 
-        /* Service Specific Card Elements */
-        .service-id { font-family: 'JetBrains Mono'; font-size: 0.7rem; color: #666; margin-bottom: 8px; }
-        .item-category { font-size: 0.7rem; color: var(--accent); text-transform: uppercase; font-weight: 700; margin-bottom: 5px; }
-        .item-name { font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; font-weight: 600; margin-bottom: 10px; min-height: 2.8rem; }
-        .item-desc { font-size: 0.85rem; color: #aaa; margin-bottom: 15px; line-height: 1.4; }
-        .price-tag { font-size: 1.3rem; font-weight: 800; color: #fff; margin-bottom: 20px; display: flex; align-items: baseline; gap: 5px; }
-        .price-tag span { font-size: 0.8rem; color: #666; font-weight: 400; }
+        .item-category { font-size: 0.6rem; color: var(--primary); text-transform: uppercase; font-weight: 800; margin-bottom: 3px; }
+        .item-name { font-size: 0.85rem; font-weight: 700; margin-bottom: 8px; min-height: 2.2rem; line-height: 1.2; color: var(--text-main); }
+        .item-desc { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 12px; line-height: 1.3; height: 32px; overflow: hidden; }
+        .price-tag { font-size: 1rem; font-weight: 800; color: var(--text-main); margin-bottom: 12px; }
+        .price-tag span { font-size: 0.7rem; color: var(--text-muted); font-weight: 500; }
 
-        /* Tag Pill Styling for Services */
-        .activity-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; }
-        .tag { font-size: 0.65rem; background: rgba(0,243,255,0.05); border: 1px solid rgba(0,243,255,0.2); padding: 3px 8px; border-radius: 4px; color: var(--n-cyan); }
-
-        .card-actions { display: flex; gap: 10px; margin-top: auto; }
         .btn-main {
-            flex: 1; background: var(--accent); color: #000; font-weight: 700; 
-            border: none; padding: 12px; border-radius: 8px; cursor: pointer;
-            font-family: 'JetBrains Mono'; text-transform: uppercase; font-size: 0.8rem; transition: 0.2s;
+            width: 100%; background: var(--primary); color: white; font-weight: 700; 
+            border: none; padding: 8px; border-radius: 5px; cursor: pointer;
+            font-size: 0.75rem; transition: background 0.2s;
         }
-        .btn-main:hover { background: #fff; transform: scale(1.02); }
 
-        .item-image { width: 100%; height: 180px; object-fit: contain; background: #000; margin-bottom: 15px; border-radius: 8px; }
+        .item-image { width: 100%; height: 110px; object-fit: contain; margin-bottom: 10px; background: #f8fafc; border-radius: 4px; }
 
-        .loader { text-align: center; padding: 100px; color: #666; font-family: 'JetBrains Mono'; letter-spacing: 2px; }
+        .loader { text-align: center; padding: 60px; color: var(--text-muted); font-size: 0.8rem; }
         .hidden { display: none; }
+
+        #nexus-toast {
+            position: fixed; bottom: 20px; right: 20px;
+            padding: 12px 20px; background: var(--text-main);
+            border-radius: 8px; color: white; font-size: 0.85rem; z-index: 9999; display: none;
+        }
     </style>
 </head>
 <body>
@@ -107,17 +123,17 @@
     <main class="container">
         <div class="mode-switch-container">
             <div class="mode-switch">
-                <button id="btn-show-products" class="switch-btn active" onclick="toggleMode('products')">Inventory</button>
-                <button id="btn-show-services" class="switch-btn" onclick="toggleMode('services')">Technical Services</button>
+                <button id="btn-show-products" class="switch-btn active" onclick="toggleMode('products')">products</button>
+                <button id="btn-show-services" class="switch-btn" onclick="toggleMode('services')">Repair Services</button>
             </div>
         </div>
 
         <div id="products-view">
-            <div class="loader">UPLINKING TO INVENTORY...</div>
+            <div class="loader">SYNCHRONIZING products...</div>
         </div>
 
         <div id="services-view" class="hidden">
-            <div class="loader">SCANNING SERVICE DATABASE...</div>
+            <div class="loader">RETRIEVING SERVICE PROTOCOLS...</div>
         </div>
     </main>
 
@@ -137,7 +153,7 @@
                 allProducts = await response.json();
                 renderItems(allProducts, view, 'product');
             } catch (err) {
-                view.innerHTML = `<div class="loader">PRODUCT DATALINK OFFLINE</div>`;
+                view.innerHTML = `<div class="loader">Unable to connect to products server.</div>`;
             }
         }
 
@@ -150,13 +166,13 @@
                 renderItems(allServices, view, 'service');
                 servicesLoaded = true;
             } catch (err) {
-                view.innerHTML = `<div class="loader">SERVICE DATALINK OFFLINE</div>`;
+                view.innerHTML = `<div class="loader">Service database is currently offline.</div>`;
             }
         }
 
         function renderItems(data, container, type) {
             const groups = data.reduce((acc, item) => {
-                const cat = (type === 'product' ? item.category : item.serviceCategory) || "Uncategorized";
+                const cat = (type === 'product' ? item.category : item.serviceCategory) || "General";
                 if (!acc[cat]) acc[cat] = [];
                 acc[cat].push(item);
                 return acc;
@@ -168,15 +184,15 @@
                 const section = document.createElement('section');
                 section.className = 'category-section';
                 
-                const viewAllLink = type === 'product' ? `shop.html?cat=${category}` : `services.html?cat=${category}`;
+                const viewAllLink = type === 'product' ? `shop.html?cat=${encodeURIComponent(category)}` : `services.html?cat=${encodeURIComponent(category)}`;
                 
                 section.innerHTML = `
                     <div class="section-header">
                         <h2>${category}</h2>
-                        <a href="${viewAllLink}" class="view-more-link">Expand Category</a>
+                        <a href="${viewAllLink}" class="view-more-link">View All</a>
                     </div>
                     <div class="nexus-grid">
-                        ${items.slice(0, 8).map(item => type === 'product' ? renderProductCard(item) : renderServiceCard(item)).join('')}
+                        ${items.slice(0, 6).map(item => type === 'product' ? renderProductCard(item) : renderServiceCard(item)).join('')}
                     </div>
                 `;
                 container.appendChild(section);
@@ -187,37 +203,23 @@
             return `
             <div class="nexus-card">
                 <a href="product-details.html?id=${p.productId}" style="text-decoration:none; color:inherit;">
-                    <img src="${p.imageUrl || 'https://via.placeholder.com/250'}" class="item-image">
+                    <img src="${p.imageUrl || 'https://via.placeholder.com/150'}" class="item-image">
                     <div class="item-category">${p.category}</div>
                     <div class="item-name">${p.name}</div>
-                    <div class="price-tag">$${p.price.toFixed(2)}</div>
+                    <div class="price-tag">$${parseFloat(p.price).toFixed(2)}</div>
                 </a>
-                <div class="card-actions">
-                    <button class="btn-main" onclick="quickAdd('${p.productId}')">Add to Cart</button>
-                </div>
+                <button class="btn-main" onclick="quickAdd('${p.productId}')">Add to Cart</button>
             </div>`;
         }
 
         function renderServiceCard(s) {
-            // Get first 2 activities to show as tags
-            const tags = s.activities ? s.activities.slice(0, 2).map(a => `<span class="tag">${a}</span>`).join('') : '';
-            
             return `
             <div class="nexus-card">
-                <div class="service-id">${s.serviceId}</div>
                 <div class="item-category">${s.serviceCategory}</div>
                 <div class="item-name">${s.serviceName}</div>
-                <div class="item-desc">${s.shortDescription || 'Professional technical maintenance and repair.'}</div>
-                
-                <div class="activity-tags">
-                    ${tags}
-                </div>
-
-                <div class="price-tag"><span>Starting at</span> $${s.basePrice}</div>
-                
-                <div class="card-actions">
-                    <button class="btn-main" onclick="location.href='service-details.html?id=${s.serviceId}'">Initialize Service</button>
-                </div>
+                <div class="item-desc">${s.shortDescription || 'Professional diagnostic and repair services.'}</div>
+                <div class="price-tag"><span>From</span> $${s.basePrice}</div>
+                <button class="btn-main" onclick="location.href='service-details.html?id=${s.serviceId}'">Book Service</button>
             </div>`;
         }
 
@@ -245,6 +247,16 @@
             const t = document.getElementById('nexus-toast');
             t.innerText = msg; t.style.display = 'block';
             setTimeout(() => t.style.display='none', 3000);
+        }
+
+        function quickAdd(id) {
+            const p = allProducts.find(item => item.productId === id);
+            if (!p) return;
+            let cart = JSON.parse(localStorage.getItem('nexus_cart')) || [];
+            cart.push({ productId: p.productId, name: p.name, price: p.price, imageUrl: p.imageUrl });
+            localStorage.setItem('nexus_cart', JSON.stringify(cart));
+            if (window.updateHeaderBadges) window.updateHeaderBadges();
+            showToast("Added to cart.");
         }
 
         window.onload = initPage;

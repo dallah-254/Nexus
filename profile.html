@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Account | NexusFlow</title>
+    <title>My Account | Nexus</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aws-sdk/2.1522.0/aws-sdk.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js@6.3.7/dist/amazon-cognito-identity.min.js"></script>
@@ -13,100 +13,150 @@
     <link rel="stylesheet" href="header.css">
 
     <style>
-        body { padding-top: 100px; font-family: 'Inter', sans-serif; } 
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-light: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+        }
+
+        body { 
+            padding-top: 100px; 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--bg-light);
+            color: var(--text-main);
+        } 
 
         /* Tab Navigation */
         .tab-nav {
             display: flex;
-            gap: 5px;
+            gap: 10px;
             margin-bottom: 30px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid var(--border-color);
         }
 
         .tab-link {
             background: none;
             border: none;
-            color: #888;
-            padding: 15px 25px;
+            color: var(--text-muted);
+            padding: 15px 20px;
             font-size: 0.95rem;
             font-weight: 600;
             cursor: pointer;
-            transition: 0.3s;
+            transition: 0.2s;
             border-bottom: 3px solid transparent;
         }
 
-        .tab-link:hover { color: var(--accent); }
+        .tab-link:hover { color: var(--primary); }
 
         .tab-link.active {
-            color: var(--accent);
-            border-bottom: 3px solid var(--accent);
+            color: var(--primary);
+            border-bottom: 3px solid var(--primary);
         }
 
         .tab-pane { display: none; animation: fadeIn 0.3s ease-in-out; }
         .tab-pane.active { display: block; }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(5px); }
+            from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         /* Account Details Styles */
         .account-grid {
             display: grid;
-            grid-template-columns: 300px 1fr;
+            grid-template-columns: 320px 1fr;
             gap: 30px;
         }
 
         .profile-card {
             text-align: center;
-            padding: 30px;
-            background: rgba(255,255,255,0.03);
-            border-radius: 12px;
+            padding: 40px 30px;
+            background: var(--card-bg);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
         }
 
         .user-circle {
-            width: 100px; height: 100px;
-            background: var(--accent);
-            color: #000;
+            width: 90px; height: 90px;
+            background: #eff6ff;
+            color: var(--primary);
             border-radius: 50%;
-            margin: 0 auto 15px;
+            margin: 0 auto 20px;
             display: flex; align-items: center; justify-content: center;
-            font-size: 2.5rem; font-weight: 800;
+            font-size: 2rem; font-weight: 800;
+            border: 2px solid #dbeafe;
         }
 
         .info-field {
-            margin-bottom: 20px;
-            padding: 15px;
-            background: rgba(0,0,0,0.2);
-            border-radius: 8px;
-            border: 1px solid rgba(255,255,255,0.05);
+            margin-bottom: 15px;
+            padding: 16px;
+            background: #f1f5f9;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
         }
 
         .info-field label {
             display: block;
             font-size: 0.75rem;
-            color: var(--accent);
+            color: var(--text-muted);
             text-transform: uppercase;
-            margin-bottom: 5px;
-            letter-spacing: 1px;
+            margin-bottom: 6px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
         }
 
-        .info-field span { font-size: 1rem; color: #fff; }
+        .info-field span { font-size: 1rem; color: var(--text-main); font-weight: 500; }
 
         /* Table Design */
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th { text-align: left; padding: 15px; color: #666; font-size: 0.8rem; text-transform: uppercase; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        td { padding: 20px 15px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .card-table-wrapper {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+        }
+
+        table { width: 100%; border-collapse: collapse; }
+        th { 
+            text-align: left; 
+            padding: 18px; 
+            background: #f8fafc;
+            color: var(--text-muted); 
+            font-size: 0.8rem; 
+            text-transform: uppercase; 
+            font-weight: 700;
+            border-bottom: 1px solid var(--border-color); 
+        }
+        td { padding: 20px 18px; border-bottom: 1px solid var(--border-color); font-size: 0.95rem; }
+        tr:last-child td { border-bottom: none; }
 
         .status-pill {
-            padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700;
+            padding: 6px 12px; border-radius: 8px; font-size: 0.75rem; font-weight: 700;
             text-transform: uppercase;
         }
-        .status-pending { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
-        .status-active { background: rgba(0, 243, 255, 0.1); color: var(--accent); }
-        .status-completed { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+        .status-pending { background: #fef3c7; color: #92400e; }
+        .status-active { background: #eff6ff; color: #1e40af; }
+        .status-completed { background: #dcfce7; color: #166534; }
 
-        @media (max-width: 850px) { .account-grid { grid-template-columns: 1fr; } }
+        .btn-logout {
+            width: 100%;
+            padding: 12px;
+            background: #fff;
+            color: #ef4444;
+            border: 1px solid #fee2e2;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-logout:hover { background: #fef2f2; border-color: #fecaca; }
+
+        @media (max-width: 900px) { .account-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
@@ -114,9 +164,9 @@
 <div id="nexus-header-wrapper"></div>
 
 <div class="container">
-    <header style="margin-bottom: 30px;">
-        <h1 style="font-weight: 800;">Customer <span class="text-accent">Dashboard</span></h1>
-        <p style="color: #666;">Manage your personal information, service requests, and orders.</p>
+    <header style="margin-bottom: 40px;">
+        <h1 style="font-weight: 800; font-size: 2.2rem; color: var(--text-main); margin-bottom: 8px;">Customer <span style="color: var(--primary);">Dashboard</span></h1>
+        <p style="color: var(--text-muted); font-size: 1.1rem;">Manage your account, track active service requests, and view order history.</p>
     </header>
 
     <div class="tab-nav">
@@ -127,32 +177,34 @@
 
     <section id="account" class="tab-pane active">
         <div class="account-grid">
-            <div class="profile-card card">
+            <div class="profile-card">
                 <div class="user-circle" id="user-initial">?</div>
-                <h3 id="user-name-display" style="margin-bottom: 5px;">User</h3>
-                <p style="color: #666; font-size: 0.9rem; margin-bottom: 25px;">Verified Customer</p>
-                <button class="btn btn-outline" style="width: 100%;" onclick="sessionTerminate()">Log Out</button>
+                <h3 id="user-name-display" style="margin-bottom: 5px; font-size: 1.4rem;">User</h3>
+                <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 30px;">Verified Nexus Client</p>
+                <button class="btn-logout" onclick="sessionTerminate()">Sign Out</button>
             </div>
             
-            <div class="card">
-                <h3 style="margin-bottom: 20px;">Contact Information</h3>
+            <div class="card" style="background: white; border: 1px solid var(--border-color); padding: 35px; border-radius: 16px;">
+                <h3 style="margin-bottom: 25px; font-size: 1.25rem;">Contact Information</h3>
                 <div id="profile-fields-container">
-                    <div style="color: #666;">Loading account data...</div>
+                    <div style="color: var(--text-muted);">Syncing with security pool...</div>
                 </div>
             </div>
         </div>
     </section>
 
     <section id="repairs" class="tab-pane">
-        <div class="card">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h3>Repair & Maintenance</h3>
-                <a href="book.html" class="btn btn-primary" style="padding: 8px 16px; font-size: 0.85rem;">Book New Service</a>
+        <div class="card-table-wrapper">
+            <div style="padding: 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color);">
+                <h3 style="margin: 0; font-size: 1.25rem;">Service & Maintenance</h3>
+                <button onclick="window.location.href='book.html'" style="background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer;">Book New Service</button>
             </div>
-            <div id="repair-status-msg" style="padding: 20px; color: #666;">Checking service history...</div>
+            <div id="repair-status-msg" style="padding: 40px; text-align: center; color: var(--text-muted);">
+                <div class="loading-pulse">Checking records...</div>
+            </div>
             <table id="repair-table" style="display:none;">
                 <thead>
-                    <tr><th>Date</th><th>Device / Issue</th><th>Status</th></tr>
+                    <tr><th>Date</th><th>Device / Technical Issue</th><th>Status</th></tr>
                 </thead>
                 <tbody id="repair-body"></tbody>
             </table>
@@ -160,12 +212,16 @@
     </section>
 
     <section id="orders" class="tab-pane">
-        <div class="card">
-            <h3 style="margin-bottom: 20px;">Recent Purchases</h3>
-            <div id="order-status-msg" style="padding: 20px; color: #666;">Retrieving orders...</div>
+        <div class="card-table-wrapper">
+            <div style="padding: 25px; border-bottom: 1px solid var(--border-color);">
+                <h3 style="margin: 0; font-size: 1.25rem;">Recent Procurement</h3>
+            </div>
+            <div id="order-status-msg" style="padding: 40px; text-align: center; color: var(--text-muted);">
+                <div class="loading-pulse">Retrieving history...</div>
+            </div>
             <table id="order-table" style="display:none;">
                 <thead>
-                    <tr><th>Date</th><th>Order ID</th><th>Total</th><th>Status</th></tr>
+                    <tr><th>Date</th><th>Order Reference</th><th>Total Amount</th><th>Fulfillment</th></tr>
                 </thead>
                 <tbody id="order-body"></tbody>
             </table>
@@ -175,7 +231,6 @@
 
 <script src="header.js"></script>
 <script>
-    // Simple Tab Switcher
     function openTab(evt, tabId) {
         const panes = document.getElementsByClassName("tab-pane");
         for (let i = 0; i < panes.length; i++) panes[i].classList.remove("active");
@@ -187,7 +242,6 @@
         evt.currentTarget.classList.add("active");
     }
 
-    // Load Data
     const poolData = { UserPoolId: NEXUS_CONFIG.auth.UserPoolId, ClientId: NEXUS_CONFIG.auth.ClientId };
 
     window.onload = function() {
@@ -218,7 +272,7 @@
         document.getElementById('user-initial').innerText = email.charAt(0).toUpperCase();
         document.getElementById('user-name-display').innerText = email.split('@')[0];
         
-        const labels = { 'email': 'Email Address', 'phone_number': 'Phone Number', 'address': 'Default Shipping Address' };
+        const labels = { 'email': 'Official Email Address', 'phone_number': 'Primary Contact', 'address': 'Service Address' };
         const container = document.getElementById('profile-fields-container');
         
         container.innerHTML = attrs
@@ -243,19 +297,19 @@
                 document.getElementById('repair-table').style.display = 'table';
                 document.getElementById('repair-body').innerHTML = data.map(item => `
                     <tr>
-                        <td style="color:#666">${item.bookingDate || 'N/A'}</td>
+                        <td style="color:var(--text-muted)">${item.bookingDate || '---'}</td>
                         <td>
-                            <div style="font-weight:600">${item.brand} ${item.model}</div>
-                            <div style="font-size:0.8rem; color:#888">${item.issueDescription}</div>
+                            <div style="font-weight:700; color:var(--text-main)">${item.brand} ${item.model}</div>
+                            <div style="font-size:0.85rem; color:var(--text-muted)">${item.issueDescription}</div>
                         </td>
-                        <td><span class="status-pill status-active">${item.status || 'IN REVIEW'}</span></td>
+                        <td><span class="status-pill status-active">${item.status || 'In Review'}</span></td>
                     </tr>
                 `).join('');
             } else {
-                document.getElementById('repair-status-msg').innerText = "No service requests found.";
+                document.getElementById('repair-status-msg').innerText = "No active service requests.";
                 document.getElementById('repair-status-msg').style.display = 'block';
             }
-        } catch (e) { document.getElementById('repair-status-msg').innerText = "Unable to load services."; }
+        } catch (e) { document.getElementById('repair-status-msg').innerText = "Network error loading services."; }
     }
 
     async function loadOrders(email) {
@@ -268,17 +322,28 @@
                 document.getElementById('order-table').style.display = 'table';
                 document.getElementById('order-body').innerHTML = data.map(order => `
                     <tr>
-                        <td style="color:#666">${new Date(order.createdAt).toLocaleDateString()}</td>
-                        <td style="font-weight:600">#${(order.orderId || '000000').substring(0,8)}</td>
-                        <td style="color:var(--accent)">$${order.totalAmount || '0.00'}</td>
-                        <td><span class="status-pill status-pending">${order.orderStatus || 'PROCESSING'}</span></td>
+                        <td style="color:var(--text-muted)">${new Date(order.createdAt).toLocaleDateString()}</td>
+                        <td style="font-weight:700; font-family:'JetBrains Mono', monospace">#${(order.orderId || '000000').substring(0,8).toUpperCase()}</td>
+                        <td style="color:var(--primary); font-weight:700">$${parseFloat(order.totalAmount || 0).toFixed(2)}</td>
+                        <td><span class="status-pill status-completed">${order.orderStatus || 'Fulfilling'}</span></td>
                     </tr>
                 `).join('');
             } else {
-                document.getElementById('order-status-msg').innerText = "No purchase history found.";
+                document.getElementById('order-status-msg').innerText = "No previous purchases found.";
                 document.getElementById('order-status-msg').style.display = 'block';
             }
-        } catch (e) { document.getElementById('order-status-msg').innerText = "Unable to load orders."; }
+        } catch (e) { document.getElementById('order-status-msg').innerText = "Network error loading orders."; }
+    }
+
+    function sessionTerminate() {
+        const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
+        const cognitoUser = userPool.getCurrentUser();
+        if (cognitoUser) {
+            cognitoUser.signOut();
+            localStorage.clear();
+            sessionStorage.clear();
+            window.location.href = 'login.html';
+        }
     }
 </script>
 </body>

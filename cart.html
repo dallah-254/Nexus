@@ -13,16 +13,22 @@
     <link rel="stylesheet" href="header.css">
     
     <style>
-        body { padding-top: 100px; } 
+        body { 
+            padding-top: 100px; 
+            background: var(--bg);
+            color: white;
+            min-height: 100vh;
+        } 
 
         .cart-wrapper {
             max-width: 1000px;
             margin: 0 auto;
             padding: 20px;
+            animation: fadeIn 0.6s ease-out;
         }
 
         /* View Toggling */
-        #checkout-view { display: none; animation: fadeIn 0.4s ease; }
+        #checkout-view { display: none; }
         .hidden { display: none !important; }
 
         /* Cart Item Styling */
@@ -32,25 +38,32 @@
             display: flex;
             align-items: center;
             background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(0, 243, 255, 0.1);
+            border: 1px solid var(--border-subtle);
             padding: 20px;
-            border-radius: 8px;
+            border-radius: 12px;
             margin-bottom: 15px;
             gap: 20px;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .cart-item:hover {
+            border-color: var(--border-cyan);
+            transform: translateX(5px);
         }
 
         .cart-item img {
-            width: 100px;
-            height: 100px;
+            width: 90px;
+            height: 90px;
             object-fit: cover;
-            border-radius: 4px;
-            border: 1px solid #333;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.1);
         }
 
         .item-details { flex-grow: 1; }
 
         .product-link {
-            font-family: 'JetBrains Mono', monospace;
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
             font-size: 1.1rem;
             color: var(--accent);
             text-decoration: none;
@@ -58,7 +71,7 @@
             margin-bottom: 5px;
         }
 
-        .product-link:hover { text-decoration: underline; }
+        .product-link:hover { color: var(--accent-hover); }
 
         .item-price {
             font-family: 'JetBrains Mono', monospace;
@@ -70,12 +83,14 @@
         .remove-btn {
             background: none;
             border: none;
-            color: #ff4d4d;
+            color: var(--danger);
             font-size: 0.7rem;
+            font-family: 'JetBrains Mono', monospace;
             text-transform: uppercase;
             cursor: pointer;
             padding: 5px 0;
-            opacity: 0.7;
+            opacity: 0.6;
+            letter-spacing: 1px;
         }
         .remove-btn:hover { opacity: 1; text-decoration: underline; }
 
@@ -84,15 +99,16 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(0, 243, 255, 0.05);
+            background: rgba(0, 243, 255, 0.03);
             padding: 30px;
             border-radius: 12px;
-            border: 1px dashed var(--accent);
+            border: 1px dashed var(--border-cyan);
             margin-top: 40px;
+            backdrop-filter: blur(10px);
         }
 
-        .grand-total-label { color: #888; font-size: 0.8rem; letter-spacing: 2px; }
-        .grand-total-value { font-size: 2rem; font-weight: 800; font-family: 'JetBrains Mono', monospace; color: var(--accent); }
+        .grand-total-label { color: var(--text-secondary); font-size: 0.7rem; letter-spacing: 3px; text-transform: uppercase; }
+        .grand-total-value { font-size: 2.2rem; font-weight: 800; font-family: 'JetBrains Mono', monospace; color: var(--accent); }
 
         /* Checkout Form Styling */
         .form-grid {
@@ -103,18 +119,34 @@
         }
 
         .input-group { margin-bottom: 20px; }
-        label { display: block; font-size: 0.75rem; color: var(--accent); text-transform: uppercase; margin-bottom: 8px; }
+        label { display: block; font-size: 0.7rem; color: var(--accent); text-transform: uppercase; margin-bottom: 8px; font-weight: 700; letter-spacing: 1px;}
+        
         input, textarea, select {
             width: 100%;
-            padding: 12px;
-            background: #0a0a0a;
-            border: 1px solid #333;
+            padding: 14px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
             color: #fff;
-            border-radius: 4px;
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        input:focus, textarea:focus {
+            border-color: var(--accent);
+            outline: none;
+            background: rgba(255,255,255,0.05);
+        }
+
+        .checkout-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-subtle);
+            padding: 40px;
+            border-radius: 16px;
+            margin-top: 30px;
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(15px); }
             to { opacity: 1; transform: translateY(0); }
         }
     </style>
@@ -125,60 +157,61 @@
 
 <div class="cart-wrapper">
     <div id="empty-state" class="hidden" style="text-align: center; padding: 100px 20px;">
-        <h1 class="mono" style="font-size: 3rem;">Cart <span class="text-accent">Null</span></h1>
-        <p style="color: #666; margin-bottom: 30px;">No hardware signatures detected in current session.</p>
+        <div style="font-size: 4rem; color: var(--text-dim); margin-bottom: 20px;">∅</div>
+        <h1 class="mono" style="font-size: 2.5rem; margin-bottom: 10px;">Cart <span class="text-accent">Null</span></h1>
+        <p style="color: var(--text-secondary); margin-bottom: 30px; max-width: 400px; margin-left: auto; margin-right: auto;">No hardware signatures detected in current session. Procurement initialization required.</p>
         <a href="shop.html" class="btn btn-primary">Initialize Procurement</a>
     </div>
 
     <div id="cart-view">
-        <h1 class="mono">Hardware <span class="text-accent">Inventory</span></h1>
-        <p style="color: #666;">Review selected modules before initiating deployment.</p>
+        <h1 class="mono" style="font-weight: 800; letter-spacing: -1px;">Hardware <span class="text-accent">Inventory</span></h1>
+        <p style="color: var(--text-secondary);">Review selected modules before initiating secure deployment.</p>
 
         <div id="cart-items-list" class="cart-list">
             </div>
 
         <div class="cart-summary-bar">
             <div>
-                <div class="grand-total-label">SYSTEM TOTAL</div>
+                <div class="grand-total-label">Subtotal Estimate</div>
                 <div id="total-amount" class="grand-total-value">$0.00</div>
             </div>
-            <button class="btn btn-primary" onclick="showCheckout()" style="padding: 15px 40px;">Continue to Checkout →</button>
+            <button class="btn btn-primary" onclick="showCheckout()" style="padding: 18px 45px; font-weight: 800;">Proceed to Logistics →</button>
         </div>
     </div>
 
-    <div id="checkout-view">
-        <h1 class="mono">Secure <span class="text-accent">Logistics</span></h1>
-        <p style="color: #666;">Provide deployment coordinates and payment protocol.</p>
+    <div id="checkout-view" class="animation-fadeIn">
+        <h1 class="mono" style="font-weight: 800;">Secure <span class="text-accent">Logistics</span></h1>
+        <p style="color: var(--text-secondary);">Provide deployment coordinates and payment protocol for final fulfillment.</p>
 
-        <div class="card" style="margin-top: 30px; background: rgba(255,255,255,0.01);">
+        <div class="checkout-card">
             <div class="form-grid">
                 <div class="input-group">
                     <label>Operator Name</label>
-                    <input type="text" id="op-name" placeholder="Full legal name">
+                    <input type="text" id="op-name" placeholder="Assigned User Name">
                 </div>
                 <div class="input-group">
-                    <label>Verified Email</label>
-                    <input type="email" id="op-email" readonly style="opacity: 0.5; cursor: not-allowed;">
+                    <label>Verified ID (Email)</label>
+                    <input type="email" id="op-email" readonly style="opacity: 0.5; background: #000; cursor: not-allowed; border-color: transparent;">
                 </div>
             </div>
 
             <div class="input-group">
-                <label>Deployment Coordinates (Address)</label>
-                <textarea id="op-address" rows="3" placeholder="Building, Street, City, Country"></textarea>
+                <label>Deployment Coordinates (Shipping Address)</label>
+                <textarea id="op-address" rows="3" placeholder="Street Address, City, Sector, Region"></textarea>
             </div>
 
             <div class="input-group">
                 <label>Payment Protocol</label>
                 <select id="op-payment">
                     <option value="M-Pesa">M-Pesa Express</option>
-                    <option value="Card">Credit / Debit Card</option>
-                    <option value="Crypto">Digital Asset Transfer</option>
+                    <option value="Card">Credit / Debit (Stripe Secure)</option>
+                    <option value="Crypto">Digital Asset Transfer (USDT/BTC)</option>
                 </select>
             </div>
 
-            <div style="margin-top: 30px;">
-                <button class="btn btn-primary" style="width: 100%; height: 60px;" onclick="processOrder()">EXECUTE SECURE CHECKOUT</button>
-                <button class="btn btn-outline" style="width: 100%; margin-top: 15px; border:none;" onclick="hideCheckout()">← Return to Inventory</button>
+            <div style="margin-top: 40px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 30px;">
+                <button class="btn btn-primary" id="submit-btn" style="width: 100%; height: 65px; font-size: 1.1rem; letter-spacing: 2px;" onclick="processOrder()">EXECUTE SECURE CHECKOUT</button>
+                <button class="btn" style="width: 100%; margin-top: 15px; background: transparent; color: var(--text-secondary); border: none;" onclick="hideCheckout()">← Return to Inventory</button>
             </div>
         </div>
     </div>
@@ -186,11 +219,9 @@
 
 <script src="header.js"></script>
 <script>
-    // --- LOGIN GUARD ---
-    const userPool = new AmazonCognitoIdentity.CognitoUserPool({
-        UserPoolId: NEXUS_CONFIG.auth.UserPoolId,
-        ClientId: NEXUS_CONFIG.auth.ClientId
-    });
+    // --- AUTH GUARD ---
+    const poolData = { UserPoolId: NEXUS_CONFIG.auth.UserPoolId, ClientId: NEXUS_CONFIG.auth.ClientId };
+    const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
     const cognitoUser = userPool.getCurrentUser();
 
     window.onload = function() {
@@ -204,17 +235,23 @@
                 window.location.href = 'login.html';
                 return;
             }
-            // Populate Email from Session
+            
+            // Get user email for the form
             cognitoUser.getUserAttributes((err, attrs) => {
-                const email = attrs.find(a => a.Name === 'email');
-                if (email) document.getElementById('op-email').value = email.Value;
+                if (!err) {
+                    const email = attrs.find(a => a.Name === 'email');
+                    if (email) document.getElementById('op-email').value = email.Value;
+                    
+                    const name = attrs.find(a => a.Name === 'name') || attrs.find(a => a.Name === 'family_name');
+                    if (name) document.getElementById('op-name').value = name.Value;
+                }
             });
         });
 
         renderCart();
     };
 
-    // --- CART LOGIC ---
+    // --- CART CORE ---
     function renderCart() {
         const cart = JSON.parse(localStorage.getItem('nexus_cart')) || [];
         const container = document.getElementById('cart-items-list');
@@ -232,15 +269,16 @@
 
         let total = 0;
         container.innerHTML = cart.map((item, index) => {
-            total += parseFloat(item.price);
+            const price = parseFloat(item.price || 0);
+            total += price;
             return `
                 <div class="cart-item">
-                    <img src="${item.imageUrl || 'https://via.placeholder.com/100?text=Hardware'}" alt="Item">
+                    <img src="${item.imageUrl || 'https://via.placeholder.com/100?text=Module'}" alt="Hardware">
                     <div class="item-details">
                         <a href="product-details.html?id=${item.productId}" class="product-link">${item.name}</a>
-                        <button class="remove-btn" onclick="removeItem(${index})">[ DE-LIST ITEM ]</button>
+                        <button class="remove-btn" onclick="removeItem(${index})">[ DE-LIST_MODULE ]</button>
                     </div>
-                    <div class="item-price">$${parseFloat(item.price).toFixed(2)}</div>
+                    <div class="item-price">$${price.toFixed(2)}</div>
                 </div>
             `;
         }).join('');
@@ -253,14 +291,16 @@
         cart.splice(index, 1);
         localStorage.setItem('nexus_cart', JSON.stringify(cart));
         renderCart();
-        if(window.updateHeaderBadges) updateHeaderBadges();
+        
+        // Update global header counts
+        if(window.updateBadges) window.updateBadges();
     }
 
     // --- NAVIGATION ---
     function showCheckout() {
         document.getElementById('cart-view').classList.add('hidden');
         document.getElementById('checkout-view').style.display = 'block';
-        window.scrollTo(0, 0);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function hideCheckout() {
@@ -268,34 +308,43 @@
         document.getElementById('cart-view').classList.remove('hidden');
     }
 
-    // --- SUBMISSION ---
+    // --- FINAL SUBMISSION ---
     async function processOrder() {
         const name = document.getElementById('op-name').value;
         const address = document.getElementById('op-address').value;
+        const btn = document.getElementById('submit-btn');
 
         if (!name || !address) {
-            NexusUtils.showAlert("Incomplete logistics data.", "warning");
+            if(window.NexusUtils) NexusUtils.showAlert("Logistics data incomplete.", "warning");
+            else alert("Please provide deployment coordinates.");
             return;
         }
 
-        const cart = JSON.parse(localStorage.getItem('nexus_cart'));
-        const total = document.getElementById('total-amount').innerText;
-
-        // Visual Feedback
-        const btn = event.target;
         btn.disabled = true;
-        btn.innerText = "TRANSMITTING SIGNAL...";
+        btn.innerText = "TRANSMITTING ENCRYPTED SIGNAL...";
 
-        // API Submission logic would go here
+        const total = document.getElementById('total-amount').innerText;
+        const email = document.getElementById('op-email').value;
+
+        // Simulate API latency
         setTimeout(() => {
+            const orderId = 'NX-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+            
+            // Store order data for the success page
             sessionStorage.setItem('lastOrder', JSON.stringify({
-                id: 'NX-' + Math.random().toString(36).substr(2, 9).toUpperCase(),
-                total: total
+                id: orderId,
+                total: total.replace('$', ''),
+                email: email
             }));
+
+            // Clear Cart
             localStorage.removeItem('nexus_cart');
+            
+            // Redirect to success protocol
             window.location.href = 'order-success.html';
-        }, 1500);
+        }, 1800);
     }
 </script>
+
 </body>
 </html>

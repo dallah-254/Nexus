@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NexusFlow | Service Intelligence</title>
+    <title>Nexus | Service Catalog</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aws-sdk/2.1522.0/aws-sdk.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js@6.3.7/dist/amazon-cognito-identity.min.js"></script>
@@ -14,19 +14,29 @@
     
     <style>
         :root { 
-            --accent: #00f3ff; 
-            --bg: #0a0a0a; 
-            --panel: rgba(255,255,255,0.03); 
-            --border: rgba(0,243,255,0.15); 
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-light: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
         }
         
-        body { background: var(--bg); color: white; font-family: 'Inter', sans-serif; padding-top: 140px; margin: 0; }
+        body { 
+            background: var(--bg-light); 
+            color: var(--text-main); 
+            font-family: 'Inter', sans-serif; 
+            padding-top: 100px; 
+            margin: 0; 
+        }
+
         .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
 
-        /* --- CONTROL PANEL (Search + Filter) --- */
+        /* --- CONTROL PANEL --- */
         .control-panel {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid var(--border);
+            background: white;
+            border: 1px solid var(--border-color);
             border-radius: 16px;
             padding: 30px;
             margin-bottom: 50px;
@@ -34,93 +44,105 @@
             grid-template-columns: 1fr auto;
             gap: 20px;
             align-items: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         }
 
         .search-box { position: relative; }
         .service-search-input {
             width: 100%;
-            background: #000;
-            border: 1px solid rgba(255,255,255,0.1);
+            background: var(--bg-light);
+            border: 1px solid var(--border-color);
             padding: 15px 20px 15px 45px;
-            border-radius: 8px;
-            color: var(--accent);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.9rem;
+            border-radius: 10px;
+            color: var(--text-main);
+            font-size: 1rem;
             outline: none;
-            transition: 0.3s;
+            transition: all 0.2s;
         }
-        .service-search-input:focus { border-color: var(--accent); box-shadow: 0 0 15px rgba(0,243,255,0.1); }
-        .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #444; }
+        .service-search-input:focus { 
+            border-color: var(--primary); 
+            background: white;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); 
+        }
+        .search-icon { 
+            position: absolute; left: 18px; top: 50%; transform: translateY(-50%); 
+            font-size: 1.1rem;
+            opacity: 0.5;
+        }
 
         /* --- CATEGORY SECTIONING --- */
         .category-block { margin-bottom: 60px; }
         .category-title {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 1.2rem;
-            letter-spacing: 2px;
-            color: #fff;
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--text-main);
             margin-bottom: 25px;
             display: flex;
             align-items: center;
             gap: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         .category-title::after {
             content: "";
             flex: 1;
-            height: 1px;
-            background: linear-gradient(90deg, var(--border), transparent);
+            height: 2px;
+            background: var(--border-color);
         }
 
-        /* --- SERVICE CARDS (Marketing Optimized) --- */
+        /* --- SERVICE CARDS --- */
         .nexus-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; }
         
         .service-card {
-            background: var(--panel);
-            border: 1px solid rgba(255,255,255,0.05);
-            border-radius: 12px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
             padding: 24px;
-            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             flex-direction: column;
             text-decoration: none;
             color: inherit;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
 
         .service-card:hover {
-            background: rgba(0, 243, 255, 0.03);
-            border-color: var(--accent);
+            border-color: var(--primary);
             transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
         }
 
         .service-tag {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.65rem;
-            color: var(--accent);
+            font-weight: 700;
+            font-size: 0.7rem;
+            color: var(--primary);
             text-transform: uppercase;
             margin-bottom: 12px;
-            opacity: 0.8;
+            letter-spacing: 0.5px;
         }
 
         .service-name {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 1.1rem;
+            font-size: 1.25rem;
+            font-weight: 700;
             margin: 0 0 15px 0;
             line-height: 1.3;
+            color: var(--text-main);
         }
 
         .activity-preview {
             display: flex;
             flex-wrap: wrap;
-            gap: 6px;
-            margin-bottom: 20px;
+            gap: 8px;
+            margin-bottom: 25px;
         }
 
         .pill {
-            font-size: 0.65rem;
-            background: rgba(255,255,255,0.05);
-            padding: 4px 10px;
-            border-radius: 4px;
-            color: #aaa;
+            font-size: 0.7rem;
+            font-weight: 600;
+            background: #eff6ff;
+            padding: 6px 12px;
+            border-radius: 6px;
+            color: var(--primary);
         }
 
         .service-footer {
@@ -128,21 +150,20 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding-top: 15px;
-            border-top: 1px solid rgba(255,255,255,0.05);
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
         }
 
-        .price { font-weight: 700; color: #fff; }
-        .price span { font-size: 0.7rem; color: #666; font-weight: 400; margin-right: 4px; }
+        .price { font-weight: 800; color: var(--text-main); font-size: 1.1rem; }
+        .price span { font-size: 0.7rem; color: var(--text-muted); font-weight: 600; margin-right: 5px; }
 
         .init-link {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.75rem;
-            color: var(--accent);
-            text-decoration: underline;
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: var(--primary);
         }
 
-        #loader { text-align: center; padding: 100px; font-family: 'JetBrains Mono'; color: var(--accent); }
+        #loader { text-align: center; padding: 100px; font-weight: 600; color: var(--primary); }
     </style>
 </head>
 <body>
@@ -152,16 +173,16 @@
     <main class="container">
         <div class="control-panel">
             <div class="search-box">
-                <span class="search-icon">⚡</span>
+                <span class="search-icon">🔍</span>
                 <input type="text" id="serviceSearch" class="service-search-input" 
-                       placeholder="SCAN_SYSTEM_PROTOCOLS..." oninput="handleSearch()">
+                       placeholder="Search for repair services, diagnostic protocols..." oninput="handleSearch()">
             </div>
-            <div id="status-tag" style="font-family: 'JetBrains Mono'; font-size: 0.7rem; color: #444;">
-                SYSTEM_STABLE // DATA_SYNCED
+            <div id="status-tag" style="font-weight: 700; font-size: 0.75rem; color: var(--text-muted);">
+                STATUS: REGISTRY_ACTIVE
             </div>
         </div>
 
-        <div id="loader">ACCESSING_CENTRAL_REGISTRY...</div>
+        <div id="loader">Syncing service database...</div>
         <div id="service-display-area"></div>
     </main>
 
@@ -175,7 +196,7 @@
                 document.getElementById('loader').style.display = 'none';
                 renderCategorized(rawData);
             } catch (e) {
-                document.getElementById('loader').innerHTML = `<span style="color:#ff4444">LINK_FAILURE</span>`;
+                document.getElementById('loader').innerHTML = `<span style="color:#ef4444">Connection to registry failed.</span>`;
             }
         }
 
@@ -192,24 +213,27 @@
             const container = document.getElementById('service-display-area');
             container.innerHTML = '';
 
-            // Grouping logic
             const groups = data.reduce((acc, item) => {
-                const cat = item.serviceCategory || "GENERAL_OPERATIONS";
+                const cat = item.serviceCategory || "General Maintenance";
                 if (!acc[cat]) acc[cat] = [];
                 acc[cat].push(item);
                 return acc;
             }, {});
 
+            if (Object.keys(groups).length === 0) {
+                container.innerHTML = `<div style="text-align:center; padding:50px; color:var(--text-muted);">No services found matching your criteria.</div>`;
+                return;
+            }
+
             for (const [category, services] of Object.entries(groups)) {
                 const section = document.createElement('div');
                 section.className = 'category-block';
                 
-                // Only show 10 if we're not searching, otherwise show all matches
                 const isSearching = document.getElementById('serviceSearch').value.length > 0;
                 const displayItems = isSearching ? services : services.slice(0, 10);
 
                 section.innerHTML = `
-                    <div class="category-title">${category.toUpperCase()}</div>
+                    <div class="category-title">${category}</div>
                     <div class="nexus-grid">
                         ${displayItems.map(s => renderServiceCard(s)).join('')}
                     </div>
@@ -219,10 +243,10 @@
         }
 
         function renderServiceCard(s) {
-            const activities = s.activities ? s.activities.slice(0, 3).map(a => `<span class="pill">${a}</span>`).join('') : '';
+            const activities = s.activities ? s.activities.slice(0, 3).map(a => `<span class="pill">${a}</span>`).join('') : '<span class="pill">Full Diagnostic</span>';
             return `
                 <a href="service-details.html?id=${s.serviceId}" class="service-card">
-                    <div class="service-tag">${s.serviceId}</div>
+                    <div class="service-tag">REF: ${s.serviceId}</div>
                     <h3 class="service-name">${s.serviceName}</h3>
                     
                     <div class="activity-preview">
@@ -230,8 +254,8 @@
                     </div>
 
                     <div class="service-footer">
-                        <div class="price"><span>FROM</span>$${parseFloat(s.basePrice || 0).toFixed(2)}</div>
-                        <span class="init-link">INITIALIZE_UNIT</span>
+                        <div class="price"><span>EST.</span>$${parseFloat(s.basePrice || 0).toFixed(2)}</div>
+                        <span class="init-link">View Details &rarr;</span>
                     </div>
                 </a>
             `;

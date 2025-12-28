@@ -5,17 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NexusFlow | Transmission Successful</title>
     
-    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aws-sdk/2.1522.0/aws-sdk.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js@6.3.7/dist/amazon-cognito-identity.min.js"></script>
+    
     <script src="auth-config.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="header.css">
     
     <style>
         body {
             display: flex;
-            justify-content: center;
-            align-items: center;
+            flex-direction: column;
             min-height: 100vh;
             background: radial-gradient(circle at center, #0a0a0a 0%, #000 100%);
             margin: 0;
+            padding-top: 80px; /* Space for fixed header */
+        }
+
+        .success-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             padding: 20px;
         }
 
@@ -26,11 +37,24 @@
             animation: fadeIn 0.8s ease-out;
         }
 
-        .success-icon {
-            font-size: 4rem;
+        /* Animated Checkmark */
+        .checkmark-circle {
+            width: 80px;
+            height: 80px;
+            border: 3px solid var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            box-shadow: 0 0 20px var(--accent-glow);
+            background: rgba(0, 243, 255, 0.05);
+        }
+
+        .checkmark {
+            font-size: 2.5rem;
             color: var(--accent);
-            margin-bottom: 20px;
-            filter: drop-shadow(0 0 15px var(--accent-glow));
+            animation: scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         .status-header {
@@ -41,7 +65,7 @@
             margin-bottom: 10px;
         }
 
-        /* Technical Data Grid */
+        /* Secure Log / Receipt Card */
         .receipt-card {
             background: rgba(255, 255, 255, 0.02);
             border: 1px solid var(--border-cyan);
@@ -50,18 +74,20 @@
             margin: 30px 0;
             text-align: left;
             position: relative;
+            backdrop-filter: blur(10px);
         }
 
         .receipt-card::before {
-            content: "SECURE LOG";
+            content: "SECURE_LOG";
             position: absolute;
             top: -10px;
             right: 20px;
-            background: var(--bg);
+            background: #050505;
             padding: 0 10px;
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.7rem;
             color: var(--text-dim);
+            border: 1px solid var(--border-cyan);
         }
 
         .data-row {
@@ -91,6 +117,7 @@
             color: var(--text-dim);
             font-size: 0.8rem;
             margin-top: 20px;
+            line-height: 1.6;
         }
 
         .action-btns {
@@ -99,75 +126,81 @@
             margin-top: 30px;
         }
 
-        .btn { width: 100%; }
+        @keyframes scaleIn {
+            from { transform: scale(0); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
 
-        /* Animation for the checkmark */
-        .checkmark-circle {
-            width: 80px;
-            height: 80px;
-            border: 3px solid var(--accent);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 25px;
-            box-shadow: 0 0 20px var(--accent-glow);
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
 
-<div class="success-wrapper">
-    <div class="checkmark-circle">
-        <span style="font-size: 2.5rem;">✓</span>
-    </div>
-    
-    <div class="status-header">Transmission Received</div>
-    <h1>Request <span class="text-accent">Confirmed</span></h1>
-    
-    <div class="receipt-card">
-        <div class="data-row">
-            <span class="label">Booking ID</span>
-            <span class="value" id="disp-id">#NX-0000</span>
-        </div>
-        <div class="data-row">
-            <span class="label">Component</span>
-            <span class="value" id="disp-device">Hardware Unit</span>
-        </div>
-        <div class="data-row">
-            <span class="label">Priority</span>
-            <span class="value" style="color: var(--warning);">Urgent Diagnostic</span>
-        </div>
-        <div class="data-row">
-            <span class="label">Deployment</span>
-            <span class="value" id="disp-date">Pending Sync</span>
-        </div>
-    </div>
+<div id="nexus-header-wrapper"></div>
 
-    <p class="footer-note">A technician has been assigned to your case. Check your profile for real-time status updates.</p>
+<div class="success-container">
+    <div class="success-wrapper">
+        <div class="checkmark-circle">
+            <span class="checkmark">✓</span>
+        </div>
+        
+        <div class="status-header">Transmission Received</div>
+        <h1 style="font-weight: 800; margin-bottom: 10px;">Request <span class="text-accent">Confirmed</span></h1>
+        
+        <div class="receipt-card">
+            <div class="data-row">
+                <span class="label">Booking ID</span>
+                <span class="value" id="disp-id">#NX-LOADING</span>
+            </div>
+            <div class="data-row">
+                <span class="label">Component</span>
+                <span class="value" id="disp-device">Analyzing...</span>
+            </div>
+            <div class="data-row">
+                <span class="label">Priority</span>
+                <span class="value" style="color: var(--warning);">Urgent Diagnostic</span>
+            </div>
+            <div class="data-row">
+                <span class="label">Deployment</span>
+                <span class="value" id="disp-date">Pending Sync</span>
+            </div>
+        </div>
 
-    <div class="action-btns">
-        <a href="index.html" class="btn btn-outline">Return Home</a>
-        <a href="profile.html" class="btn btn-primary">Go to Profile</a>
+        <p class="footer-note">
+            The service request has been logged into the NexusFlow ledger. 
+            A technician will be dispatched to your coordinates shortly.
+        </p>
+
+        <div class="action-btns">
+            <a href="index.html" class="btn" style="border: 1px solid var(--border-cyan); color: white; background: transparent; text-decoration: none; display: flex; align-items: center; justify-content: center; border-radius: 8px;">Return Home</a>
+            <a href="profile.html" class="btn btn-primary" style="text-decoration: none; display: flex; align-items: center; justify-content: center;">Go to Profile</a>
+        </div>
     </div>
 </div>
 
+<script src="header.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // Retrieve the data saved by the previous page
-        const bookingData = JSON.parse(sessionStorage.getItem('lastBooking'));
+        // Retrieve the data saved by the booking page (book-repair.html)
+        const bookingDataRaw = sessionStorage.getItem('lastBooking');
 
-        if (bookingData) {
-            document.getElementById('disp-id').innerText = `#${bookingData.id}`;
-            document.getElementById('disp-device').innerText = bookingData.device;
-            document.getElementById('disp-date').innerText = bookingData.date || 'Scheduled';
+        if (bookingDataRaw) {
+            try {
+                const bookingData = JSON.parse(bookingDataRaw);
+                document.getElementById('disp-id').innerText = `#${bookingData.id}`;
+                document.getElementById('disp-device').innerText = bookingData.device;
+                document.getElementById('disp-date').innerText = bookingData.date || 'Scheduled';
+            } catch (e) {
+                console.error("Data Parse Error", e);
+                window.location.href = 'index.html';
+            }
         } else {
-            // If someone lands here without a booking, redirect them
+            // Redirect if accessed directly without a session
             window.location.href = 'index.html';
         }
-
-        // Clean up session storage after display if desired, 
-        // or keep it so they can refresh the page.
     });
 </script>
 

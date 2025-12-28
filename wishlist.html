@@ -3,27 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wishlist | NexusFlow Terminal</title>
+    <title>Wishlist | Nexus Hardware</title>
     
     <script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js@6.3.7/dist/amazon-cognito-identity.min.js"></script>
     <script src="auth-config.js"></script>
     <script src="header.js" defer></script>
+    <link rel="stylesheet" href="style.css">
 
     <style>
         :root {
-            --n-cyan: #00f3ff;
-            --n-bg: #0a0a0a;
-            --n-border: rgba(0, 243, 255, 0.15);
-            --n-panel: rgba(255, 255, 255, 0.03);
-            --accent: #00f3ff;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-light: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
         }
 
         body { 
-            background: var(--n-bg); 
-            color: white; 
+            background: var(--bg-light); 
+            color: var(--text-main); 
             margin: 0; 
             font-family: 'Inter', sans-serif; 
-            padding-top: 120px; /* Space for the header */
+            padding-top: 120px;
         }
 
         .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
@@ -31,11 +34,11 @@
         /* Notification Toast */
         #nexus-toast {
             position: fixed; bottom: 30px; right: 30px;
-            padding: 15px 25px; background: #111;
-            border-left: 4px solid var(--n-cyan);
-            border-radius: 4px; color: white;
-            font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            padding: 16px 24px; background: #1e293b;
+            border-left: 4px solid var(--primary);
+            border-radius: 8px; color: white;
+            font-weight: 600; font-size: 0.9rem;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2);
             z-index: 9999; display: none;
             animation: slideIn 0.3s ease-out;
         }
@@ -44,42 +47,42 @@
 
         /* Header Area */
         .terminal-header {
-            border-left: 4px solid var(--accent);
-            padding-left: 20px;
             margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
         }
 
         .terminal-header h1 {
-            font-family: 'JetBrains Mono', monospace;
-            text-transform: uppercase;
+            font-weight: 800;
             margin: 0;
-            font-size: 1.8rem;
-            letter-spacing: 2px;
+            font-size: 2rem;
+            color: var(--text-main);
         }
 
         /* Wishlist Grid & Cards */
         .wishlist-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
         }
 
         .wish-card {
-            background: var(--n-panel);
-            border: 1px solid var(--n-border);
-            border-radius: 12px;
-            padding: 15px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
             display: flex;
             flex-direction: column;
-            transition: 0.3s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         }
 
         .wish-card:hover {
-            border-color: var(--accent);
+            border-color: var(--primary);
             transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
         }
 
-        /* Nav Link Area */
         .wish-link {
             text-decoration: none;
             color: inherit;
@@ -88,94 +91,99 @@
 
         .wish-image {
             width: 100%;
-            height: 180px;
+            height: 200px;
             object-fit: contain;
-            background: #000;
-            border-radius: 8px;
-            margin-bottom: 12px;
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 15px;
         }
 
         .wish-name {
-            font-size: 1rem;
-            font-weight: 600;
-            height: 2.6rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            height: 2.8rem;
             overflow: hidden;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
+            line-height: 1.4;
         }
 
         .wish-price {
-            font-family: 'JetBrains Mono';
-            color: var(--accent);
-            font-weight: 700;
-            font-size: 1.1rem;
-            margin-bottom: 15px;
+            color: var(--text-main);
+            font-weight: 800;
+            font-size: 1.25rem;
+            margin-bottom: 20px;
             display: block;
         }
 
         /* Buttons */
         .wish-actions {
             display: flex;
-            gap: 10px;
+            gap: 12px;
             margin-top: auto;
         }
 
         .btn-cart {
             flex: 1;
-            background: var(--accent);
-            color: #000;
+            background: var(--primary);
+            color: white;
             border: none;
-            padding: 10px;
-            border-radius: 6px;
+            padding: 12px;
+            border-radius: 10px;
             font-weight: 700;
             cursor: pointer;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
+            transition: background 0.2s;
         }
 
-        .btn-cart:hover { background: #fff; }
+        .btn-cart:hover { background: var(--primary-hover); }
 
         .btn-remove {
-            background: transparent;
-            border: 1px solid #ff4444;
-            color: #ff4444;
-            padding: 10px 15px;
-            border-radius: 6px;
+            background: #fff;
+            border: 1px solid var(--border-color);
+            color: #ef4444;
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
             cursor: pointer;
             transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
         }
 
         .btn-remove:hover {
-            background: #ff4444;
-            color: white;
+            background: #fee2e2;
+            border-color: #fecaca;
         }
 
         .empty-state {
             grid-column: 1 / -1;
             text-align: center;
-            padding: 100px 0;
-            color: #666;
-            font-family: 'JetBrains Mono', monospace;
+            padding: 120px 0;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 1.1rem;
         }
     </style>
 </head>
 <body>
 
     <div id="nexus-header-wrapper"></div>
-    
     <div id="nexus-toast"></div>
 
     <main class="container">
         <div class="terminal-header">
-            <h1>WISHLIST_PROTOCOLS</h1>
-            <p style="opacity: 0.6; color: #888;">Manage your saved hardware and system upgrades.</p>
+            <h1>My Wishlist</h1>
+            <p style="color: var(--text-muted); margin-top: 8px;">Review and manage your saved hardware components.</p>
         </div>
 
         <div id="wishlist-display" class="wishlist-grid">
-            <div class="empty-state">SYNCING_DATA_STREAMS...</div>
+            <div class="empty-state">Syncing your saved items...</div>
         </div>
     </main>
 
     <script>
-        // Global storage for products fetched from API
         let apiProducts = [];
 
         async function initWishlist() {
@@ -183,45 +191,45 @@
             const savedIds = JSON.parse(localStorage.getItem('nexus_wishlist')) || [];
             
             if (savedIds.length === 0) {
-                display.innerHTML = `<div class="empty-state">WISHLIST_IS_EMPTY</div>`;
+                display.innerHTML = `<div class="empty-state">Your wishlist is currently empty.</div>`;
                 return;
             }
 
             try {
-                // Fetch from the same API as index and shop
                 const response = await fetch(`${NEXUS_CONFIG.api.baseUrl}/products`);
                 apiProducts = await response.json();
 
-                // Match saved IDs with API products
                 const wishItems = apiProducts.filter(p => savedIds.includes(p.productId));
 
                 if (wishItems.length === 0) {
-                    display.innerHTML = `<div class="empty-state">ITEMS_NOT_FOUND_IN_DATABASE</div>`;
+                    display.innerHTML = `<div class="empty-state">No matching products found in our catalog.</div>`;
                     return;
                 }
 
                 display.innerHTML = wishItems.map(p => `
                     <div class="wish-card" id="card-${p.productId}">
                         <a href="product-details.html?id=${p.productId}" class="wish-link">
-                            <img src="${p.imageUrl || 'https://via.placeholder.com/250'}" class="wish-image">
+                            <img src="${p.imageUrl || 'https://via.placeholder.com/250'}" class="wish-image" alt="${p.name}">
                             <div class="wish-name">${p.name}</div>
-                            <span class="wish-price">$${p.price.toFixed(2)}</span>
+                            <span class="wish-price">$${parseFloat(p.price).toFixed(2)}</span>
                         </a>
                         <div class="wish-actions">
-                            <button class="btn-cart" onclick="transferToCart('${p.productId}')">ADD TO CART</button>
-                            <button class="btn-remove" onclick="removeFromWishlist('${p.productId}')">×</button>
+                            <button class="btn-cart" onclick="transferToCart('${p.productId}')">Add to Cart</button>
+                            <button class="btn-remove" onclick="removeFromWishlist('${p.productId}')" title="Remove Item">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            </button>
                         </div>
                     </div>
                 `).join('');
 
             } catch (err) {
-                display.innerHTML = `<div class="empty-state">ERROR: FAILED_TO_CONNECT_TO_API</div>`;
+                display.innerHTML = `<div class="empty-state">Error: Could not connect to the product database.</div>`;
             }
         }
 
         function showToast(message) {
             const toast = document.getElementById('nexus-toast');
-            toast.innerText = `> ${message}`;
+            toast.innerText = message;
             toast.style.display = 'block';
             setTimeout(() => { toast.style.display = 'none'; }, 3000);
         }
@@ -232,12 +240,19 @@
             localStorage.setItem('nexus_wishlist', JSON.stringify(wishlist));
             
             const card = document.getElementById(`card-${id}`);
-            if (card) card.remove();
-            
-            showToast("MODULE_REMOVED");
-            if (wishlist.length === 0) {
-                document.getElementById('wishlist-display').innerHTML = `<div class="empty-state">WISHLIST_IS_EMPTY</div>`;
+            if (card) {
+                card.style.opacity = '0';
+                card.style.transform = 'scale(0.9)';
+                setTimeout(() => {
+                    card.remove();
+                    if (wishlist.length === 0) {
+                        document.getElementById('wishlist-display').innerHTML = `<div class="empty-state">Your wishlist is currently empty.</div>`;
+                    }
+                }, 300);
             }
+            
+            showToast("Success: Item removed from wishlist");
+            if (window.updateHeaderBadges) window.updateHeaderBadges();
         }
 
         function transferToCart(id) {
@@ -254,7 +269,7 @@
             
             localStorage.setItem('nexus_cart', JSON.stringify(cart));
             if (window.updateHeaderBadges) window.updateHeaderBadges();
-            showToast(`${product.name.toUpperCase()} TRANSFERRED_TO_CART`);
+            showToast(`Success: ${product.name} added to cart`);
         }
 
         window.onload = initWishlist;

@@ -3,57 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NexusFlow | Inventory Search</title>
+    <title>Nexus | Inventory Search</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aws-sdk/2.1522.0/aws-sdk.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js@6.3.7/dist/amazon-cognito-identity.min.js"></script>
     <script src="auth-config.js"></script>
     
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="header.css">
+    
     <style>
-        .search-hero { padding: 60px 20px; text-align: center; }
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-light: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+        }
+
+        body { 
+            background: var(--bg-light); 
+            color: var(--text-main); 
+            font-family: 'Inter', sans-serif; 
+            margin: 0; 
+            padding-top: 80px; 
+        }
+
+        .search-hero { 
+            padding: 60px 20px 40px; 
+            text-align: center; 
+            background: white;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .search-hero h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
         
         /* Flex wrapper for Search and Home button */
         .search-controls {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 15px;
-            max-width: 850px;
-            margin: 20px auto;
+            gap: 12px;
+            max-width: 700px;
+            margin: 30px auto 0;
         }
 
         .home-btn {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border-cyan);
-            color: var(--accent);
-            padding: 16px;
-            border-radius: 8px;
+            background: white;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 14px;
+            border-radius: 10px;
             cursor: pointer;
-            transition: 0.3s;
+            transition: all 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
 
         .home-btn:hover {
-            background: var(--accent);
-            color: black;
+            border-color: var(--primary);
+            color: var(--primary);
+            background: #eff6ff;
         }
 
-        .main-search-box { flex-grow: 1; }
+        .main-search-box { flex-grow: 1; position: relative; }
 
         .main-search-box input {
             width: 100%;
-            padding: 18px 25px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border-cyan);
-            border-radius: 8px;
-            color: white;
-            font-size: 1.1rem;
+            padding: 16px 20px;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-main);
+            font-size: 1rem;
             outline: none;
-            font-family: 'JetBrains Mono', monospace;
+            transition: all 0.2s;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .main-search-box input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
         }
 
         .inventory-grid {
@@ -61,31 +100,68 @@
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 25px;
             max-width: 1200px;
-            margin: 0 auto;
+            margin: 40px auto;
             padding: 20px;
         }
 
         .product-item {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            padding: 20px;
-            border-radius: 12px;
-            transition: 0.3s;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 24px;
+            border-radius: 16px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         }
 
         .product-item:hover {
-            border-color: var(--accent);
-            transform: translateY(-5px);
+            border-color: var(--primary);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
         }
 
         .product-item img {
             width: 100%;
             height: 200px;
             object-fit: contain;
-            background: #000;
+            background: #fff;
             border-radius: 8px;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            /* Professional product shadow */
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.08));
+        }
+
+        .category-tag {
+            color: var(--primary);
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .product-name {
+            margin: 0 0 12px 0;
+            font-size: 1.25rem;
+            font-weight: 700;
+            line-height: 1.3;
+        }
+
+        .product-price {
+            margin-top: auto;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .status-bar {
+            background: #f1f5f9;
+            padding: 12px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 500;
         }
     </style>
 </head>
@@ -94,36 +170,37 @@
 <div id="nexus-header-wrapper"></div>
 
 <div class="search-hero">
-    <h1>Inventory <span class="text-accent">Search</span></h1>
+    <h1>Inventory <span style="color: var(--primary);">Catalog</span></h1>
+    <p style="color: var(--text-muted); margin-top: 10px;">Search through our enterprise-grade hardware registry.</p>
     
     <div class="search-controls">
-        <button class="home-btn" onclick="returnToOrigin()" title="Back to previous page">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <button class="home-btn" onclick="returnToOrigin()" title="Return to Home">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
                 <polyline points="9 22 9 12 15 12 15 22"></polyline>
             </svg>
         </button>
 
         <div class="main-search-box">
-            <input type="text" id="pageSearchInput" placeholder="Filter hardware..." onkeyup="runLocalSearch()">
+            <input type="text" id="pageSearchInput" placeholder="Enter component name or category..." onkeyup="runLocalSearch()">
         </div>
     </div>
 </div>
 
-<div class="results-info" id="searchStatus" style="text-align:center; color: var(--text-dim);">Initializing Registry...</div>
+<div class="status-bar" id="searchStatus" style="text-align:center;">Synchronizing with central registry...</div>
+
 <div class="inventory-grid" id="inventoryDisplay"></div>
 
+<script src="header.js"></script>
 <script>
     const API_URL = 'https://yskkdnff93.execute-api.us-east-1.amazonaws.com/prod/products';
     let masterInventory = [];
 
-    // HOME BUTTON LOGIC
     function returnToOrigin() {
-        // If there is a browser history, go back. Otherwise, default to index.
         if (document.referrer.includes(window.location.hostname)) {
             window.history.back();
         } else {
-            window.location.href = 'index.html';
+            window.location.href = 'shop.html';
         }
     }
 
@@ -141,10 +218,11 @@
                 runLocalSearch();
             } else {
                 renderItems(masterInventory);
-                status.innerText = `Registry ready. ${masterInventory.length} items loaded.`;
+                status.innerText = `Registry Synchronized: ${masterInventory.length} components available.`;
             }
         } catch (err) {
-            status.innerText = "Connection to central registry failed.";
+            status.innerText = "System Failure: Connection to central registry failed.";
+            status.style.color = "#ef4444";
         }
     };
 
@@ -155,16 +233,27 @@
             (item.category || "").toLowerCase().includes(term)
         );
         renderItems(filtered);
+        
+        const status = document.getElementById('searchStatus');
+        status.innerText = `Search results: ${filtered.length} matches found.`;
     }
 
     function renderItems(items) {
         const container = document.getElementById('inventoryDisplay');
+        if (items.length === 0) {
+            container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 100px; color: var(--text-muted);">
+                <h3 style="font-size: 1.5rem;">No matching components found</h3>
+                <p>Try adjusting your search filters.</p>
+            </div>`;
+            return;
+        }
+
         container.innerHTML = items.map(item => `
             <div class="product-item" onclick="window.location.href='product-details.html?id=${item.productId || item.id}'">
-                <img src="${item.imageUrl || 'https://via.placeholder.com/300'}" alt="Item">
-                <div style="color:var(--accent); font-size:0.7rem;">${item.category || 'HARDWARE'}</div>
-                <h3 style="margin:10px 0;">${item.name || item.productName}</h3>
-                <div style="font-weight:bold;">$${parseFloat(item.price).toFixed(2)}</div>
+                <img src="${item.imageUrl || 'https://via.placeholder.com/300'}" alt="${item.name || 'Hardware'}">
+                <div class="category-tag">${item.category || 'GENERAL HARDWARE'}</div>
+                <h3 class="product-name">${item.name || item.productName}</h3>
+                <div class="product-price">$${parseFloat(item.price).toFixed(2)}</div>
             </div>
         `).join('');
     }

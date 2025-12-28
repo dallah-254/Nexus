@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NexusFlow | Secure Component Details</title>
+    <title>Nexus | Component Details</title>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aws-sdk/2.1522.0/aws-sdk.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js@6.3.7/dist/amazon-cognito-identity.min.js"></script>
@@ -13,192 +13,264 @@
     <link rel="stylesheet" href="header.css">
 
     <style>
-        body { padding-top: 100px; } /* Uniform offset for header */
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-light: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --white: #ffffff;
+        }
+
+        body { 
+            background: var(--bg-light); 
+            color: var(--text-main); 
+            font-family: 'Inter', sans-serif; 
+            margin: 0; 
+            padding-top: 100px; 
+        }
 
         .details-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 50px;
-            margin-top: 60px;
+            gap: 60px;
+            margin-top: 40px;
             padding-bottom: 100px;
+            align-items: start;
         }
 
+        /* Image Section */
         .product-visual {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid var(--border-cyan);
-            border-radius: 20px;
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
             padding: 40px;
             display: flex;
             align-items: center;
             justify-content: center;
-            backdrop-filter: blur(10px);
-            min-height: 400px;
+            min-height: 500px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         }
 
         .product-visual img {
             max-width: 100%;
-            max-height: 350px;
+            max-height: 400px;
             object-fit: contain;
-            filter: drop-shadow(0 0 20px rgba(0, 243, 255, 0.2));
+            /* Professional shadow instead of neon glow */
+            filter: drop-shadow(0 20px 30px rgba(0,0,0,0.1));
+        }
+
+        /* Content Section */
+        .status-pill {
+            display: inline-block;
+            padding: 6px 14px;
+            background: #eff6ff;
+            color: var(--primary);
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            border: 1px solid #dbeafe;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .spec-label {
-            color: var(--accent);
-            font-size: 0.7rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 1.5px;
             display: block;
-            margin-bottom: 5px;
-            font-family: 'JetBrains Mono', monospace;
+            margin-bottom: 8px;
+            font-weight: 600;
         }
 
         .price-display {
-            font-size: 3rem;
+            font-size: 2.5rem;
             font-weight: 800;
-            margin: 20px 0;
-            color: var(--text-primary);
-            font-family: 'JetBrains Mono', monospace;
+            margin: 25px 0;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
 
         .action-zone {
             margin-top: 40px;
-            padding-top: 30px;
-            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 35px;
+            border-top: 1px solid var(--border-color);
             display: flex;
-            gap: 20px;
+            gap: 15px;
         }
 
+        /* Buttons */
+        .btn-add {
+            flex: 2;
+            padding: 18px 40px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-add:hover { background: var(--primary-hover); transform: translateY(-2px); }
+
+        .btn-back {
+            flex: 1;
+            padding: 18px;
+            background: var(--white);
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-back:hover { background: #f1f5f9; color: var(--text-main); }
+
+        /* Loading Overlay */
         #loading-screen {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg);
+            background: var(--bg-light);
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 1000;
+            z-index: 2000;
         }
 
-        .status-pill {
-            display: inline-block;
-            padding: 5px 15px;
-            background: rgba(0, 243, 255, 0.05);
-            color: var(--accent);
-            border-radius: 20px;
-            font-size: 0.8rem;
-            margin-bottom: 15px;
-            border: 1px solid var(--border-cyan);
-            font-family: 'JetBrains Mono', monospace;
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #e2e8f0;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
         }
 
-        @media (max-width: 850px) {
-            .details-container { grid-template-columns: 1fr; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        @media (max-width: 900px) {
+            .details-container { grid-template-columns: 1fr; gap: 30px; }
+            .product-visual { min-height: 350px; }
         }
     </style>
 </head>
 <body>
 
-<div id="loading-screen">
-    <h2 class="loading-pulse">Retrieving Data...</h2>
-</div>
+    <div id="nexus-header-wrapper"></div>
 
-<div id="nexus-header-wrapper"></div>
+    <div id="loading-screen">
+        <div class="spinner"></div>
+        <p style="color: var(--text-muted); font-weight: 600;">Fetching Component Data...</p>
+    </div>
 
-<div class="container">
-    <div class="details-container" id="details-content" style="display: none;">
-        <div class="product-visual">
-            <img id="p-img" src="" alt="Hardware Visual">
-        </div>
+    <div class="container">
+        <div class="details-container" id="details-content" style="display: none;">
+            <div class="product-visual">
+                <img id="p-img" src="" alt="Hardware Component">
+            </div>
 
-        <div class="product-info">
-            <div class="status-pill">AUTHENTIC COMPONENT</div>
-            <span class="spec-label" id="p-category">HARDWARE</span>
-            <h1 id="p-name" style="font-size: 2.8rem; margin: 10px 0;">Component Name</h1>
-            
-            <p id="p-description" class="text-dim" style="line-height: 1.8; font-size: 1.1rem; margin: 20px 0;">
-                Initializing telemetry...
-            </p>
+            <div class="product-info">
+                <div class="status-pill">Certified Technical Component</div>
+                
+                <span class="spec-label" id="p-category">Category</span>
+                <h1 id="p-name" style="font-size: 3rem; margin: 0 0 15px 0; font-weight: 800; line-height: 1.1;">Component Name</h1>
+                
+                <p id="p-description" style="line-height: 1.6; font-size: 1.1rem; color: var(--text-muted); margin: 20px 0;">
+                    Accessing technical specifications...
+                </p>
 
-            <div class="price-display">$<span id="p-price">0.00</span></div>
+                <div class="price-display">$<span id="p-price">0.00</span></div>
 
-            <div class="action-zone">
-                <button id="add-btn" class="btn btn-primary" style="padding: 15px 40px; min-width: 200px;" onclick="addToCart()">Add to Cart</button>
-                <button class="btn btn-outline" style="border:none" onclick="window.location.href='shop.html'">Exit View</button>
+                <div class="action-zone">
+                    <button id="add-btn" class="btn-add" onclick="addToCart()">Add to Selection</button>
+                    <button class="btn-back" onclick="window.location.href='shop.html'">Exit View</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<script src="header.js"></script>
-<script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const productId = urlParams.get('id');
-    const API_URL = `https://yskkdnff93.execute-api.us-east-1.amazonaws.com/prod/products?id=${productId}`;
+    <script src="header.js"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const productId = urlParams.get('id');
+        // Use your existing API endpoint
+        const API_URL = `https://yskkdnff93.execute-api.us-east-1.amazonaws.com/prod/products?id=${productId}`;
 
-    let currentProductData = null;
+        let currentProductData = null;
 
-    window.onload = function() {
-        if (!productId) {
-            window.location.href = 'shop.html';
-            return;
-        }
+        window.onload = function() {
+            if (!productId) {
+                window.location.href = 'shop.html';
+                return;
+            }
 
-        fetch(API_URL)
-            .then(res => res.json())
-            .then(product => {
-                if (!product || product.error) {
-                    document.getElementById('loading-screen').innerHTML = "<h2>Component not found.</h2>";
-                    return;
-                }
+            fetch(API_URL)
+                .then(res => res.json())
+                .then(product => {
+                    if (!product || product.error) {
+                        document.getElementById('loading-screen').innerHTML = "<h2>Component not found.</h2>";
+                        return;
+                    }
 
-                currentProductData = product;
-                const name = product.name || product.productName || "Unknown Hardware";
-                const price = product.price ? parseFloat(product.price).toFixed(2) : "0.00";
-                const img = product.imageUrl || product.imageURL || 'assets/placeholder.jpg';
+                    currentProductData = product;
+                    const name = product.name || product.productName || "Unknown Hardware";
+                    const price = product.price ? parseFloat(product.price).toFixed(2) : "0.00";
+                    const img = product.imageUrl || product.imageURL || 'https://via.placeholder.com/500';
 
-                document.getElementById('p-name').innerText = name;
-                document.getElementById('p-price').innerText = price;
-                document.getElementById('p-category').innerText = product.category || "Hardware";
-                document.getElementById('p-description').innerText = product.description || "High-performance specialized hardware part for professional deployment.";
-                document.getElementById('p-img').src = img;
+                    document.getElementById('p-name').innerText = name;
+                    document.getElementById('p-price').innerText = price;
+                    document.getElementById('p-category').innerText = product.category || "General Hardware";
+                    document.getElementById('p-description').innerText = product.description || "High-performance specialized hardware part optimized for professional enterprise deployment.";
+                    document.getElementById('p-img').src = img;
 
-                document.getElementById('loading-screen').style.display = 'none';
-                document.getElementById('details-content').style.display = 'grid';
-            })
-            .catch(err => {
-                console.error("Fetch Error:", err);
-                document.getElementById('loading-screen').innerHTML = "<h2>System Link Failure.</h2>";
+                    document.getElementById('loading-screen').style.display = 'none';
+                    document.getElementById('details-content').style.display = 'grid';
+                })
+                .catch(err => {
+                    console.error("Fetch Error:", err);
+                    document.getElementById('loading-screen').innerHTML = "<h2>System Link Failure. Please try again.</h2>";
+                });
+        };
+
+        function addToCart() {
+            if (!currentProductData) return;
+
+            let cart = JSON.parse(localStorage.getItem('nexus_cart')) || [];
+            
+            cart.push({
+                productId: currentProductData.productId || currentProductData.id,
+                name: currentProductData.name || currentProductData.productName,
+                price: parseFloat(currentProductData.price),
+                imageUrl: currentProductData.imageUrl || currentProductData.imageURL
             });
-    };
 
-    function addToCart() {
-        if (!currentProductData) return;
+            localStorage.setItem('nexus_cart', JSON.stringify(cart));
+            
+            if(window.updateHeaderBadges) updateHeaderBadges();
 
-        let cart = JSON.parse(localStorage.getItem('nexus_cart')) || [];
-        
-        cart.push({
-            productId: currentProductData.productId || currentProductData.id,
-            name: currentProductData.name || currentProductData.productName,
-            price: parseFloat(currentProductData.price),
-            imageUrl: currentProductData.imageUrl || currentProductData.imageURL
-        });
+            const btn = document.getElementById('add-btn');
+            const originalText = btn.innerText;
+            btn.innerText = "✓ Added to Selection";
+            btn.style.background = "#059669"; // Success green
+            btn.disabled = true;
 
-        localStorage.setItem('nexus_cart', JSON.stringify(cart));
-        
-        // Update header badges if the function exists in header.js
-        if(window.updateHeaderBadges) updateHeaderBadges();
-
-        const btn = document.getElementById('add-btn');
-        const originalText = btn.innerText;
-        btn.innerText = "✓ Added to Selection";
-        btn.style.background = "#10b981";
-        btn.disabled = true;
-
-        setTimeout(() => {
-            btn.innerText = originalText;
-            btn.style.background = "";
-            btn.disabled = false;
-        }, 2000);
-    }
-</script>
+            setTimeout(() => {
+                btn.innerText = originalText;
+                btn.style.background = "";
+                btn.disabled = false;
+            }, 2000);
+        }
+    </script>
 </body>
 </html>

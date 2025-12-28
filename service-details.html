@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NexusFlow | Service Intelligence</title>
+    <title>Nexus | Service Intelligence</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aws-sdk/2.1522.0/aws-sdk.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js@6.3.7/dist/amazon-cognito-identity.min.js"></script>
@@ -13,50 +13,151 @@
     <link rel="stylesheet" href="header.css">
     
     <style>
-        :root { --accent: #00f3ff; --bg: #0a0a0a; --panel: rgba(255,255,255,0.03); --border: rgba(0,243,255,0.15); }
-        body { background: var(--bg); color: white; font-family: 'Inter', sans-serif; padding-top: 100px; margin: 0; }
+        :root { 
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-light: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+        }
+
+        body { 
+            background: var(--bg-light); 
+            color: var(--text-main); 
+            font-family: 'Inter', sans-serif; 
+            padding-top: 100px; 
+            margin: 0; 
+        }
+
         .container { max-width: 1100px; margin: 0 auto; padding: 20px; }
 
         /* HEADER SECTION */
-        .service-header { border-bottom: 1px solid var(--border); padding-bottom: 30px; margin-bottom: 40px; }
-        .category-tag { color: var(--accent); font-family: 'JetBrains Mono'; font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase; }
-        .service-title { font-size: 2.5rem; margin: 10px 0; font-weight: 800; }
+        .service-header { 
+            border-bottom: 1px solid var(--border-color); 
+            padding-bottom: 30px; 
+            margin-bottom: 40px; 
+        }
+
+        .category-tag { 
+            color: var(--primary); 
+            font-weight: 700; 
+            font-size: 0.75rem; 
+            letter-spacing: 1px; 
+            text-transform: uppercase; 
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .service-title { 
+            font-size: 2.8rem; 
+            margin: 0 0 15px 0; 
+            font-weight: 800; 
+            color: var(--text-main);
+        }
 
         /* GRID LAYOUT */
-        .detail-grid { display: grid; grid-template-columns: 1fr 350px; gap: 40px; }
+        .detail-grid { display: grid; grid-template-columns: 1fr 360px; gap: 50px; }
 
         /* LEFT COLUMN */
-        .description-box { line-height: 1.8; color: #aaa; font-size: 1.05rem; margin-bottom: 40px; }
+        .description-box { 
+            line-height: 1.8; 
+            color: var(--text-muted); 
+            font-size: 1.1rem; 
+            margin-bottom: 40px; 
+        }
+
+        .section-heading {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
         .protocol-list { list-style: none; padding: 0; }
         .protocol-item { 
-            background: var(--panel); border: 1px solid var(--border); 
-            padding: 15px; margin-bottom: 10px; font-family: 'JetBrains Mono'; 
-            font-size: 0.85rem; display: flex; align-items: center; 
+            background: white; 
+            border: 1px solid var(--border-color); 
+            padding: 16px 20px; 
+            margin-bottom: 12px; 
+            border-radius: 10px;
+            font-weight: 500;
+            display: flex; 
+            align-items: center; 
+            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
         }
-        .protocol-item::before { content: "›"; color: var(--accent); margin-right: 15px; font-size: 1.2rem; }
+        .protocol-item::before { 
+            content: ""; 
+            width: 8px; height: 8px; 
+            background: var(--primary); 
+            border-radius: 50%; 
+            margin-right: 15px; 
+        }
 
         /* RIGHT COLUMN (The "Price Card") */
         .action-card { 
-            background: white; color: black; padding: 30px; border-radius: 4px; 
-            position: sticky; top: 120px; text-align: center; 
+            background: white; 
+            padding: 35px; 
+            border-radius: 20px; 
+            border: 1px solid var(--border-color);
+            position: sticky; 
+            top: 120px; 
+            text-align: center; 
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
         }
-        .price-label { font-size: 0.7rem; font-weight: 900; color: #666; text-transform: uppercase; }
-        .price-value { font-size: 3rem; font-weight: 900; margin: 10px 0; font-family: 'JetBrains Mono'; }
-        .meta-info { border-top: 1px solid #eee; margin-top: 20px; padding-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+        .price-label { font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
+        .price-value { 
+            font-size: 3.5rem; 
+            font-weight: 800; 
+            margin: 10px 0; 
+            color: var(--text-main);
+            letter-spacing: -1px;
+        }
+
+        .meta-info { 
+            border-top: 1px solid var(--border-color); 
+            margin-top: 25px; 
+            padding-top: 25px; 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 15px; 
+        }
+
         .meta-item { text-align: left; }
-        .meta-item label { display: block; font-size: 0.6rem; color: #999; font-weight: bold; }
-        .meta-item span { font-size: 0.8rem; font-weight: bold; }
+        .meta-item label { display: block; font-size: 0.7rem; color: var(--text-muted); font-weight: 700; margin-bottom: 4px; }
+        .meta-item span { font-size: 0.95rem; font-weight: 700; color: var(--text-main); }
 
         .btn-book { 
-            display: block; background: #000; color: #fff; text-decoration: none; 
-            padding: 18px; margin-top: 25px; font-weight: 900; font-size: 0.8rem; 
-            letter-spacing: 1px; transition: 0.3s;
+            display: block; 
+            background: var(--primary); 
+            color: #fff; 
+            text-decoration: none; 
+            padding: 18px; 
+            margin-top: 30px; 
+            font-weight: 700; 
+            font-size: 1rem; 
+            border-radius: 12px;
+            transition: all 0.2s;
         }
-        .btn-book:hover { background: var(--accent); color: #000; }
+        .btn-book:hover { background: var(--primary-hover); transform: translateY(-2px); }
 
-        .loading-overlay { text-align: center; padding: 100px; font-family: 'JetBrains Mono'; color: var(--accent); }
+        .loading-overlay { 
+            text-align: center; 
+            padding: 150px 20px; 
+            font-weight: 600; 
+            color: var(--primary); 
+        }
         
-        @media (max-width: 850px) { .detail-grid { grid-template-columns: 1fr; } .action-card { position: static; } }
+        @media (max-width: 900px) { 
+            .detail-grid { grid-template-columns: 1fr; } 
+            .action-card { position: static; } 
+            .service-title { font-size: 2rem; }
+        }
     </style>
 </head>
 <body>
@@ -65,33 +166,36 @@
     <script src="header.js"></script>
 
     <div class="container" id="details-container">
-        <div class="loading-overlay">DECRYPTING_PROTOCOL_DATA...</div>
+        <div class="loading-overlay">Retrieving technical specifications...</div>
     </div>
 
     <script>
-        // THE SAME API URL AS THE SERVICE PAGE
         const API = "https://yskkdnff93.execute-api.us-east-1.amazonaws.com/prod/services";
 
         async function fetchDetails() {
-            // 1. Get the 'id' from the URL (e.g. ?id=PHN-001)
             const urlParams = new URLSearchParams(window.location.search);
             const serviceId = urlParams.get('id');
 
             if (!serviceId) {
-                document.getElementById('details-container').innerHTML = "<h1>ERROR: PROTOCOL_ID_NOT_FOUND</h1>";
+                document.getElementById('details-container').innerHTML = `
+                    <div style="text-align:center; padding:100px;">
+                        <h1>Service ID Not Found</h1>
+                        <a href="services.html" style="color:var(--primary);">Return to Services</a>
+                    </div>`;
                 return;
             }
 
             try {
-                // 2. Call the API with the ?id= parameter
                 const response = await fetch(`${API}?id=${serviceId}`);
-                if (!response.ok) throw new Error("PROTOCOL_OFFLINE");
+                if (!response.ok) throw new Error("Service data offline");
                 const data = await response.json();
-
-                // 3. Inject the data into the page
                 renderPage(data);
             } catch (err) {
-                document.getElementById('details-container').innerHTML = `<h1>LINK_FAILURE: ${err.message}</h1>`;
+                document.getElementById('details-container').innerHTML = `
+                    <div style="text-align:center; padding:100px;">
+                        <h1>Connection Error</h1>
+                        <p>${err.message}</p>
+                    </div>`;
             }
         }
 
@@ -100,45 +204,50 @@
             
             container.innerHTML = `
                 <div class="service-header">
-                    <span class="category-tag">${data.serviceCategory || 'GENERAL_PROTOCOL'}</span>
+                    <span class="category-tag">${data.serviceCategory || 'Standard Service'}</span>
                     <h1 class="service-title">${data.serviceName}</h1>
-                    <a href="services.html" style="color:#555; text-decoration:none; font-size:0.7rem; font-family:'JetBrains Mono';">← RETURN_TO_INDEX</a>
+                    <a href="services.html" style="color:var(--text-muted); text-decoration:none; font-size:0.9rem; font-weight:600;">
+                        &larr; Back to Service Catalog
+                    </a>
                 </div>
 
                 <div class="detail-grid">
                     <div class="left-col">
                         <div class="description-box">
-                            <h3 style="color:white; font-family:'JetBrains Mono'; margin-bottom:20px;">> OPERATION_SUMMARY</h3>
-                            ${data.longDescription || 'No detailed data available for this protocol.'}
+                            <h3 class="section-heading">Service Overview</h3>
+                            <p>${data.longDescription || 'Comprehensive service details for this component are currently being updated by our technical team.'}</p>
                         </div>
 
                         <div class="protocols">
-                            <h3 style="color:white; font-family:'JetBrains Mono'; margin-bottom:20px;">> INCLUSION_LOG</h3>
+                            <h3 class="section-heading">What's Included</h3>
                             <div class="protocol-list">
                                 ${data.activities && data.activities.length > 0 
                                     ? data.activities.map(act => `<div class="protocol-item">${act}</div>`).join('') 
-                                    : '<div class="protocol-item">Standard Diagnostic Flow</div>'}
+                                    : '<div class="protocol-item">Full System Diagnostic</div><div class="protocol-item">Professional Component Installation</div>'}
                             </div>
                         </div>
                     </div>
 
                     <div class="right-col">
                         <div class="action-card">
-                            <div class="price-label">Estimated Base Cost</div>
+                            <div class="price-label">Estimated Service Cost</div>
                             <div class="price-value">$${parseFloat(data.basePrice || 0).toFixed(2)}</div>
                             
                             <div class="meta-info">
                                 <div class="meta-item">
-                                    <label>TIMELINE</label>
-                                    <span>${data.duration || 'TBD'}</span>
+                                    <label>EST. TIME</label>
+                                    <span>${data.duration || '2-4 Hours'}</span>
                                 </div>
                                 <div class="meta-item">
-                                    <label>WARRANTY</label>
-                                    <span>${data.warranty || '90 DAYS'}</span>
+                                    <label>GUARANTEE</label>
+                                    <span>${data.warranty || '180 Days'}</span>
                                 </div>
                             </div>
 
-                            <a href="book-repair.html?serviceId=${data.serviceId}" class="btn-book">INITIALIZE BOOKING</a>
+                            <a href="book-repair.html?serviceId=${data.serviceId}" class="btn-book">Book Service Now</a>
+                            <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 15px;">
+                                Final cost may vary based on component parts.
+                            </p>
                         </div>
                     </div>
                 </div>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NexusFlow | Secure Repair Protocol</title>
+    <title>Nexus | Book a Repair</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aws-sdk/2.1522.0/aws-sdk.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js@6.3.7/dist/amazon-cognito-identity.min.js"></script>
@@ -13,9 +13,8 @@
     <link rel="stylesheet" href="header.css">
     
     <style>
-        body { padding-top: 100px; } /* Offset for fixed header */
+        body { padding-top: 100px; background-color: #f8fafc; } /* Light Nexus Background */
 
-        /* Prevent flashing of content before login check */
         #main-content { display: none; }
 
         .repair-container {
@@ -31,21 +30,21 @@
             align-items: center;
             gap: 15px;
             margin-bottom: 25px;
-            border-bottom: 1px solid rgba(0, 243, 255, 0.1);
+            border-bottom: 1px solid #e2e8f0;
             padding-bottom: 10px;
         }
 
         .step-number {
-            background: var(--nexus-cyan, #00f3ff);
-            color: #000;
-            width: 30px;
-            height: 30px;
+            background: var(--primary); /* Royal Blue */
+            color: #fff;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 900;
-            font-size: 0.8rem;
+            font-weight: 700;
+            font-size: 0.85rem;
         }
 
         .grid {
@@ -59,31 +58,30 @@
         label {
             display: block;
             margin-bottom: 8px;
-            font-size: 0.75rem;
-            color: #888;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            font-size: 0.85rem;
+            color: #475569;
+            font-weight: 600;
         }
 
         input, select, textarea {
             width: 100%;
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.1);
-            color: white;
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            color: #1e293b;
             padding: 12px;
-            border-radius: 5px;
+            border-radius: 8px;
             font-family: inherit;
         }
 
-        input:focus { border-color: var(--nexus-cyan); outline: none; }
+        input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
 
         .checkbox-group {
             display: flex;
             gap: 30px;
-            background: rgba(0, 243, 255, 0.03);
+            background: #f1f5f9;
             padding: 20px;
             border-radius: 8px;
-            border: 1px solid rgba(0, 243, 255, 0.1);
+            border: 1px solid #e2e8f0;
         }
 
         .check-item {
@@ -91,7 +89,8 @@
             align-items: center;
             gap: 10px;
             cursor: pointer;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
+            color: #334155;
         }
 
         .check-item input { width: auto; margin: 0; }
@@ -100,13 +99,20 @@
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(5px);
+            background: rgba(255,255,255,0.9);
+            backdrop-filter: blur(4px);
             z-index: 20000;
             justify-content: center;
             align-items: center;
             flex-direction: column;
-            color: var(--nexus-cyan);
+            color: var(--primary);
+        }
+
+        .brand-name {
+            font-weight: 800;
+            font-size: 1.5rem;
+            color: var(--dark);
+            margin-bottom: 10px;
         }
     </style>
 </head>
@@ -116,96 +122,97 @@
 
 <div id="main-content" class="repair-container">
     <div style="margin-bottom: 50px;">
-        <h1 style="font-size: 2.5rem; letter-spacing: -1px;">Hardware <span style="color:var(--nexus-cyan)">Recovery</span></h1>
-        <p style="color: #666;">Initiate a technical diagnostic request for your malfunctioning gear.</p>
+        <h1 style="font-size: 2.5rem; color: var(--dark);">Device <span style="color:var(--primary)">Repair Service</span></h1>
+        <p style="color: #64748b;">Schedule a professional diagnostic and repair for your device.</p>
     </div>
 
-    <div class="card" style="background: rgba(255,255,255,0.02); padding: 40px; border: 1px solid rgba(255,255,255,0.05);">
+    <div class="card">
         <form id="repairForm">
             <div class="form-section">
                 <div class="section-header">
-                    <div class="step-number">01</div>
-                    <h3 style="text-transform: uppercase; font-size: 0.9rem; letter-spacing: 2px;">Device Specifications</h3>
+                    <div class="step-number">1</div>
+                    <h3 style="font-size: 1.1rem; color: var(--dark);">Device Details</h3>
                 </div>
                 <div class="grid">
                     <div>
-                        <label>Category</label>
+                        <label>Device Type</label>
                         <select id="deviceType" required>
                             <option value="Smartphone">Smartphone</option>
                             <option value="Laptop">Laptop</option>
                             <option value="Gaming Console">Gaming Console</option>
-                            <option value="Other">Custom Rig</option>
+                            <option value="Other">Other Electronics</option>
                         </select>
                     </div>
                     <div>
                         <label>Manufacturer</label>
-                        <input type="text" id="brand" placeholder="e.g. Razer, Apple" required>
+                        <input type="text" id="brand" placeholder="e.g. Apple, Samsung, HP" required>
                     </div>
                     <div>
-                        <label>Model Number</label>
-                        <input type="text" id="model" placeholder="e.g. Blade 15, iPhone 15 Pro" required>
+                        <label>Model Name/Number</label>
+                        <input type="text" id="model" placeholder="e.g. iPhone 15, MacBook Pro" required>
                     </div>
                     <div>
-                        <label>Serial / IMEI</label>
-                        <input type="text" id="serialNumber" placeholder="For parts verification">
+                        <label>Serial Number (Optional)</label>
+                        <input type="text" id="serialNumber" placeholder="For warranty verification">
                     </div>
                 </div>
             </div>
 
             <div class="form-section">
                 <div class="section-header">
-                    <div class="step-number">02</div>
-                    <h3 style="text-transform: uppercase; font-size: 0.9rem; letter-spacing: 2px;">Failure Analysis</h3>
+                    <div class="step-number">2</div>
+                    <h3 style="font-size: 1.1rem; color: var(--dark);">Issue Description</h3>
                 </div>
-                <label>Symptom Log</label>
-                <textarea id="issueDescription" rows="4" placeholder="Describe the erratic behavior..." required></textarea>
+                <label>Problem Description</label>
+                <textarea id="issueDescription" rows="4" placeholder="Please describe the issue you are experiencing..." required></textarea>
                 
                 <div class="checkbox-group" style="margin-top: 15px;">
                     <label class="check-item">
-                        <input type="checkbox" id="liquidDamage"> Liquid Intrusion
+                        <input type="checkbox" id="liquidDamage"> Liquid Damage
                     </label>
                     <label class="check-item">
-                        <input type="checkbox" id="previousRepair"> Third-party Tampering
+                        <input type="checkbox" id="previousRepair"> Previously Repaired Elsewhere
                     </label>
                 </div>
             </div>
 
             <div class="form-section">
                 <div class="section-header">
-                    <div class="step-number">03</div>
-                    <h3 style="text-transform: uppercase; font-size: 0.9rem; letter-spacing: 2px;">Logistics Link</h3>
+                    <div class="step-number">3</div>
+                    <h3 style="font-size: 1.1rem; color: var(--dark);">Logistics & Schedule</h3>
                 </div>
                 <div class="grid">
                     <div class="full-width">
-                        <label>Pickup Coordinates (Address)</label>
-                        <input type="text" id="pickupAddress" placeholder="Building, Floor, Unit Number" required>
+                        <label>Pickup Address</label>
+                        <input type="text" id="pickupAddress" placeholder="Street name, Building, Apartment number" required>
                     </div>
                     <div>
-                        <label>City Hub</label>
+                        <label>City</label>
                         <input type="text" id="city" placeholder="e.g. Nairobi" required>
                     </div>
                     <div>
-                        <label>Deployment Date</label>
+                        <label>Preferred Date</label>
                         <input type="date" id="bookingDate" required>
                     </div>
                 </div>
             </div>
 
-            <button type="submit" id="submitBtn" class="btn btn-primary" style="width: 100%; margin-top: 20px; height: 60px; font-size: 1rem;">
-                TRANSMIT RECOVERY REQUEST
+            <button type="submit" id="submitBtn" class="btn btn-primary" style="width: 100%; margin-top: 20px; height: 55px; font-size: 1.1rem;">
+                Confirm Repair Booking
             </button>
         </form>
     </div>
 </div>
 
 <div id="msg-overlay">
-    <div class="brand-logo" style="margin-bottom: 20px;">NEXUS<span>FLOW</span></div>
-    <p id="overlay-text">Establishing Secure Link...</p>
+    <div class="brand-name">NEXUS</div>
+    <p id="overlay-text" style="font-weight: 500;">Connecting to service center...</p>
 </div>
-
+<footer id="nexus-footer-wrapper"></footer>
 <script src="header.js"></script>
+<script src="footer.js"></script>
 <script>
-    // 1. SESSION GUARD: Check login immediately
+    // 1. SESSION GUARD
     const userPool = new AmazonCognitoIdentity.CognitoUserPool({
         UserPoolId: NEXUS_CONFIG.auth.UserPoolId,
         ClientId: NEXUS_CONFIG.auth.ClientId
@@ -215,7 +222,6 @@
     if (!cognitoUser) {
         window.location.href = 'login.html?redirect=book-repair.html';
     } else {
-        // Show content only if user is logged in
         cognitoUser.getSession((err, session) => {
             if (err || !session.isValid()) {
                 window.location.href = 'login.html';
@@ -237,7 +243,6 @@
 
         cognitoUser.getSession((err, session) => {
             if (err || !session.isValid()) { 
-                NexusUtils.showAlert("Session Expired", "error");
                 window.location.href = 'login.html';
                 return; 
             }
@@ -265,7 +270,7 @@
             })
             .then(res => res.json())
             .then(data => {
-                overlayText.innerText = "Request Logged. Finalizing...";
+                overlayText.innerText = "Booking confirmed. Redirecting...";
                 
                 const bookingId = data.bookingId || data.id || `NX-${Math.floor(1000 + Math.random() * 9000)}`;
 
@@ -278,7 +283,7 @@
                 setTimeout(() => window.location.href = 'booking-success.html', 1200);
             })
             .catch(error => {
-                NexusUtils.showAlert("Transmission Failed", "error");
+                alert("Could not process booking. Please try again.");
                 btn.disabled = false;
                 overlay.style.display = "none";
             });
