@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wishlist | Nexus Hardware</title>
+    <title>Nexus | Hardware Inventory</title>
     
     <script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js@6.3.7/dist/amazon-cognito-identity.min.js"></script>
     <script src="auth-config.js"></script>
     <script src="header.js" defer></script>
+    <script src="footer.js" defer></script>
     <link rel="stylesheet" href="style.css">
 
     <style>
@@ -182,6 +183,7 @@
             <div class="empty-state">Syncing your saved items...</div>
         </div>
     </main>
+    <footer id="nexus-footer-wrapper"></footer>
 
     <script>
         let apiProducts = [];

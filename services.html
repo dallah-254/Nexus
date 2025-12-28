@@ -3,167 +3,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexus | Service Catalog</title>
+    <title>Nexus | Technical Service Hub</title>
     
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/aws-sdk/2.1522.0/aws-sdk.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js@6.3.7/dist/amazon-cognito-identity.min.js"></script>
-    
     <script src="auth-config.js"></script>
     <script src="header.js" defer></script>
+    <script src="footer.js" defer></script>
     <link rel="stylesheet" href="style.css">
     
     <style>
         :root { 
-            --primary: #2563eb;
-            --primary-hover: #1d4ed8;
-            --bg-light: #f8fafc;
+            --primary: #2563eb; 
+            --bg: #f8fafc; 
             --card-bg: #ffffff;
-            --text-main: #1e293b;
+            --text-main: #0f172a;
             --text-muted: #64748b;
-            --border-color: #e2e8f0;
+            --border: #e2e8f0; 
         }
         
         body { 
-            background: var(--bg-light); 
+            background: var(--bg); 
             color: var(--text-main); 
             font-family: 'Inter', sans-serif; 
-            padding-top: 100px; 
+            padding-top: 110px; /* Tightest spacing yet */
             margin: 0; 
         }
 
-        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 15px; }
 
-        /* --- CONTROL PANEL --- */
-        .control-panel {
-            background: white;
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 30px;
-            margin-bottom: 50px;
-            display: grid;
-            grid-template-columns: 1fr auto;
-            gap: 20px;
-            align-items: center;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-        }
-
-        .search-box { position: relative; }
-        .service-search-input {
-            width: 100%;
-            background: var(--bg-light);
-            border: 1px solid var(--border-color);
-            padding: 15px 20px 15px 45px;
-            border-radius: 10px;
-            color: var(--text-main);
-            font-size: 1rem;
-            outline: none;
-            transition: all 0.2s;
-        }
-        .service-search-input:focus { 
-            border-color: var(--primary); 
-            background: white;
-            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); 
-        }
-        .search-icon { 
-            position: absolute; left: 18px; top: 50%; transform: translateY(-50%); 
-            font-size: 1.1rem;
-            opacity: 0.5;
-        }
-
-        /* --- CATEGORY SECTIONING --- */
-        .category-block { margin-bottom: 60px; }
-        .category-title {
-            font-size: 1.25rem;
-            font-weight: 800;
-            color: var(--text-main);
-            margin-bottom: 25px;
+        /* --- CATEGORY TABS --- */
+        .tabs-container {
             display: flex;
-            align-items: center;
-            gap: 15px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            gap: 10px;
+            overflow-x: auto;
+            padding: 10px 0;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+            scrollbar-width: none; /* Hide scrollbar Firefox */
         }
-        .category-title::after {
-            content: "";
-            flex: 1;
-            height: 2px;
-            background: var(--border-color);
+        .tabs-container::-webkit-scrollbar { display: none; } /* Hide scrollbar Chrome */
+
+        .cat-tab {
+            padding: 8px 16px;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            white-space: nowrap;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            transition: 0.2s;
+        }
+        .cat-tab.active {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
         }
 
-        /* --- SERVICE CARDS --- */
-        .nexus-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; }
+        /* --- ULTRA COMPACT GRID (50% Smaller) --- */
+        .nexus-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); /* Half the size of previous 320px */
+            gap: 12px; 
+        }
         
         .service-card {
             background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 24px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            transition: all 0.2s ease;
             display: flex;
             flex-direction: column;
             text-decoration: none;
             color: inherit;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
 
         .service-card:hover {
+            transform: translateY(-3px);
             border-color: var(--primary);
-            transform: translateY(-5px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
         }
 
         .service-tag {
-            font-weight: 700;
-            font-size: 0.7rem;
+            font-size: 0.55rem;
             color: var(--primary);
             text-transform: uppercase;
-            margin-bottom: 12px;
-            letter-spacing: 0.5px;
+            font-weight: 800;
+            margin-bottom: 4px;
         }
 
         .service-name {
-            font-size: 1.25rem;
+            font-size: 0.8rem; /* Smaller Font */
             font-weight: 700;
-            margin: 0 0 15px 0;
-            line-height: 1.3;
-            color: var(--text-main);
-        }
-
-        .activity-preview {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 25px;
-        }
-
-        .pill {
-            font-size: 0.7rem;
-            font-weight: 600;
-            background: #eff6ff;
-            padding: 6px 12px;
-            border-radius: 6px;
-            color: var(--primary);
+            margin: 0 0 8px 0;
+            line-height: 1.2;
+            height: 2.4em; /* Max 2 lines */
+            overflow: hidden;
         }
 
         .service-footer {
             margin-top: auto;
+            padding-top: 8px;
+            border-top: 1px solid var(--border);
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-top: 20px;
-            border-top: 1px solid var(--border-color);
+            flex-direction: column;
+            gap: 5px;
         }
 
-        .price { font-weight: 800; color: var(--text-main); font-size: 1.1rem; }
-        .price span { font-size: 0.7rem; color: var(--text-muted); font-weight: 600; margin-right: 5px; }
+        .price { font-weight: 800; color: var(--text-main); font-size: 0.9rem; }
+        .price span { font-size: 0.6rem; color: var(--text-muted); display: block; }
 
-        .init-link {
+        .btn-book {
+            font-size: 0.65rem;
             font-weight: 700;
-            font-size: 0.85rem;
             color: var(--primary);
+            text-align: right;
         }
 
-        #loader { text-align: center; padding: 100px; font-weight: 600; color: var(--primary); }
+        #loader { text-align: center; padding: 50px; font-size: 0.8rem; color: var(--text-muted); }
     </style>
 </head>
 <body>
@@ -171,94 +130,72 @@
     <div id="nexus-header-wrapper"></div>
 
     <main class="container">
-        <div class="control-panel">
-            <div class="search-box">
-                <span class="search-icon">🔍</span>
-                <input type="text" id="serviceSearch" class="service-search-input" 
-                       placeholder="Search for repair services, diagnostic protocols..." oninput="handleSearch()">
+        <div id="category-tabs" class="tabs-container">
             </div>
-            <div id="status-tag" style="font-weight: 700; font-size: 0.75rem; color: var(--text-muted);">
-                STATUS: REGISTRY_ACTIVE
-            </div>
-        </div>
 
-        <div id="loader">Syncing service database...</div>
-        <div id="service-display-area"></div>
+        <div id="loader">Syncing database...</div>
+        <div id="service-display-area" class="nexus-grid"></div>
     </main>
+
+    <footer id="nexus-footer-wrapper"></footer>
 
     <script>
         let rawData = [];
+        let categories = [];
+        let currentCategory = 'ALL';
 
         async function load() {
             try {
                 const res = await fetch(`${NEXUS_CONFIG.api.baseUrl}/services`);
                 rawData = await res.json();
-                document.getElementById('loader').style.display = 'none';
-                renderCategorized(rawData);
-            } catch (e) {
-                document.getElementById('loader').innerHTML = `<span style="color:#ef4444">Connection to registry failed.</span>`;
-            }
-        }
-
-        function handleSearch() {
-            const query = document.getElementById('serviceSearch').value.toLowerCase();
-            const filtered = rawData.filter(s => 
-                s.serviceName.toLowerCase().includes(query) || 
-                (s.serviceCategory && s.serviceCategory.toLowerCase().includes(query))
-            );
-            renderCategorized(filtered);
-        }
-
-        function renderCategorized(data) {
-            const container = document.getElementById('service-display-area');
-            container.innerHTML = '';
-
-            const groups = data.reduce((acc, item) => {
-                const cat = item.serviceCategory || "General Maintenance";
-                if (!acc[cat]) acc[cat] = [];
-                acc[cat].push(item);
-                return acc;
-            }, {});
-
-            if (Object.keys(groups).length === 0) {
-                container.innerHTML = `<div style="text-align:center; padding:50px; color:var(--text-muted);">No services found matching your criteria.</div>`;
-                return;
-            }
-
-            for (const [category, services] of Object.entries(groups)) {
-                const section = document.createElement('div');
-                section.className = 'category-block';
                 
-                const isSearching = document.getElementById('serviceSearch').value.length > 0;
-                const displayItems = isSearching ? services : services.slice(0, 10);
-
-                section.innerHTML = `
-                    <div class="category-title">${category}</div>
-                    <div class="nexus-grid">
-                        ${displayItems.map(s => renderServiceCard(s)).join('')}
-                    </div>
-                `;
-                container.appendChild(section);
+                // Extract unique categories
+                categories = ['ALL', ...new Set(rawData.map(s => s.serviceCategory || "General"))];
+                
+                document.getElementById('loader').style.display = 'none';
+                renderTabs();
+                renderServices();
+            } catch (e) {
+                document.getElementById('loader').innerHTML = "Database Connection Offline";
             }
         }
 
-        function renderServiceCard(s) {
-            const activities = s.activities ? s.activities.slice(0, 3).map(a => `<span class="pill">${a}</span>`).join('') : '<span class="pill">Full Diagnostic</span>';
-            return `
+        function renderTabs() {
+            const container = document.getElementById('category-tabs');
+            container.innerHTML = categories.map(cat => `
+                <div class="cat-tab ${currentCategory === cat ? 'active' : ''}" 
+                     onclick="filterCategory('${cat}')">
+                    ${cat}
+                </div>
+            `).join('');
+        }
+
+        function filterCategory(cat) {
+            currentCategory = cat;
+            renderTabs(); // Update active state
+            renderServices();
+        }
+
+        function renderServices() {
+            const container = document.getElementById('service-display-area');
+            const filteredData = currentCategory === 'ALL' 
+                ? rawData 
+                : rawData.filter(s => (s.serviceCategory || "General") === currentCategory);
+
+            container.innerHTML = filteredData.map(s => `
                 <a href="service-details.html?id=${s.serviceId}" class="service-card">
-                    <div class="service-tag">REF: ${s.serviceId}</div>
+                    <div class="service-tag">#${s.serviceId.substring(0,8)}</div>
                     <h3 class="service-name">${s.serviceName}</h3>
                     
-                    <div class="activity-preview">
-                        ${activities}
-                    </div>
-
                     <div class="service-footer">
-                        <div class="price"><span>EST.</span>$${parseFloat(s.basePrice || 0).toFixed(2)}</div>
-                        <span class="init-link">View Details &rarr;</span>
+                        <div class="price">
+                            <span>Starting at</span>
+                            $${parseFloat(s.basePrice || 0).toFixed(2)}
+                        </div>
+                        <span class="btn-book">Details <i class="fa-solid fa-arrow-right"></i></span>
                     </div>
                 </a>
-            `;
+            `).join('');
         }
 
         window.onload = load;

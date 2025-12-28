@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexus | Service Intelligence</title>
+    <title>Nexus | Hardware Inventory</title>
     
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/aws-sdk/2.1522.0/aws-sdk.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js@6.3.7/dist/amazon-cognito-identity.min.js"></script>
-    
     <script src="auth-config.js"></script>
+    <script src="header.js" defer></script>
+    <script src="footer.js" defer></script>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="header.css">
     
     <style>
         :root { 
@@ -168,6 +167,9 @@
     <div class="container" id="details-container">
         <div class="loading-overlay">Retrieving technical specifications...</div>
     </div>
+
+        <footer id="nexus-footer-wrapper"></footer>
+
 
     <script>
         const API = "https://yskkdnff93.execute-api.us-east-1.amazonaws.com/prod/services";
