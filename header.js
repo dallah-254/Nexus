@@ -206,7 +206,7 @@
 
             <div class="header-main">
                 <a href="index.html" class="brand-container">
-                    <img src="image.png" alt="Nexus Logo" class="header-logo-img">
+                    <img src="logo.png" alt="Nexus Logo" class="header-logo-img">
                     <div class="brand-text-group">
                         <h1 class="logo-text">Nexus<span>Hardware</span></h1>
                         <span class="slogan-text">Precision Hardware. Proven Reliability.</span>

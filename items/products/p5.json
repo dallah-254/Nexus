@@ -1,0 +1,294 @@
+{
+  "NexusFlow_Products": [
+    {
+      "PutRequest": {
+        "Item": {
+          "productId": { "S": "GPU-401" },
+          "name": { "S": "NVIDIA GeForce RTX 4090 Founders Edition 24GB GDDR6X" },
+          "category": { "S": "Graphics Cards" },
+          "price": { "N": "1599.99" },
+          "imageUrl": { "S": "https://images.unsplash.com/photo-1624701928517-44c8ac49d93c?auto=format&fit=crop&w=600&q=80" },
+          "description": { "S": "The ultimate gaming GPU featuring NVIDIA's Ada Lovelace architecture with 16,384 CUDA cores, 24GB of ultra-fast GDDR6X memory at 21 Gbps, and DLSS 3 technology. This graphics card delivers up to 4x performance of previous generation GPUs with fourth-gen Tensor Cores and third-gen RT Cores. Features a revolutionary cooling system with vapor chamber, 23-phase power supply, and dual axial-flow fans. Supports 8K gaming at 60 FPS, AV1 encoding, and NVIDIA Reflex for ultra-low latency competitive gaming. Includes HDMI 2.1a and three DisplayPort 1.4a outputs with 4x NVENC encoders for professional streaming and content creation." }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "productId": { "S": "GPU-402" },
+          "name": { "S": "AMD Radeon RX 7900 XTX 24GB GDDR6" },
+          "category": { "S": "Graphics Cards" },
+          "price": { "N": "999.99" },
+          "imageUrl": { "S": "https://images.unsplash.com/photo-1624701928517-44c8ac49d93c?auto=format&fit=crop&w=600&q=80" },
+          "description": { "S": "High-performance gaming GPU based on AMD's RDNA 3 architecture featuring chiplet design with 96 Compute Units, 24GB of GDDR6 memory on a 384-bit memory bus, and 61 TFLOPs of peak single-precision compute performance. Includes DisplayPort 2.1 support for up to 8K 165Hz or 4K 480Hz displays, AMD Infinity Cache technology with 96MB, and dedicated AI accelerators. Advanced cooling solution with vapor chamber, triple-fan design with intelligent fan control, and full-coverage backplate. Supports AMD FidelityFX Super Resolution 3, HYPR-RX performance boost technology, and AV1 encoding/decoding hardware acceleration." }
+        }
+      }
+    },
+
+    {
+      "PutRequest": {
+        "Item": {
+          "productId": { "S": "CPU-102" },
+          "name": { "S": "AMD Ryzen 9 7950X3D 16-Core 32-Thread Processor" },
+          "category": { "S": "Processors" },
+          "price": { "N": "699.99" },
+          "imageUrl": { "S": "https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?auto=format&fit=crop&w=600&q=80" },
+          "description": { "S": "World's fastest gaming processor featuring AMD 3D V-Cache technology with 144MB total cache (128MB L3 + 16MB L2). Zen 4 architecture with 16 cores/32 threads, boost clock up to 5.7GHz, and AMD EXPO technology for memory overclocking. Built on 5nm process with integrated RDNA 2 graphics and support for PCIe 5.0 and DDR5-5200. Optimized for gaming with asymmetrical cache design where 8 cores have 3D V-Cache for gaming workloads and 8 cores run at higher frequencies for productivity. Includes AMD Ryzen Master utility for precision overclocking and Wraith Prism RGB cooler with independent LED control." }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "productId": { "S": "MB-201" },
+          "name": { "S": "ASUS ROG Maximus Z790 Hero WiFi 6E LGA 1700 ATX Motherboard" },
+          "category": { "S": "Motherboards" },
+          "price": { "N": "629.99" },
+          "imageUrl": { "S": "https://images.unsplash.com/photo-1512499617640-c74ae3a79d37?auto=format&fit=crop&w=600&q=80" },
+          "description": { "S": "Premium gaming motherboard with 20+1 power stages rated at 105A each, dual 8-pin ProCool II power connectors, and robust VRM cooling with heatsinks and heatpipes. Features 5x M.2 slots with heatsinks (PCIe 4.0/5.0), PCIe 5.0 x16 SafeSlot, Thunderbolt 4 with 40 Gbps bandwidth, and Intel WiFi 6E with 6 GHz band support. Includes SupremeFX ALC4082 audio codec with ESS SABRE9218 DAC, dual BIOS with FlashBack button, and comprehensive RGB lighting with Aura Sync. Networking includes Intel 2.5Gb Ethernet and ASUS LANGuard protection. Extensive cooling options with multiple fan headers, water pump headers, and temperature sensors." }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "productId": { "S": "RAM-301" },
+          "name": { "S": "G.Skill Trident Z5 RGB 64GB (2x32GB) DDR5-6400 CL32" },
+          "category": { "S": "Memory" },
+          "price": { "N": "279.99" },
+          "imageUrl": { "S": "https://images.unsplash.com/photo-1591485423007-765bde4139ef?auto=format&fit=crop&w=600&q=80" },
+          "description": { "S": "High-performance DDR5 memory kit with 64GB capacity (2x32GB) running at 6400MHz with tight CL32-39-39-102 timings at 1.4V. Features custom-designed aluminum heat spreaders with diffused RGB lighting synchronized via G.Skill's lighting control software. Samsung B-die memory chips with on-die ECC for enhanced stability and reliability. Optimized for Intel XMP 3.0 and AMD EXPO profiles for one-click overclocking. Ten-layer PCB design for superior signal integrity and improved overclocking potential. Includes customizable RGB effects with 8 independent LED zones per module and compatibility with major motherboard RGB software platforms." }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "productId": { "S": "SSD-501" },
+          "name": { "S": "Samsung 990 Pro 2TB PCIe 4.0 NVMe M.2 SSD" },
+          "category": { "S": "Storage" },
+          "price": { "N": "179.99" },
+          "imageUrl": { "S": "https://images.unsplash.com/photo-1587614382346-4ec70e388b28?auto=format&fit=crop&w=600&q=80" },
+          "description": { "S": "Flagship PCIe 4.0 SSD featuring Samsung's proprietary controller and 7th-gen V-NAND with speeds up to 7,450 MB/s sequential read and 6,900 MB/s sequential write. Includes 2GB of LPDDR4 DRAM cache and intelligent TurboWrite 2.0 technology for sustained high performance. Advanced thermal control with nickel-coated controller and heat spreader label maintains optimal temperatures during extended workloads. Rated for 1,200 TBW endurance with 5-year limited warranty. Samsung Magician software provides drive health monitoring, performance optimization, and firmware updates. Perfect for gaming, content creation, and professional applications requiring maximum storage performance." }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "productId": { "S": "PSU-601" },
+          "name": { "S": "Corsair RM1000x SHIFT 1000W 80 PLUS Gold Fully Modular ATX 3.0 Power Supply" },
+          "category": { "S": "Power Supplies" },
+          "price": { "N": "189.99" },
+          "imageUrl": { "S": "https://images.unsplash.com/photo-1600003263720-95b45a4035d5?auto=format&fit=crop&w=600&q=80" },
+          "description": { "S": "ATX 3.0 compliant power supply with 1000W capacity and 80 PLUS Gold certification delivering up to 90% efficiency. Features side-mounted connectors for easier cable management in modern cases and includes native 12VHPWR connector for next-gen GPUs up to 600W. Fully modular design with individually sleeved cables, 135mm rifle bearing fan with zero RPM mode, and 100% Japanese 105°C capacitors for reliability. Advanced protection with OCP, OVP, UVP, OPP, SCP, and OTP. Compliant with PCIe 5.0 and CEC 2022 efficiency standards. Includes 10-year warranty and Corsair Type 5 Gen 2 sleeved cables with improved flexibility and aesthetics." }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "productId": { "S": "CASE-701" },
+          "name": { "S": "Lian Li O11 Dynamic EVO RGB Tempered Glass ATX Mid Tower Case" },
+          "category": { "S": "Cases" },
+          "price": { "N": "159.99" },
+          "imageUrl": { "S": "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?auto=format&fit=crop&w=600&q=80" },
+          "description": { "S": "Revolutionary dual-chamber PC case with modular design allowing reversible motherboard tray, invertible layout, and multiple configuration options. Features three ARGB fans pre-installed with mesh side and front panels for optimal airflow. Supports up to E-ATX motherboards, 420mm radiators, and 10 fan positions. Dual chamber design separates PSU and storage from main components with included vertical GPU mount bracket. Made of 4mm tempered glass on three sides with aluminum frame construction. Includes Lian Li's innovative cable management system, tool-free drive installation, and support for multiple radiator configurations. Compatible with all liquid cooling systems and air coolers up to 167mm height." }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "productId": { "S": "COOL-801" },
+          "name": { "S": "NZXT Kraken Z73 RGB 360mm All-in-One Liquid CPU Cooler" },
+          "category": { "S": "Cooling" },
+          "price": { "N": "279.99" },
+          "imageUrl": { "S": "https://images.unsplash.com/photo-1528164344705-47542687000d?auto=format&fit=crop&w=600&q=80" },
+          "description": { "S": "Premium AIO liquid cooler featuring a 360mm radiator with three Aer P RGB fans and NZXT's revolutionary LCD display on the pump head that can show system information, custom images, or GIFs. Asetek 7th gen pump with increased flow rate and reduced noise, copper cold plate with micro-channel design, and 6-year warranty. Includes CAM software for complete control over cooling performance, RGB lighting, and LCD display customization. The 2.36\" LCD display offers 320x320 resolution with 24-bit color depth. Features reinforced tubing with anti-leak technology, 2400 RPM pump speed, and support for all modern CPU sockets including Intel LGA 1700 and AMD AM5." }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "productId": { "S": "MON-901" },
+          "name": { "S": "Alienware AW3423DWF 34\" QD-OLED Curved Gaming Monitor" },
+          "category": { "S": "Monitors" },
+          "price": { "N": "999.99" },
+          "imageUrl": { "S": "https://images.unsplash.com/photo-1556155092-490a1ba16284?auto=format&fit=crop&w=600&q=80" },
+          "description": { "S": "34-inch QD-OLED gaming monitor with 3440x1440 resolution, 1800R curvature, and 165Hz refresh rate (overclockable to 175Hz). Features quantum dot technology with infinite contrast ratio, true blacks, and 99.3% DCI-P3 color gamut. Certified with DisplayHDR True Black 400, 0.1ms GtG response time, and AMD FreeSync Premium Pro. Includes Alienware's proprietary heatsink for better thermal management and pixel refresh technology to prevent burn-in. Connectivity includes 2x HDMI 2.0, DisplayPort 1.4, 4x USB 3.2 Gen 1 ports, and 3.5mm audio out. Factory color calibrated with delta-E <2 accuracy and includes 3-year warranty with burn-in protection." }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "productId": { "S": "MOUSE-1001" },
+          "name": { "S": "Logitech G Pro X Superlight 2 Wireless Gaming Mouse" },
+          "category": { "S": "Peripherals" },
+          "price": { "N": "159.99" },
+          "imageUrl": { "S": "https://images.unsplash.com/photo-1527814050087-3793815479db?auto=format&fit=crop&w=600&q=80" },
+          "description": { "S": "Ultra-lightweight wireless gaming mouse at only 60 grams featuring Logitech's HERO 2 sensor with 32,000 DPI, zero smoothing/filtering/acceleration, and 400+ IPS tracking. Includes LIGHTSPEED wireless technology with 1ms report rate, 95-hour battery life, and USB-C fast charging. New hybrid optical-mechanical switches provide 70M click durability with crisp tactile feedback. PTFE feet with 100% pure virgin material for smooth gliding, and POWERPLAY compatibility for wireless charging. Symmetrical ambidextrous design tested by professional esports athletes, with onboard memory for five profiles and Logitech G HUB software customization. Includes USB-C to USB-A charging cable and USB receiver extender." }
+        }
+    }
+      },
+
+    {
+      "PutRequest": {
+        "Item": {
+          "productId": { "S": "KYB-1101" },
+          "name": { "S": "Razer Huntsman V2 Analog Optical Gaming Keyboard" },
+          "category": { "S": "Peripherals" },
+          "price": { "N": "249.99" },
+          "imageUrl": { "S": "https://images.unsplash.com/photo-1618384881928-02484c98f801?auto=format&fit=crop&w=600&q=80" },
+          "description": { "S": "Advanced gaming keyboard featuring Razer Analog Optical Switches with adjustable actuation from 1.5mm to 3.6mm, dual-step actuation for racing and flying games, and analog control for precise movement. Includes per-key RGB lighting with Razer Chroma RGB, dedicated media controls with digital dial, and plush leatherette wrist rest. Doubleshot PBT keycaps for durability, hybrid on-board and cloud storage for keymaps, and 100% anti-ghosting with N-key rollover. Detachable USB-C cable, aluminum construction, and sound-dampening foam for quieter typing experience. Razer Synapse 3 software provides complete customization of analog functions, macros, and lighting effects with integration for 200+ games and apps." }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "productId": { "S": "AUD-1201" },
+          "name": { "S": "SteelSeries Arctis Nova Pro Wireless Multi-System Gaming Headset" },
+          "category": { "S": "Audio" },
+          "price": { "N": "349.99" },
+          "imageUrl": { "S": "https://images.unsplash.com/photo-1484704849700-f032a568e944?auto=format&fit=crop&w=600&q=80" },
+          "description": { "S": "Premium wireless gaming headset featuring simultaneous multi-platform connectivity with GameDAC Gen 2 that supports PC, PlayStation, and Switch simultaneously. Includes dual wireless batteries with hot-swap capability for infinite playtime, active noise cancellation with transparency mode, and 360° spatial audio with Sonar software suite. High-fidelity drivers with neodymium magnets deliver 10Hz-22kHz frequency response, and ClearCast Gen 2 microphone with AI-powered noise cancellation. All-day comfort with ski goggle headband, AirWeave memory foam ear cushions, and lightweight magnesium alloy construction. Includes swappable microphone designs, ChatMix dial, on-ear controls, and premium carrying case. Compatible with Xbox via included 3.5mm cable." }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "productId": { "S": "DESK-1301" },
+          "name": { "S": "Secretlab MAGNUS Pro Metal Gaming Desk - XL Edition" },
+          "category": { "S": "Furniture" },
+          "price": { "N": "949.99" },
+          "imageUrl": { "S": "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=600&q=80" },
+          "description": { "S": "Professional-grade motorized standing desk with 74.8\" x 31.5\" carbon steel surface featuring magnetic accessories ecosystem. Includes electric height adjustment from 25.6\" to 51.2\" with 4 memory presets, 300lb weight capacity, and dual-motor system with 0.8\"/sec adjustment speed. Integrated cable management with magnetic panels, built-in power supply with 2x USB-C (100W PD) and 2x USB-A ports, and smart cable tray. Desk surface is scratch-resistant, spill-proof, and compatible with magnetic cable anchors, headphone holder, and monitor mounts. Features programmable controller with LCD display, child lock, and anti-collision technology. Industrial-grade steel frame with 10-year warranty and certified for office and home use." }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "productId": { "S": "CHAIR-1401" },
+          "name": { "S": "Herman Miller Aeron Gaming Chair Remastered - Size C" },
+          "category": { "S": "Furniture" },
+          "price": { "N": "1695.00" },
+          "imageUrl": { "S": "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=600&q=80" },
+          "description": { "S": "Legendary ergonomic gaming chair featuring 8Z Pellicle suspension material that distributes weight evenly while maintaining airflow. Includes fully adjustable PostureFit SL lumbar support, 12-year warranty, and recycled materials construction. Size C version for taller users (6'2\" to 6'10\") with enhanced seat depth and backrest height. Titanium finish with gaming-specific color accents, tilt limiter with forward tilt function, and adjustable armrests (height, pivot, width, and depth). Breathable mesh material prevents heat buildup during long sessions, and self-adjusting tilt mechanism responds to user's movements. Certified by orthopedic surgeons and tested for 24/7 use in commercial environments. Includes all adjustments for perfect ergonomic positioning." }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "productId": { "S": "NET-1501" },
+          "name": { "S": "ASUS ROG Rapture GT-AXE16000 Quad-Band WiFi 6E Gaming Router" },
+          "category": { "S": "Networking" },
+          "price": { "N": "649.99" },
+          "imageUrl": { "S": "https://images.unsplash.com/photo-1597764690523-15bea2d0007f?auto=format&fit=crop&w=600&q=80" },
+          "description": { "S": "World's first quad-band WiFi 6E gaming router with 16 streams, 10G WAN/LAN ports, and dual 10G ports. Delivers combined speeds up to 16000 Mbps across 2.4GHz (1148Mbps), 5GHz-1 (4804Mbps), 5GHz-2 (4804Mbps), and 6GHz bands (4804Mbps). Features 2.0GHz quad-core processor, 2GB RAM, and dedicated gaming port with Game First V technology. Includes ASUS RangeBoost Plus for 38% wider coverage, AiMesh support for whole-home mesh networking, and ASUS AiProtection Pro with lifetime security updates. Dual USB 3.2 ports for media sharing and 3G/4G dongles, eight external antennas with high-gain design, and comprehensive QoS with gaming acceleration. Mobile app management and compatibility with all gaming consoles and devices." }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "productId": { "S": "LAP-1601" },
+          "name": { "S": "ASUS ROG Zephyrus G16 2024 Gaming Laptop" },
+          "category": { "S": "Laptops" },
+          "price": { "N": "2399.99" },
+          "imageUrl": { "S": "https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?auto=format&fit=crop&w=600&q=80" },
+          "description": { "S": "Ultra-slim 16\" gaming laptop featuring Intel Core Ultra 9 processor 185H and NVIDIA GeForce RTX 4070 Laptop GPU with 8GB GDDR6. 16\" Nebula Display with 240Hz refresh rate, 3ms response time, 100% DCI-P3 color gamut, and G-SYNC support. CNC-machined aluminum chassis at only 19.9mm thin with AniMe Matrix LED array on lid for custom animations. Includes 32GB LPDDR5X RAM, 2TB PCIe 4.0 SSD, WiFi 6E, and Thunderbolt 4. Advanced cooling with Tri-fan technology, liquid metal on CPU, and Arc Flow fans. 90Wh battery with 100W USB-C PD charging, per-key RGB keyboard with 1.7mm travel, and six-speaker system with Dolby Atmos. Weight: 4.41 lbs with premium build quality." }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "productId": { "S": "STREAM-1701" },
+          "name": { "S": "Elgato Stream Deck MK.2 - 15 Key Studio Controller" },
+          "category": { "S": "Streaming" },
+          "price": { "N": "149.99" },
+          "imageUrl": { "S": "https://images.unsplash.com/photo-1593305841991-05c297ba4575?auto=format&fit=crop&w=600&q=80" },
+          "description": { "S": "Professional studio controller with 15 customizable LCD keys that display icons or text, each capable of triggering unlimited actions. Features improved non-slip stand with adjustable tilt, detachable USB-C cable, and enhanced anti-glare screen. Integration with 200+ apps including OBS, Twitch, YouTube, Discord, Philips Hue, and Spotify. Create multi-actions with multiple steps, timers, and conditional logic. Includes Stream Deck software with plugin marketplace, folder navigation, and profile switching. Perfect for streamers, content creators, and professionals for controlling scenes, switching cameras, adjusting audio, launching media, and automating workflows. Compatible with Windows 10/11 and macOS 11+ with regular software updates adding new features." }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "productId": { "S": "CAM-1801" },
+          "name": { "S": "Sony ZV-E10 Content Creator Mirrorless Camera" },
+          "category": { "S": "Streaming" },
+          "price": { "N": "799.99" },
+          "imageUrl": { "S": "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?auto=format&fit=crop&w=600&q=80" },
+          "description": { "S": "APS-C mirrorless camera designed specifically for content creators with 24.2MP Exmor CMOS sensor and BIONZ X processor. Features unlimited 4K video recording, product showcase setting that automatically shifts focus, and background defocus button. Includes directional 3-capsule microphone, windscreen, and MI shoe for additional audio accessories. Fully articulating LCD touchscreen, real-time eye autofocus for humans and animals, and real-time tracking. Compact and lightweight body with 425 phase-detection AF points covering 84% of sensor area. Compatible with E-mount lenses, includes USB streaming capability at up to 4K, and has vari-angle screen for vlogging. Perfect for streaming, YouTube content, and professional video production." }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "productId": { "S": "LIGHT-1901" },
+          "name": { "S": "Elgato Key Light Air Professional LED Streaming Light" },
+          "category": { "S": "Streaming" },
+          "price": { "N": "149.99" },
+          "imageUrl": { "S": "https://images.unsplash.com/photo-1562813733-b31f71025d54?auto=format&fit=crop&w=600&q=80" },
+          "description": { "S": "Professional studio lighting with 1400 lumens output, adjustable color temperature from 2900K to 7000K, and brightness control via smartphone app or Stream Deck. Features 80+ CRI for accurate color reproduction, built-in diffuser for soft shadows, and aluminum construction with stable desk clamp. WiFi enabled with Control Center software for precise adjustments, scheduling, and grouping multiple lights. Compact design with flexible gooseneck for precise positioning, 110-240V universal power supply, and zero-flicker technology for stable video recording. Energy efficient with 18W power consumption and cool operation. Perfect for streaming, video conferencing, content creation, and professional photography with studio-quality lighting results." }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "productId": { "S": "VR-2001" },
+          "name": { "S": "Meta Quest 3 128GB Advanced Mixed Reality Headset" },
+          "category": { "S": "VR/AR" },
+          "price": { "N": "499.99" },
+          "imageUrl": { "S": "https://images.unsplash.com/photo-1593508512255-86ab42a8e620?auto=format&fit=crop&w=600&q=80" },
+          "description": { "S": "Next-generation mixed reality headset with pancake optics for 30% slimmer profile and high-resolution displays with 2064x2208 pixels per eye at 120Hz refresh rate. Features Snapdragon XR2 Gen 2 platform with 2x GPU performance, full-color passthrough with 18 PPD, and 10x more pixels than previous generation. Includes Touch Plus controllers with TruTouch haptics and no tracking rings, 128GB storage, and improved audio with 3D spatial sound. Over 500 games and apps available, compatibility with Xbox Cloud Gaming and PC VR via Meta Quest Link. Advanced guardian system with room scanning, hand tracking 2.0, and mixed reality experiences blending virtual and real worlds. Perfect for gaming, fitness, productivity, and social experiences in VR and MR." }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "productId": { "S": "NAS-2101" },
+          "name": { "S": "Synology DS1522+ 5-Bay NAS DiskStation" },
+          "category": { "S": "Storage" },
+          "price": { "N": "699.99" },
+          "imageUrl": { "S": "https://images.unsplash.com/photo-1587614382346-4ec70e388b28?auto=format&fit=crop&w=600&q=80" },
+          "description": { "S": "5-bay network attached storage solution with AMD Ryzen R1600 dual-core processor, 8GB DDR4 ECC memory (expandable to 32GB), and dual M.2 NVMe SSD slots for cache acceleration. Supports up to 90TB raw capacity (5x18TB drives) with Synology Hybrid RAID (SHR), Btrfs file system with data integrity protection, and snapshot replication. Includes four 1GbE LAN ports with Link Aggregation and Failover support, plus PCIe expansion for 10GbE network upgrade. Features comprehensive backup solutions, surveillance station with 40 camera licenses, and virtualization support. DSM operating system provides intuitive management, Docker support, and extensive application ecosystem. Perfect for small businesses, creative professionals, and home labs requiring reliable network storage with advanced features." }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "productId": { "S": "UPS-2201" },
+          "name": { "S": "APC Smart-UPS SMT1500C 1500VA/900W Tower UPS" },
+          "category": { "S": "Power" },
+          "price": { "N": "499.99" },
+          "imageUrl": { "S": "https://images.unsplash.com/photo-1600003263720-95b45a4035d5?auto=format&fit=crop&w=600&q=80" },
+          "description": { "S": "Line-interactive UPS with 1500VA/900W capacity, pure sine wave output, and automatic voltage regulation (AVR). Features LCD display for real-time status monitoring, runtime estimation, and configuration. Includes 12 user-replaceable batteries with hot-swappable design, 10 network/communication ports (1 Gigabit Ethernet surge protection, 2 RJ45 surge protection), and 10 NEMA 5-15R battery backup outlets. Network management capable with included SmartConnect for cloud monitoring, PowerChute business edition software, and SNMP compatibility. Runtime up to 90 minutes at half load, with 0.9 output power factor and 98% efficiency in online mode. Perfect for servers, networking equipment, gaming PCs, and sensitive electronics requiring clean, uninterrupted power with remote management capabilities." }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "productId": { "S": "SUB-3001" },
+          "name": { "S": "SVS SB-1000 Pro Sealed Box Subwoofer - Piano Black" },
+          "category": { "S": "Audio" },
+          "price": { "N": "599.99" },
+          "imageUrl": { "S": "https://images.unsplash.com/photo-1484704849700-f032a568e944?auto=format&fit=crop&w=600&q=80" },
+          "description": { "S": "Compact 12-inch sealed subwoofer with 325W RMS (820W peak) Sledge amplifier, DSP-controlled for precise frequency response and room integration. Features 12-inch high-excursion driver with dual ferrite magnet assembly, finite element analysis optimized motor structure, and patented injection molded cone with composite fiber construction. Includes smartphone app control for room gain compensation, parametric EQ, and three programmable presets. Frequency response 20-270Hz ±3dB, with advanced DSP algorithms for distortion reduction and dynamic optimization. Auto on/off, phase control, variable low-pass filter, and line-level/LFE inputs. Perfect for gaming, home theater, and music systems requiring deep, accurate bass response in medium to large rooms with minimal footprint. Made in USA with 5-year warranty." }
+        }
+      }
+    }
+  ]
+}

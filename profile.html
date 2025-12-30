@@ -3,349 +3,365 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexus | Hardware Inventory</title>
+    <title>Nexus | Premium Account</title>
     
     <script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js@6.3.7/dist/amazon-cognito-identity.min.js"></script>
     <script src="auth-config.js"></script>
     <script src="header.js" defer></script>
     <script src="footer.js" defer></script>
+    
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         :root {
-            --primary: #2563eb;
-            --primary-hover: #1d4ed8;
-            --bg-light: #f8fafc;
-            --card-bg: #ffffff;
-            --text-main: #1e293b;
-            --text-muted: #64748b;
-            --border-color: #e2e8f0;
+            --accent: #2563eb;
+            --accent-soft: #dbeafe;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #0f172a;
+            --muted: #64748b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --radius-lg: 24px;
+            --radius-md: 16px;
+            --shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
         }
 
         body { 
             padding-top: 100px; 
             font-family: 'Inter', sans-serif; 
-            background-color: var(--bg-light);
-            color: var(--text-main);
-        } 
-
-        /* Tab Navigation */
-        .tab-nav {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 30px;
-            border-bottom: 1px solid var(--border-color);
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
         }
 
-        .tab-link {
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            padding: 15px 20px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.2s;
-            border-bottom: 3px solid transparent;
-        }
-
-        .tab-link:hover { color: var(--primary); }
-
-        .tab-link.active {
-            color: var(--primary);
-            border-bottom: 3px solid var(--primary);
-        }
-
-        .tab-pane { display: none; animation: fadeIn 0.3s ease-in-out; }
-        .tab-pane.active { display: block; }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Account Details Styles */
-        .account-grid {
+        /* --- DASHBOARD LAYOUT --- */
+        .nexus-wrapper {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 20px;
             display: grid;
             grid-template-columns: 320px 1fr;
             gap: 30px;
         }
 
-        .profile-card {
+        /* --- SIDEBAR & ACTIONS --- */
+        .sidebar { position: sticky; top: 120px; height: fit-content; }
+        
+        .profile-hero {
+            background: var(--card);
+            border-radius: var(--radius-lg);
+            padding: 40px 20px;
             text-align: center;
-            padding: 40px 30px;
-            background: var(--card-bg);
-            border-radius: 16px;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
         }
 
-        .user-circle {
+        .avatar {
             width: 90px; height: 90px;
-            background: #eff6ff;
-            color: var(--primary);
+            background: linear-gradient(135deg, var(--accent), #8b5cf6);
             border-radius: 50%;
             margin: 0 auto 20px;
             display: flex; align-items: center; justify-content: center;
-            font-size: 2rem; font-weight: 800;
-            border: 2px solid #dbeafe;
+            color: white; font-size: 32px; font-weight: 800;
+            box-shadow: 0 0 20px rgba(37, 99, 235, 0.3);
         }
 
-        .info-field {
-            margin-bottom: 15px;
-            padding: 16px;
-            background: #f1f5f9;
-            border-radius: 10px;
-            border: 1px solid var(--border-color);
+        .quick-actions {
+            background: var(--card);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            border: 1px solid #e2e8f0;
         }
 
-        .info-field label {
-            display: block;
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            margin-bottom: 6px;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-        }
-
-        .info-field span { font-size: 1rem; color: var(--text-main); font-weight: 500; }
-
-        /* Table Design */
-        .card-table-wrapper {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-        }
-
-        table { width: 100%; border-collapse: collapse; }
-        th { 
-            text-align: left; 
-            padding: 18px; 
-            background: #f8fafc;
-            color: var(--text-muted); 
-            font-size: 0.8rem; 
-            text-transform: uppercase; 
-            font-weight: 700;
-            border-bottom: 1px solid var(--border-color); 
-        }
-        td { padding: 20px 18px; border-bottom: 1px solid var(--border-color); font-size: 0.95rem; }
-        tr:last-child td { border-bottom: none; }
-
-        .status-pill {
-            padding: 6px 12px; border-radius: 8px; font-size: 0.75rem; font-weight: 700;
-            text-transform: uppercase;
-        }
-        .status-pending { background: #fef3c7; color: #92400e; }
-        .status-active { background: #eff6ff; color: #1e40af; }
-        .status-completed { background: #dcfce7; color: #166534; }
-
-        .btn-logout {
-            width: 100%;
+        .action-link {
+            display: flex; align-items: center; gap: 12px;
             padding: 12px;
-            background: #fff;
-            color: #ef4444;
-            border: 1px solid #fee2e2;
-            border-radius: 8px;
+            color: var(--text);
+            text-decoration: none;
             font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
+            border-radius: 10px;
+            transition: 0.2s;
+            margin-bottom: 5px;
         }
-        .btn-logout:hover { background: #fef2f2; border-color: #fecaca; }
 
-        @media (max-width: 900px) { .account-grid { grid-template-columns: 1fr; } }
+        .action-link:hover { background: var(--accent-soft); color: var(--accent); }
+        .action-link.logout { color: var(--danger); margin-top: 20px; }
+
+        /* --- CONTENT CARDS --- */
+        .section-title { font-size: 24px; font-weight: 800; margin-bottom: 25px; display: flex; align-items: center; gap: 10px; }
+        
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 20px; }
+
+        .nexus-card {
+            background: var(--card);
+            border-radius: var(--radius-md);
+            padding: 25px;
+            border: 1px solid #e2e8f0;
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nexus-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+            border-color: var(--accent);
+        }
+
+        .card-tag {
+            position: absolute; top: 0; right: 0;
+            background: var(--accent-soft);
+            color: var(--accent);
+            padding: 5px 15px;
+            border-bottom-left-radius: 15px;
+            font-size: 11px; font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        /* --- MODAL DESIGN --- */
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(10px); z-index: 10000;
+            align-items: center; justify-content: center;
+        }
+
+        .modal-inner {
+            background: white; width: 90%; max-width: 900px; max-height: 85vh;
+            border-radius: 30px; overflow: hidden; display: flex; flex-direction: column;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+        }
+
+        .modal-top { padding: 30px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; }
+        .modal-scroll { padding: 40px; overflow-y: auto; }
+        .modal-bottom { padding: 25px 40px; border-top: 1px solid #f1f5f9; display: flex; gap: 15px; background: #f8fafc; }
+
+        /* --- TRACKING COMPONENT --- */
+        .track-container { margin: 20px 0 40px; display: flex; justify-content: space-between; position: relative; }
+        .track-line { position: absolute; top: 20px; left: 0; width: 100%; height: 4px; background: #e2e8f0; z-index: 1; }
+        .track-node { position: relative; z-index: 2; background: white; text-align: center; width: 80px; }
+        .node-icon { 
+            width: 44px; height: 44px; background: #e2e8f0; border-radius: 50%; 
+            margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; color: white;
+            transition: 0.3s;
+        }
+        .track-node.done .node-icon { background: var(--accent); box-shadow: 0 0 15px rgba(37,99,235,0.4); }
+        .track-node.done span { color: var(--accent); font-weight: 700; }
+
+        .btn { padding: 12px 24px; border-radius: 12px; font-weight: 700; border: none; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px; }
+        .btn-primary { background: var(--accent); color: white; }
+        .btn-danger { background: #fee2e2; color: var(--danger); }
+        .btn-outline { background: white; border: 1px solid #e2e8f0; color: var(--muted); }
+
+        @media (max-width: 900px) {
+            .nexus-wrapper { grid-template-columns: 1fr; }
+            .sidebar { position: static; }
+        }
     </style>
 </head>
 <body>
+    <div id="nexus-header-wrapper"></div>
 
-<div id="nexus-header-wrapper"></div>
-
-<div class="container">
-    <header style="margin-bottom: 40px;">
-        <h1 style="font-weight: 800; font-size: 2.2rem; color: var(--text-main); margin-bottom: 8px;">Customer <span style="color: var(--primary);">Dashboard</span></h1>
-        <p style="color: var(--text-muted); font-size: 1.1rem;">Manage your account, track active service requests, and view order history.</p>
-    </header>
-
-    <div class="tab-nav">
-        <button class="tab-link active" onclick="openTab(event, 'account')">Account Details</button>
-        <button class="tab-link" onclick="openTab(event, 'repairs')">Service Requests</button>
-        <button class="tab-link" onclick="openTab(event, 'orders')">Order History</button>
+    <div id="mainModal" class="modal">
+        <div class="modal-inner">
+            <div class="modal-top">
+                <h2 id="modalTitle" style="margin:0">Transaction Details</h2>
+                <i class="fas fa-times" onclick="closeModal()" style="cursor:pointer; font-size:24px; color:var(--muted)"></i>
+            </div>
+            <div class="modal-scroll" id="modalBody"></div>
+            <div class="modal-bottom" id="modalActions"></div>
+        </div>
     </div>
 
-    <section id="account" class="tab-pane active">
-        <div class="account-grid">
-            <div class="profile-card">
-                <div class="user-circle" id="user-initial">?</div>
-                <h3 id="user-name-display" style="margin-bottom: 5px; font-size: 1.4rem;">User</h3>
-                <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 30px;">Verified Nexus Client</p>
-                <button class="btn-logout" onclick="sessionTerminate()">Sign Out</button>
+    <div class="nexus-wrapper">
+        <aside class="sidebar">
+            <div class="profile-hero">
+                <div class="avatar" id="uInit">U</div>
+                <h3 id="uName" style="margin-bottom:5px;">Loading...</h3>
+                <p id="uEmail" style="color:var(--muted); font-size:14px; margin-bottom:0;"></p>
             </div>
-            
-            <div class="card" style="background: white; border: 1px solid var(--border-color); padding: 35px; border-radius: 16px;">
-                <h3 style="margin-bottom: 25px; font-size: 1.25rem;">Contact Information</h3>
-                <div id="profile-fields-container">
-                    <div style="color: var(--text-muted);">Syncing with security pool...</div>
-                </div>
+
+            <div class="quick-actions">
+                <p style="font-size:11px; font-weight:800; color:var(--muted); text-transform:uppercase; margin-bottom:15px; letter-spacing:1px;">Account Controls</p>
+                <a href="book.html" class="action-link"><i class="fas fa-plus-circle"></i> New Service Request</a>
+                <a href="products.html" class="action-link"><i class="fas fa-shopping-cart"></i> Browse Hardware</a>
+                <a href="#" class="action-link" onclick="alert('Support Chat Opening...')"><i class="fas fa-headset"></i> Live Support</a>
+                <a href="#" class="action-link" onclick="alert('Settings feature coming soon.')"><i class="fas fa-user-cog"></i> Profile Settings</a>
+                <a href="#" class="action-link logout" onclick="sessionTerminate()"><i class="fas fa-sign-out-alt"></i> Sign Out</a>
             </div>
-        </div>
-    </section>
+        </aside>
 
-    <section id="repairs" class="tab-pane">
-        <div class="card-table-wrapper">
-            <div style="padding: 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color);">
-                <h3 style="margin: 0; font-size: 1.25rem;">Service & Maintenance</h3>
-                <button onclick="window.location.href='book.html'" style="background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer;">Book New Service</button>
-            </div>
-            <div id="repair-status-msg" style="padding: 40px; text-align: center; color: var(--text-muted);">
-                <div class="loading-pulse">Checking records...</div>
-            </div>
-            <table id="repair-table" style="display:none;">
-                <thead>
-                    <tr><th>Date</th><th>Device / Technical Issue</th><th>Status</th></tr>
-                </thead>
-                <tbody id="repair-body"></tbody>
-            </table>
-        </div>
-    </section>
+        <main>
+            <section style="margin-bottom: 50px;">
+                <div class="section-title"><i class="fas fa-box" style="color:var(--accent)"></i> Hardware Orders</div>
+                <div id="ordersGrid" class="grid-container"></div>
+            </section>
 
-    <section id="orders" class="tab-pane">
-        <div class="card-table-wrapper">
-            <div style="padding: 25px; border-bottom: 1px solid var(--border-color);">
-                <h3 style="margin: 0; font-size: 1.25rem;">Recent Procurement</h3>
-            </div>
-            <div id="order-status-msg" style="padding: 40px; text-align: center; color: var(--text-muted);">
-                <div class="loading-pulse">Retrieving history...</div>
-            </div>
-            <table id="order-table" style="display:none;">
-                <thead>
-                    <tr><th>Date</th><th>Order Reference</th><th>Total Amount</th><th>Fulfillment</th></tr>
-                </thead>
-                <tbody id="order-body"></tbody>
-            </table>
-        </div>
-    </section>
-</div>
-    <footer id="nexus-footer-wrapper"></footer>
+            <section>
+                <div class="section-title"><i class="fas fa-tools" style="color:var(--accent)"></i> Repair Status</div>
+                <div id="bookingsGrid" class="grid-container"></div>
+            </section>
+        </main>
+    </div>
 
+    <script>
+        const poolData = { UserPoolId: NEXUS_CONFIG.auth.UserPoolId, ClientId: NEXUS_CONFIG.auth.ClientId };
+        let cachedOrders = [];
+        let cachedBookings = [];
 
-<script src="header.js"></script>
-<script>
-    function openTab(evt, tabId) {
-        const panes = document.getElementsByClassName("tab-pane");
-        for (let i = 0; i < panes.length; i++) panes[i].classList.remove("active");
+        window.onload = function() {
+            const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
+            const user = userPool.getCurrentUser();
 
-        const links = document.getElementsByClassName("tab-link");
-        for (let i = 0; i < links.length; i++) links[i].classList.remove("active");
+            if (user) {
+                user.getSession((err, session) => {
+                    if (err || !session.isValid()) { window.location.href='login.html'; return; }
+                    user.getUserAttributes((err, attrs) => {
+                        const email = attrs.find(a => a.Name === 'email')?.Value || "";
+                        document.getElementById('uEmail').innerText = email;
+                        document.getElementById('uName').innerText = email.split('@')[0].toUpperCase();
+                        document.getElementById('uInit').innerText = email[0].toUpperCase();
+                        
+                        fetchOrders(email, session);
+                        fetchBookings(email, session);
+                    });
+                });
+            } else { window.location.href='login.html'; }
+        };
 
-        document.getElementById(tabId).classList.add("active");
-        evt.currentTarget.classList.add("active");
-    }
-
-    const poolData = { UserPoolId: NEXUS_CONFIG.auth.UserPoolId, ClientId: NEXUS_CONFIG.auth.ClientId };
-
-    window.onload = function() {
-        const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
-        const cognitoUser = userPool.getCurrentUser();
-
-        if (cognitoUser) {
-            cognitoUser.getSession((err, session) => {
-                if (err || !session.isValid()) {
-                    window.location.href = 'login.html';
+        async function fetchOrders(email, session) {
+            try {
+                const res = await fetch(`${NEXUS_CONFIG.api.baseUrl}/orders?email=${encodeURIComponent(email)}`, {
+                    headers: { 'Authorization': session.getIdToken().getJwtToken() }
+                });
+                cachedOrders = await res.json() || [];
+                const grid = document.getElementById('ordersGrid');
+                
+                if(cachedOrders.length === 0) {
+                    grid.innerHTML = `<div style="grid-column:1/-1; padding:40px; text-align:center; opacity:0.5;">No orders found.</div>`;
                     return;
                 }
-                
-                cognitoUser.getUserAttributes((err, attributes) => {
-                    if (err) return;
-                    const email = attributes.find(a => a.Name === 'email').Value;
-                    renderProfile(attributes, email);
-                    loadRepairs(email, session);
-                    loadOrders(email);
-                });
-            });
-        } else {
-            window.location.href = 'login.html';
-        }
-    };
 
-    function renderProfile(attrs, email) {
-        document.getElementById('user-initial').innerText = email.charAt(0).toUpperCase();
-        document.getElementById('user-name-display').innerText = email.split('@')[0];
-        
-        const labels = { 'email': 'Official Email Address', 'phone_number': 'Primary Contact', 'address': 'Service Address' };
-        const container = document.getElementById('profile-fields-container');
-        
-        container.innerHTML = attrs
-            .filter(a => labels[a.Name])
-            .map(a => `
-                <div class="info-field">
-                    <label>${labels[a.Name]}</label>
-                    <span>${a.Value}</span>
+                grid.innerHTML = cachedOrders.map(o => `
+                    <div class="nexus-card" onclick="openOrderModal('${o.orderId || o.id}')">
+                        <div class="card-tag">${o.status || 'Processing'}</div>
+                        <div style="color:var(--accent); font-weight:800; font-family:monospace; margin-bottom:10px;">#${(o.orderId || o.id || '---').toString().substring(0,8)}</div>
+                        <div style="font-size:24px; font-weight:900; margin-bottom:5px;">$${parseFloat(o.totalAmount || 0).toFixed(2)}</div>
+                        <div style="font-size:12px; color:var(--muted);">${new Date(o.createdAt).toLocaleDateString()}</div>
+                    </div>
+                `).join('');
+            } catch(e) { console.error(e); }
+        }
+
+        function openOrderModal(id) {
+            const o = cachedOrders.find(x => (x.orderId === id || x.id === id));
+            if(!o) return;
+
+            const status = (o.status || "ordered").toLowerCase();
+            const steps = ["ordered", "processing", "shipped", "delivered"];
+            const currentStep = steps.indexOf(status) !== -1 ? steps.indexOf(status) : 1;
+
+            document.getElementById('modalBody').innerHTML = `
+                <div class="track-container">
+                    <div class="track-line"></div>
+                    <div class="track-node ${currentStep >= 0 ? 'done' : ''}"><div class="node-icon"><i class="fas fa-receipt"></i></div><span>Ordered</span></div>
+                    <div class="track-node ${currentStep >= 1 ? 'done' : ''}"><div class="node-icon"><i class="fas fa-box"></i></div><span>Packed</span></div>
+                    <div class="track-node ${currentStep >= 2 ? 'done' : ''}"><div class="node-icon"><i class="fas fa-truck"></i></div><span>On Way</span></div>
+                    <div class="track-node ${currentStep >= 3 ? 'done' : ''}"><div class="node-icon"><i class="fas fa-home"></i></div><span>Arrived</span></div>
                 </div>
-            `).join('');
-    }
 
-    async function loadRepairs(email, session) {
-        try {
-            const res = await fetch(`${NEXUS_CONFIG.api.baseUrl}/bookings?email=${email}`, {
-                headers: { 'Authorization': session.getIdToken().getJwtToken() }
-            });
-            const data = await res.json();
-            
-            document.getElementById('repair-status-msg').style.display = 'none';
-            if (data && data.length > 0) {
-                document.getElementById('repair-table').style.display = 'table';
-                document.getElementById('repair-body').innerHTML = data.map(item => `
-                    <tr>
-                        <td style="color:var(--text-muted)">${item.bookingDate || '---'}</td>
-                        <td>
-                            <div style="font-weight:700; color:var(--text-main)">${item.brand} ${item.model}</div>
-                            <div style="font-size:0.85rem; color:var(--text-muted)">${item.issueDescription}</div>
-                        </td>
-                        <td><span class="status-pill status-active">${item.status || 'In Review'}</span></td>
-                    </tr>
-                `).join('');
-            } else {
-                document.getElementById('repair-status-msg').innerText = "No active service requests.";
-                document.getElementById('repair-status-msg').style.display = 'block';
-            }
-        } catch (e) { document.getElementById('repair-status-msg').innerText = "Network error loading services."; }
-    }
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px; margin-bottom:30px;">
+                    <div style="padding:20px; background:var(--bg); border-radius:15px;">
+                        <span style="font-size:11px; font-weight:800; color:var(--muted); text-transform:uppercase;">Reference ID</span>
+                        <div style="font-weight:700;">${id}</div>
+                    </div>
+                    <div style="padding:20px; background:var(--bg); border-radius:15px;">
+                        <span style="font-size:11px; font-weight:800; color:var(--muted); text-transform:uppercase;">Billing Total</span>
+                        <div style="font-weight:700;">$${o.totalAmount}</div>
+                    </div>
+                </div>
 
-    async function loadOrders(email) {
-        try {
-            const res = await fetch(`${NEXUS_CONFIG.api.baseUrl}/orders?email=${email}`);
-            const data = await res.json();
+                <h3 style="margin-bottom:15px;">Manifest</h3>
+                <div style="border:1px solid #f1f5f9; border-radius:15px; overflow:hidden;">
+                    ${(o.items || []).map(i => `
+                        <div style="display:flex; justify-content:space-between; padding:15px 20px; border-bottom:1px solid #f1f5f9;">
+                            <span><b>${i.name}</b> × ${i.quantity}</span>
+                            <span>$${i.price}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
 
-            document.getElementById('order-status-msg').style.display = 'none';
-            if (data && data.length > 0) {
-                document.getElementById('order-table').style.display = 'table';
-                document.getElementById('order-body').innerHTML = data.map(order => `
-                    <tr>
-                        <td style="color:var(--text-muted)">${new Date(order.createdAt).toLocaleDateString()}</td>
-                        <td style="font-weight:700; font-family:'JetBrains Mono', monospace">#${(order.orderId || '000000').substring(0,8).toUpperCase()}</td>
-                        <td style="color:var(--primary); font-weight:700">$${parseFloat(order.totalAmount || 0).toFixed(2)}</td>
-                        <td><span class="status-pill status-completed">${order.orderStatus || 'Fulfilling'}</span></td>
-                    </tr>
-                `).join('');
-            } else {
-                document.getElementById('order-status-msg').innerText = "No previous purchases found.";
-                document.getElementById('order-status-msg').style.display = 'block';
-            }
-        } catch (e) { document.getElementById('order-status-msg').innerText = "Network error loading orders."; }
-    }
+            document.getElementById('modalActions').innerHTML = `
+                <button class="btn btn-primary" onclick="alert('Tracking link sent to email.')"><i class="fas fa-map-marker-alt"></i> Live Tracking</button>
+                <button class="btn btn-outline" onclick="window.print()"><i class="fas fa-print"></i> PDF Receipt</button>
+                <button class="btn btn-danger" style="margin-left:auto;" onclick="cancelOrder('${id}')"><i class="fas fa-trash"></i> Cancel Order</button>
+            `;
 
-    function sessionTerminate() {
-        const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
-        const cognitoUser = userPool.getCurrentUser();
-        if (cognitoUser) {
-            cognitoUser.signOut();
-            localStorage.clear();
-            sessionStorage.clear();
-            window.location.href = 'login.html';
+            document.getElementById('mainModal').style.display = 'flex';
         }
-    }
-</script>
+
+        async function fetchBookings(email, session) {
+            try {
+                const res = await fetch(`${NEXUS_CONFIG.api.baseUrl}/bookings?email=${encodeURIComponent(email)}`, {
+                    headers: { 'Authorization': session.getIdToken().getJwtToken() }
+                });
+                cachedBookings = await res.json() || [];
+                const grid = document.getElementById('bookingsGrid');
+                
+                grid.innerHTML = cachedBookings.map(b => `
+                    <div class="nexus-card" onclick="openBookingModal('${b.bookingId || b.id}')">
+                        <div class="card-tag" style="background:#fef3c7; color:#92400e;">Service</div>
+                        <div style="font-weight:800; font-size:18px; margin-bottom:8px;">${b.brand || 'Nexus'} ${b.model || 'Device'}</div>
+                        <div style="font-size:13px; color:var(--muted); line-height:1.5;">${(b.issueDescription || "General service").toString().substring(0, 60)}...</div>
+                    </div>
+                `).join('');
+            } catch(e) { console.error(e); }
+        }
+
+        function openBookingModal(id) {
+            const b = cachedBookings.find(x => (x.bookingId === id || x.id === id));
+            if(!b) return;
+
+            document.getElementById('modalBody').innerHTML = `
+                <div style="text-align:center; padding:20px; background:var(--accent-soft); border-radius:20px; margin-bottom:30px;">
+                    <i class="fas fa-tools" style="font-size:40px; color:var(--accent); margin-bottom:15px;"></i>
+                    <h2 style="margin:0">${b.brand} ${b.model}</h2>
+                    <p style="color:var(--accent); font-weight:700;">Service Ref: #${id.substring(0,8)}</p>
+                </div>
+
+                <div style="background:#f8fafc; padding:30px; border-radius:20px; border-left:5px solid var(--accent);">
+                    <h4 style="margin-top:0">Technical Description</h4>
+                    <p style="margin-bottom:0; line-height:1.6; color:var(--muted);">${b.issueDescription || "No notes provided."}</p>
+                </div>
+            `;
+
+            document.getElementById('modalActions').innerHTML = `
+                <button class="btn btn-primary" onclick="alert('Connecting to technician...')"><i class="fas fa-comments"></i> Chat with Tech</button>
+                <button class="btn btn-outline" onclick="closeModal()">Back to Dashboard</button>
+            `;
+            document.getElementById('mainModal').style.display = 'flex';
+        }
+
+        function cancelOrder(id) {
+            if(confirm("Are you sure you want to request a cancellation for order #" + id + "?")) {
+                alert("Cancellation request submitted to Nexus team.");
+                closeModal();
+            }
+        }
+
+        function closeModal() { document.getElementById('mainModal').style.display = 'none'; }
+        
+        function sessionTerminate() {
+            const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
+            const user = userPool.getCurrentUser();
+            if(user) { user.signOut(); localStorage.clear(); window.location.href='login.html'; }
+        }
+
+        window.onclick = function(e) { if(e.target.className === 'modal') closeModal(); }
+    </script>
 </body>
 </html>

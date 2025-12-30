@@ -1,0 +1,244 @@
+{
+  "NexusFlow_PickupStations": [
+    {
+      "PutRequest": {
+        "Item": {
+          "id": { "S": "STN-001" },
+          "name": { "S": "Nexus Downtown Hub" },
+          "address": { "S": "Kenya Re Towers, 7th Floor, Taifa Road" },
+          "city": { "S": "Nairobi" },
+          "state": { "S": "Nairobi" },
+          "postalCode": { "S": "00100" },
+          "country": { "S": "Kenya" },
+          "phone": { "S": "+254 720 100 001" },
+          "email": { "S": "downtown@nexus.co.ke" },
+          "hours": { "S": "Mon-Fri: 8:00 AM - 8:00 PM, Sat: 9:00 AM - 6:00 PM, Sun: 10:00 AM - 4:00 PM" },
+          "isActive": { "BOOL": true },
+          "pickupCount": { "N": "0" },
+          "capacity": { "N": "150" },
+          "features": { "L": [{ "S": "24/7 Security" }, { "S": "Underground Parking" }, { "S": "Loading Dock" }, { "S": "Customer Lounge" }] },
+          "coordinates": { "M": { "lat": { "N": "-1.292066" }, "lng": { "N": "36.821945" } } },
+          "manager": { "S": "James Mwangi" },
+          "createdAt": { "S": "2024-01-15T08:00:00Z" },
+          "updatedAt": { "S": "2024-01-15T08:00:00Z" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "id": { "S": "STN-002" },
+          "name": { "S": "Nexus Westlands Tech Center" },
+          "address": { "S": "The Mirage, 3rd Floor, Westlands Road" },
+          "city": { "S": "Nairobi" },
+          "state": { "S": "Nairobi" },
+          "postalCode": { "S": "00621" },
+          "country": { "S": "Kenya" },
+          "phone": { "S": "+254 720 100 002" },
+          "email": { "S": "westlands@nexus.co.ke" },
+          "hours": { "S": "Mon-Fri: 9:00 AM - 9:00 PM, Sat: 10:00 AM - 7:00 PM, Sun: Closed" },
+          "isActive": { "BOOL": true },
+          "pickupCount": { "N": "0" },
+          "capacity": { "N": "120" },
+          "features": { "L": [{ "S": "Valet Parking" }, { "S": "Premium Lounge" }, { "S": "Tech Demo Area" }, { "S": "Free WiFi" }] },
+          "coordinates": { "M": { "lat": { "N": "-1.263280" }, "lng": { "N": "36.807804" } } },
+          "manager": { "S": "Sarah Ochieng" },
+          "createdAt": { "S": "2024-01-15T08:00:00Z" },
+          "updatedAt": { "S": "2024-01-15T08:00:00Z" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "id": { "S": "STN-003" },
+          "name": { "S": "Nexus Karen Warehouse" },
+          "address": { "S": "Karen Plaza, Ground Floor, Karen Road" },
+          "city": { "S": "Nairobi" },
+          "state": { "S": "Nairobi" },
+          "postalCode": { "S": "00502" },
+          "country": { "S": "Kenya" },
+          "phone": { "S": "+254 720 100 003" },
+          "email": { "S": "karen@nexus.co.ke" },
+          "hours": { "S": "Mon-Sat: 7:00 AM - 7:00 PM, Sun: 9:00 AM - 3:00 PM" },
+          "isActive": { "BOOL": true },
+          "pickupCount": { "N": "0" },
+          "capacity": { "N": "200" },
+          "features": { "L": [{ "S": "Warehouse Storage" }, { "S": "Forklift Access" }, { "S": "Loading Bay" }, { "S": "Security CCTV" }] },
+          "coordinates": { "M": { "lat": { "N": "-1.319083" }, "lng": { "N": "36.708976" } } },
+          "manager": { "S": "Peter Kamau" },
+          "createdAt": { "S": "2024-01-15T08:00:00Z" },
+          "updatedAt": { "S": "2024-01-15T08:00:00Z" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "id": { "S": "STN-004" },
+          "name": { "S": "Nexus Gigiri Express" },
+          "address": { "S": "UN Avenue Mall, Shop 12, Gigiri" },
+          "city": { "S": "Nairobi" },
+          "state": { "S": "Nairobi" },
+          "postalCode": { "S": "00621" },
+          "country": { "S": "Kenya" },
+          "phone": { "S": "+254 720 100 004" },
+          "email": { "S": "gigiri@nexus.co.ke" },
+          "hours": { "S": "Mon-Fri: 8:30 AM - 7:30 PM, Sat: 9:00 AM - 5:00 PM, Sun: 10:00 AM - 4:00 PM" },
+          "isActive": { "BOOL": true },
+          "pickupCount": { "N": "0" },
+          "capacity": { "N": "80" },
+          "features": { "L": [{ "S": "Express Pickup" }, { "S": "Diplomatic Area" }, { "S": "Premium Service" }, { "S": "Multilingual Staff" }] },
+          "coordinates": { "M": { "lat": { "N": "-1.230917" }, "lng": { "N": "36.827083" } } },
+          "manager": { "S": "Lisa Akinyi" },
+          "createdAt": { "S": "2024-01-15T08:00:00Z" },
+          "updatedAt": { "S": "2024-01-15T08:00:00Z" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "id": { "S": "STN-005" },
+          "name": { "S": "Nexus Industrial Area Depot" },
+          "address": { "S": "Block B, Plot 24, Enterprise Road" },
+          "city": { "S": "Nairobi" },
+          "state": { "S": "Nairobi" },
+          "postalCode": { "S": "00500" },
+          "country": { "S": "Kenya" },
+          "phone": { "S": "+254 720 100 005" },
+          "email": { "S": "industrial@nexus.co.ke" },
+          "hours": { "S": "Mon-Fri: 6:00 AM - 10:00 PM, Sat: 7:00 AM - 8:00 PM, Sun: 8:00 AM - 6:00 PM" },
+          "isActive": { "BOOL": true },
+          "pickupCount": { "N": "0" },
+          "capacity": { "N": "300" },
+          "features": { "L": [{ "S": "24/7 Operations" }, { "S": "Heavy Equipment" }, { "S": "Drive-through Pickup" }, { "S": "Bulk Storage" }] },
+          "coordinates": { "M": { "lat": { "N": "-1.310000" }, "lng": { "N": "36.830000" } } },
+          "manager": { "S": "David Maina" },
+          "createdAt": { "S": "2024-01-15T08:00:00Z" },
+          "updatedAt": { "S": "2024-01-15T08:00:00Z" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "id": { "S": "STN-006" },
+          "name": { "S": "Nexus Upper Hill Center" },
+          "address": { "S": "Pioneer House, 2nd Floor, Hospital Road" },
+          "city": { "S": "Nairobi" },
+          "state": { "S": "Nairobi" },
+          "postalCode": { "S": "00100" },
+          "country": { "S": "Kenya" },
+          "phone": { "S": "+254 720 100 006" },
+          "email": { "S": "upperhill@nexus.co.ke" },
+          "hours": { "S": "Mon-Fri: 8:00 AM - 8:00 PM, Sat: 9:00 AM - 5:00 PM, Sun: Closed" },
+          "isActive": { "BOOL": true },
+          "pickupCount": { "N": "0" },
+          "capacity": { "N": "100" },
+          "features": { "L": [{ "S": "Corporate Accounts" }, { "S": "Meeting Rooms" }, { "S": "Business Center" }, { "S": "Secure Parking" }] },
+          "coordinates": { "M": { "lat": { "N": "-1.293611" }, "lng": { "N": "36.811111" } } },
+          "manager": { "S": "Michael Otieno" },
+          "createdAt": { "S": "2024-01-15T08:00:00Z" },
+          "updatedAt": { "S": "2024-01-15T08:00:00Z" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "id": { "S": "STN-007" },
+          "name": { "S": "Nexus Thika Road Mega Store" },
+          "address": { "S": "Thika Road Mall, Unit 45, Thika Road" },
+          "city": { "S": "Nairobi" },
+          "state": { "S": "Nairobi" },
+          "postalCode": { "S": "00600" },
+          "country": { "S": "Kenya" },
+          "phone": { "S": "+254 720 100 007" },
+          "email": { "S": "thika@nexus.co.ke" },
+          "hours": { "S": "Mon-Sun: 7:00 AM - 10:00 PM" },
+          "isActive": { "BOOL": true },
+          "pickupCount": { "N": "0" },
+          "capacity": { "N": "250" },
+          "features": { "L": [{ "S": "Mega Store" }, { "S": "Extended Hours" }, { "S": "Drive-through" }, { "S": "Bulk Pickup" }] },
+          "coordinates": { "M": { "lat": { "N": "-1.220000" }, "lng": { "N": "36.900000" } } },
+          "manager": { "S": "Grace Wambui" },
+          "createdAt": { "S": "2024-01-15T08:00:00Z" },
+          "updatedAt": { "S": "2024-01-15T08:00:00Z" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "id": { "S": "STN-008" },
+          "name": { "S": "Nexus Lang'ata Gateway" },
+          "address": { "S": "Galleria Mall, First Floor, Lang'ata Road" },
+          "city": { "S": "Nairobi" },
+          "state": { "S": "Nairobi" },
+          "postalCode": { "S": "00509" },
+          "country": { "S": "Kenya" },
+          "phone": { "S": "+254 720 100 008" },
+          "email": { "S": "langata@nexus.co.ke" },
+          "hours": { "S": "Mon-Sat: 9:00 AM - 9:00 PM, Sun: 10:00 AM - 8:00 PM" },
+          "isActive": { "BOOL": true },
+          "pickupCount": { "N": "0" },
+          "capacity": { "N": "90" },
+          "features": { "L": [{ "S": "Shopping Mall" }, { "S": "Family Friendly" }, { "S": "Weekend Hours" }, { "S": "Customer Support" }] },
+          "coordinates": { "M": { "lat": { "N": "-1.364000" }, "lng": { "N": "36.742000" } } },
+          "manager": { "S": "Brian Kiprop" },
+          "createdAt": { "S": "2024-01-15T08:00:00Z" },
+          "updatedAt": { "S": "2024-01-15T08:00:00Z" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "id": { "S": "STN-009" },
+          "name": { "S": "Nexus Mombasa Road Logistics" },
+          "address": { "S": "Airport View Park, Warehouse 3, Mombasa Road" },
+          "city": { "S": "Nairobi" },
+          "state": { "S": "Nairobi" },
+          "postalCode": { "S": "00520" },
+          "country": { "S": "Kenya" },
+          "phone": { "S": "+254 720 100 009" },
+          "email": { "S": "mombasaroad@nexus.co.ke" },
+          "hours": { "S": "Mon-Fri: 5:00 AM - 11:00 PM, Sat-Sun: 6:00 AM - 9:00 PM" },
+          "isActive": { "BOOL": true },
+          "pickupCount": { "N": "0" },
+          "capacity": { "N": "400" },
+          "features": { "L": [{ "S": "Airport Proximity" }, { "S": "Logistics Hub" }, { "S": "Cargo Handling" }, { "S": "International Shipping" }] },
+          "coordinates": { "M": { "lat": { "N": "-1.319000" }, "lng": { "N": "36.915000" } } },
+          "manager": { "S": "Samuel Mutua" },
+          "createdAt": { "S": "2024-01-15T08:00:00Z" },
+          "updatedAt": { "S": "2024-01-15T08:00:00Z" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "id": { "S": "STN-010" },
+          "name": { "S": "Nexus Riverside Drive Tech Hub" },
+          "address": { "S": "Riverside Square, Unit 8, Riverside Drive" },
+          "city": { "S": "Nairobi" },
+          "state": { "S": "Nairobi" },
+          "postalCode": { "S": "00100" },
+          "country": { "S": "Kenya" },
+          "phone": { "S": "+254 720 100 010" },
+          "email": { "S": "riverside@nexus.co.ke" },
+          "hours": { "S": "Mon-Fri: 8:00 AM - 9:00 PM, Sat: 10:00 AM - 6:00 PM, Sun: 11:00 AM - 5:00 PM" },
+          "isActive": { "BOOL": true },
+          "pickupCount": { "N": "0" },
+          "capacity": { "N": "110" },
+          "features": { "L": [{ "S": "Premium Location" }, { "S": "Tech Support" }, { "S": "Product Demos" }, { "S": "VIP Lounge" }] },
+          "coordinates": { "M": { "lat": { "N": "-1.275000" }, "lng": { "N": "36.805000" } } },
+          "manager": { "S": "Catherine Njeri" },
+          "createdAt": { "S": "2024-01-15T08:00:00Z" },
+          "updatedAt": { "S": "2024-01-15T08:00:00Z" }
+        }
+      }
+    }
+  ]
+}
