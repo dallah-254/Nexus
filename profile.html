@@ -12,6 +12,7 @@
     
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
         :root {
@@ -23,9 +24,19 @@
             --muted: #64748b;
             --success: #10b981;
             --danger: #ef4444;
+            --warning: #f59e0b;
             --radius-lg: 24px;
             --radius-md: 16px;
+            --radius-sm: 8px;
             --shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+            --shadow-lg: 0 20px 25px -5px rgba(0,0,0,0.1);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body { 
@@ -33,40 +44,426 @@
             font-family: 'Inter', sans-serif; 
             background-color: var(--bg);
             color: var(--text);
-            margin: 0;
+            line-height: 1.6;
+            min-height: 100vh;
         }
 
-        /* --- DASHBOARD LAYOUT --- */
-        .nexus-wrapper {
-            max-width: 1440px;
+        /* --- MAIN CONTAINER --- */
+        .nexus-container {
+            max-width: 1600px;
             margin: 0 auto;
             padding: 20px;
+            position: relative;
+        }
+
+        /* --- BACK NAVIGATION --- */
+        .back-nav {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            padding: 12px 20px;
+            background: var(--card);
+            border-radius: var(--radius-md);
+            border: 1px solid #e2e8f0;
+            cursor: pointer;
+            transition: var(--transition);
+            width: fit-content;
+        }
+
+        .back-nav:hover {
+            background: var(--accent-soft);
+            transform: translateX(-5px);
+        }
+
+        /* --- DETAILS PAGE LAYOUT --- */
+        .details-wrapper {
             display: grid;
-            grid-template-columns: 320px 1fr;
+            grid-template-columns: 1fr 400px;
+            gap: 30px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- MAIN CONTENT AREA --- */
+        .main-content {
+            display: flex;
+            flex-direction: column;
             gap: 30px;
         }
 
-        /* --- SIDEBAR & ACTIONS --- */
-        .sidebar { position: sticky; top: 120px; height: fit-content; }
+        /* --- SIDEBAR --- */
+        .details-sidebar {
+            position: sticky;
+            top: 120px;
+            height: fit-content;
+        }
+
+        /* --- HERO SECTION --- */
+        .hero-section {
+            background: linear-gradient(135deg, var(--accent), #8b5cf6);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            color: white;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,0 L100,0 L100,100 Z" fill="rgba(255,255,255,0.1)"/></svg>');
+            background-size: cover;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 50px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        /* --- INFO CARDS --- */
+        .info-card {
+            background: var(--card);
+            border-radius: var(--radius-md);
+            padding: 25px;
+            border: 1px solid #e2e8f0;
+            transition: var(--transition);
+        }
+
+        .info-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f1f5f9;
+        }
+
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        /* --- STATUS INDICATORS --- */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-processing { background: #dbeafe; color: #1e40af; }
+        .status-shipped { background: #fef3c7; color: #92400e; }
+        .status-delivered { background: #dcfce7; color: #166534; }
+        .status-cancelled { background: #fee2e2; color: #991b1b; }
         
-        .profile-hero {
+        .status-received { background: #dbeafe; color: #1e40af; }
+        .status-confirmed { background: #dcfce7; color: #166534; }
+        .status-in-progress { background: #fef3c7; color: #92400e; }
+        .status-completed { background: #bbf7d0; color: #14532d; }
+        .status-cancelled { background: #fee2e2; color: #991b1b; }
+
+        /* --- TRACKING TIMELINE --- */
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+            margin: 25px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #e2e8f0;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .timeline-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: -30px;
+            top: 0;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #e2e8f0;
+            border: 4px solid white;
+            transition: var(--transition);
+        }
+
+        .timeline-item.active .timeline-dot {
+            background: var(--accent);
+            box-shadow: 0 0 0 5px rgba(37, 99, 235, 0.1);
+        }
+
+        .timeline-item.completed .timeline-dot {
+            background: var(--success);
+        }
+
+        .timeline-content {
+            padding-left: 15px;
+        }
+
+        .timeline-date {
+            font-size: 12px;
+            color: var(--muted);
+            margin-bottom: 5px;
+        }
+
+        /* --- DETAILS GRID --- */
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .detail-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .detail-value {
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        /* --- PRODUCT ITEMS --- */
+        .product-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            border-radius: var(--radius-sm);
+            border: 1px solid #f1f5f9;
+            margin-bottom: 10px;
+            transition: var(--transition);
+        }
+
+        .product-item:hover {
+            background: #f8fafc;
+            border-color: var(--accent-soft);
+        }
+
+        .product-image {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--muted);
+            font-size: 24px;
+        }
+
+        .product-info {
+            flex: 1;
+        }
+
+        .product-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 5px;
+            font-size: 14px;
+            color: var(--muted);
+        }
+
+        /* --- ACTION BUTTONS --- */
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: var(--text);
+        }
+
+        .btn-success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .btn-danger {
+            background: #fee2e2;
+            color: var(--danger);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #e2e8f0;
+            color: var(--muted);
+        }
+
+        .btn-full {
+            width: 100%;
+            justify-content: center;
+        }
+
+        /* --- QUICK STATS --- */
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background: #f8fafc;
+            border-radius: var(--radius-sm);
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--accent);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* --- LOADING STATES --- */
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+            gap: 20px;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid #f1f5f9;
+            border-top: 3px solid var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* --- PROFILE SIDEBAR --- */
+        .profile-sidebar {
+            position: sticky;
+            top: 120px;
+            height: fit-content;
+        }
+
+        .profile-card {
             background: var(--card);
             border-radius: var(--radius-lg);
-            padding: 40px 20px;
+            padding: 30px;
             text-align: center;
             border: 1px solid #e2e8f0;
             box-shadow: var(--shadow);
             margin-bottom: 20px;
         }
 
-        .avatar {
-            width: 90px; height: 90px;
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
             background: linear-gradient(135deg, var(--accent), #8b5cf6);
             border-radius: 50%;
             margin: 0 auto 20px;
-            display: flex; align-items: center; justify-content: center;
-            color: white; font-size: 32px; font-weight: 800;
-            box-shadow: 0 0 20px rgba(37, 99, 235, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 36px;
+            font-weight: 800;
+            box-shadow: 0 0 30px rgba(37, 99, 235, 0.3);
         }
 
         .quick-actions {
@@ -77,30 +474,36 @@
         }
 
         .action-link {
-            display: flex; align-items: center; gap: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
             padding: 12px;
             color: var(--text);
             text-decoration: none;
-            font-weight: 600;
             border-radius: 10px;
-            transition: 0.2s;
+            transition: var(--transition);
             margin-bottom: 5px;
+            cursor: pointer;
+            font-weight: 500;
         }
 
-        .action-link:hover { background: var(--accent-soft); color: var(--accent); }
-        .action-link.logout { color: var(--danger); margin-top: 20px; }
+        .action-link:hover {
+            background: var(--accent-soft);
+            color: var(--accent);
+        }
 
-        /* --- CONTENT CARDS --- */
-        .section-title { font-size: 24px; font-weight: 800; margin-bottom: 25px; display: flex; align-items: center; gap: 10px; }
-        
-        .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 20px; }
+        .action-link.logout {
+            color: var(--danger);
+            margin-top: 20px;
+        }
 
+        /* --- ORDER/BOOKING CARDS --- */
         .nexus-card {
             background: var(--card);
             border-radius: var(--radius-md);
             padding: 25px;
             border: 1px solid #e2e8f0;
-            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: var(--transition);
             cursor: pointer;
             position: relative;
             overflow: hidden;
@@ -108,260 +511,1059 @@
 
         .nexus-card:hover {
             transform: translateY(-8px);
-            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+            box-shadow: var(--shadow-lg);
             border-color: var(--accent);
         }
 
         .card-tag {
-            position: absolute; top: 0; right: 0;
-            background: var(--accent-soft);
-            color: var(--accent);
+            position: absolute;
+            top: 0;
+            right: 0;
             padding: 5px 15px;
             border-bottom-left-radius: 15px;
-            font-size: 11px; font-weight: 800;
+            font-size: 11px;
+            font-weight: 800;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        /* --- MODAL DESIGN --- */
-        .modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(10px); z-index: 10000;
-            align-items: center; justify-content: center;
+        .card-tag-order {
+            background: var(--accent-soft);
+            color: var(--accent);
         }
 
-        .modal-inner {
-            background: white; width: 90%; max-width: 900px; max-height: 85vh;
-            border-radius: 30px; overflow: hidden; display: flex; flex-direction: column;
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+        .card-tag-booking {
+            background: #fef3c7;
+            color: #92400e;
         }
 
-        .modal-top { padding: 30px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; }
-        .modal-scroll { padding: 40px; overflow-y: auto; }
-        .modal-bottom { padding: 25px 40px; border-top: 1px solid #f1f5f9; display: flex; gap: 15px; background: #f8fafc; }
-
-        /* --- TRACKING COMPONENT --- */
-        .track-container { margin: 20px 0 40px; display: flex; justify-content: space-between; position: relative; }
-        .track-line { position: absolute; top: 20px; left: 0; width: 100%; height: 4px; background: #e2e8f0; z-index: 1; }
-        .track-node { position: relative; z-index: 2; background: white; text-align: center; width: 80px; }
-        .node-icon { 
-            width: 44px; height: 44px; background: #e2e8f0; border-radius: 50%; 
-            margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; color: white;
-            transition: 0.3s;
+        /* --- MAIN DASHBOARD LAYOUT --- */
+        .dashboard-wrapper {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 30px;
         }
-        .track-node.done .node-icon { background: var(--accent); box-shadow: 0 0 15px rgba(37,99,235,0.4); }
-        .track-node.done span { color: var(--accent); font-weight: 700; }
 
-        .btn { padding: 12px 24px; border-radius: 12px; font-weight: 700; border: none; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px; }
-        .btn-primary { background: var(--accent); color: white; }
-        .btn-danger { background: #fee2e2; color: var(--danger); }
-        .btn-outline { background: white; border: 1px solid #e2e8f0; color: var(--muted); }
+        /* --- SECTIONS --- */
+        .section-title {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        /* --- RESPONSIVE DESIGN --- */
+        @media (max-width: 1200px) {
+            .details-wrapper {
+                grid-template-columns: 1fr;
+            }
+            
+            .details-sidebar {
+                position: static;
+            }
+        }
 
         @media (max-width: 900px) {
-            .nexus-wrapper { grid-template-columns: 1fr; }
-            .sidebar { position: static; }
+            .dashboard-wrapper {
+                grid-template-columns: 1fr;
+            }
+            
+            .profile-sidebar {
+                position: static;
+            }
+            
+            .details-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .quick-stats {
+                grid-template-columns: 1fr;
+            }
         }
+
+        @media (max-width: 768px) {
+            .nexus-container {
+                padding: 15px;
+            }
+            
+            .hero-section {
+                padding: 30px 20px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .grid-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* --- UTILITY CLASSES --- */
+        .text-muted { color: var(--muted); }
+        .text-success { color: var(--success); }
+        .text-danger { color: var(--danger); }
+        .text-warning { color: var(--warning); }
+        
+        .mb-1 { margin-bottom: 10px; }
+        .mb-2 { margin-bottom: 20px; }
+        .mb-3 { margin-bottom: 30px; }
+        .mb-4 { margin-bottom: 40px; }
+        
+        .mt-1 { margin-top: 10px; }
+        .mt-2 { margin-top: 20px; }
+        .mt-3 { margin-top: 30px; }
+        
+        .flex { display: flex; }
+        .flex-col { flex-direction: column; }
+        .items-center { align-items: center; }
+        .justify-between { justify-content: space-between; }
+        .gap-2 { gap: 20px; }
+        .gap-3 { gap: 30px; }
     </style>
 </head>
 <body>
     <div id="nexus-header-wrapper"></div>
 
-    <div id="mainModal" class="modal">
-        <div class="modal-inner">
-            <div class="modal-top">
-                <h2 id="modalTitle" style="margin:0">Transaction Details</h2>
-                <i class="fas fa-times" onclick="closeModal()" style="cursor:pointer; font-size:24px; color:var(--muted)"></i>
+    <!-- Main Container -->
+    <div class="nexus-container">
+        <!-- Dashboard View (Default) -->
+        <div id="dashboardView">
+            <div class="dashboard-wrapper">
+                <!-- Profile Sidebar -->
+                <aside class="profile-sidebar">
+                    <div class="profile-card">
+                        <div class="profile-avatar" id="uInit">U</div>
+                        <h3 id="uName" style="margin-bottom:5px;">Loading...</h3>
+                        <p id="uEmail" class="text-muted" style="font-size:14px; margin-bottom:20px;"></p>
+                        <div class="quick-stats">
+                            <div class="stat-item">
+                                <div class="stat-value" id="ordersCount">0</div>
+                                <div class="stat-label">Orders</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="bookingsCount">0</div>
+                                <div class="stat-label">Services</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="quick-actions">
+                        <p style="font-size:11px; font-weight:800; color:var(--muted); text-transform:uppercase; margin-bottom:15px; letter-spacing:1px;">Account Controls</p>
+                        <a href="book.html" class="action-link"><i class="fas fa-plus-circle"></i> New Service Request</a>
+                        <a href="products.html" class="action-link"><i class="fas fa-shopping-cart"></i> Browse Hardware</a>
+                        <a href="#" class="action-link" onclick="openSupportChat()"><i class="fas fa-headset"></i> Live Support</a>
+                        <a href="#" class="action-link" onclick="openSettings()"><i class="fas fa-user-cog"></i> Profile Settings</a>
+                        <a href="#" class="action-link logout" onclick="sessionTerminate()"><i class="fas fa-sign-out-alt"></i> Sign Out</a>
+                    </div>
+                </aside>
+
+                <!-- Main Content -->
+                <main>
+                    <section class="mb-4">
+                        <div class="section-title">
+                            <i class="fas fa-box" style="color:var(--accent)"></i> Hardware Orders
+                        </div>
+                        <div id="ordersGrid" class="grid-container">
+                            <div class="loading-container">
+                                <div class="loading-spinner"></div>
+                                <p class="text-muted">Loading orders...</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="mb-4">
+                        <div class="section-title">
+                            <i class="fas fa-tools" style="color:var(--accent)"></i> Repair Bookings
+                        </div>
+                        <div id="bookingsGrid" class="grid-container">
+                            <div class="loading-container">
+                                <div class="loading-spinner"></div>
+                                <p class="text-muted">Loading bookings...</p>
+                            </div>
+                        </div>
+                    </section>
+                </main>
             </div>
-            <div class="modal-scroll" id="modalBody"></div>
-            <div class="modal-bottom" id="modalActions"></div>
+        </div>
+
+        <!-- Details View (Hidden by default) -->
+        <div id="detailsView" style="display: none;">
+            <!-- Back Navigation -->
+            <div class="back-nav" onclick="goBackToDashboard()">
+                <i class="fas fa-arrow-left"></i>
+                <span>Back to Dashboard</span>
+            </div>
+
+            <!-- Details Content will be inserted here -->
+            <div id="detailsContent"></div>
         </div>
     </div>
 
-    <div class="nexus-wrapper">
-        <aside class="sidebar">
-            <div class="profile-hero">
-                <div class="avatar" id="uInit">U</div>
-                <h3 id="uName" style="margin-bottom:5px;">Loading...</h3>
-                <p id="uEmail" style="color:var(--muted); font-size:14px; margin-bottom:0;"></p>
-            </div>
-
-            <div class="quick-actions">
-                <p style="font-size:11px; font-weight:800; color:var(--muted); text-transform:uppercase; margin-bottom:15px; letter-spacing:1px;">Account Controls</p>
-                <a href="book.html" class="action-link"><i class="fas fa-plus-circle"></i> New Service Request</a>
-                <a href="products.html" class="action-link"><i class="fas fa-shopping-cart"></i> Browse Hardware</a>
-                <a href="#" class="action-link" onclick="alert('Support Chat Opening...')"><i class="fas fa-headset"></i> Live Support</a>
-                <a href="#" class="action-link" onclick="alert('Settings feature coming soon.')"><i class="fas fa-user-cog"></i> Profile Settings</a>
-                <a href="#" class="action-link logout" onclick="sessionTerminate()"><i class="fas fa-sign-out-alt"></i> Sign Out</a>
-            </div>
-        </aside>
-
-        <main>
-            <section style="margin-bottom: 50px;">
-                <div class="section-title"><i class="fas fa-box" style="color:var(--accent)"></i> Hardware Orders</div>
-                <div id="ordersGrid" class="grid-container"></div>
-            </section>
-
-            <section>
-                <div class="section-title"><i class="fas fa-tools" style="color:var(--accent)"></i> Repair Status</div>
-                <div id="bookingsGrid" class="grid-container"></div>
-            </section>
-        </main>
-    </div>
-
     <script>
-        const poolData = { UserPoolId: NEXUS_CONFIG.auth.UserPoolId, ClientId: NEXUS_CONFIG.auth.ClientId };
+        const poolData = { 
+            UserPoolId: NEXUS_CONFIG.auth.UserPoolId, 
+            ClientId: NEXUS_CONFIG.auth.ClientId 
+        };
+        
         let cachedOrders = [];
         let cachedBookings = [];
+        let currentUserEmail = '';
+        let currentUserSession = null;
 
+        // Initialize page
         window.onload = function() {
             const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
             const user = userPool.getCurrentUser();
 
             if (user) {
                 user.getSession((err, session) => {
-                    if (err || !session.isValid()) { window.location.href='login.html'; return; }
+                    if (err || !session.isValid()) { 
+                        window.location.href='login.html'; 
+                        return; 
+                    }
+                    
+                    currentUserSession = session;
+                    
                     user.getUserAttributes((err, attrs) => {
                         const email = attrs.find(a => a.Name === 'email')?.Value || "";
+                        currentUserEmail = email;
+                        
+                        // Update profile
                         document.getElementById('uEmail').innerText = email;
                         document.getElementById('uName').innerText = email.split('@')[0].toUpperCase();
                         document.getElementById('uInit').innerText = email[0].toUpperCase();
                         
+                        // Load data
                         fetchOrders(email, session);
-                        fetchBookings(email, session);
+                        fetchBookings(session);
                     });
                 });
-            } else { window.location.href='login.html'; }
+            } else { 
+                window.location.href='login.html'; 
+            }
         };
 
+        // Fetch orders
         async function fetchOrders(email, session) {
             try {
                 const res = await fetch(`${NEXUS_CONFIG.api.baseUrl}/orders?email=${encodeURIComponent(email)}`, {
                     headers: { 'Authorization': session.getIdToken().getJwtToken() }
                 });
+                
                 cachedOrders = await res.json() || [];
                 const grid = document.getElementById('ordersGrid');
                 
+                // Update count
+                document.getElementById('ordersCount').textContent = cachedOrders.length;
+                
                 if(cachedOrders.length === 0) {
-                    grid.innerHTML = `<div style="grid-column:1/-1; padding:40px; text-align:center; opacity:0.5;">No orders found.</div>`;
+                    grid.innerHTML = `
+                        <div class="empty-state" style="grid-column:1/-1; padding:60px; text-align:center;">
+                            <i class="fas fa-shopping-bag" style="font-size:48px; color:#cbd5e1; margin-bottom:20px;"></i>
+                            <h3 style="margin-bottom:10px;">No Orders Yet</h3>
+                            <p class="text-muted" style="margin-bottom:20px;">You haven't placed any hardware orders yet.</p>
+                            <a href="products.html" class="btn btn-primary" style="display:inline-flex; width:auto;">
+                                <i class="fas fa-shopping-cart"></i> Browse Hardware
+                            </a>
+                        </div>`;
                     return;
                 }
 
-                grid.innerHTML = cachedOrders.map(o => `
-                    <div class="nexus-card" onclick="openOrderModal('${o.orderId || o.id}')">
-                        <div class="card-tag">${o.status || 'Processing'}</div>
-                        <div style="color:var(--accent); font-weight:800; font-family:monospace; margin-bottom:10px;">#${(o.orderId || o.id || '---').toString().substring(0,8)}</div>
-                        <div style="font-size:24px; font-weight:900; margin-bottom:5px;">$${parseFloat(o.totalAmount || 0).toFixed(2)}</div>
-                        <div style="font-size:12px; color:var(--muted);">${new Date(o.createdAt).toLocaleDateString()}</div>
-                    </div>
-                `).join('');
-            } catch(e) { console.error(e); }
-        }
-
-        function openOrderModal(id) {
-            const o = cachedOrders.find(x => (x.orderId === id || x.id === id));
-            if(!o) return;
-
-            const status = (o.status || "ordered").toLowerCase();
-            const steps = ["ordered", "processing", "shipped", "delivered"];
-            const currentStep = steps.indexOf(status) !== -1 ? steps.indexOf(status) : 1;
-
-            document.getElementById('modalBody').innerHTML = `
-                <div class="track-container">
-                    <div class="track-line"></div>
-                    <div class="track-node ${currentStep >= 0 ? 'done' : ''}"><div class="node-icon"><i class="fas fa-receipt"></i></div><span>Ordered</span></div>
-                    <div class="track-node ${currentStep >= 1 ? 'done' : ''}"><div class="node-icon"><i class="fas fa-box"></i></div><span>Packed</span></div>
-                    <div class="track-node ${currentStep >= 2 ? 'done' : ''}"><div class="node-icon"><i class="fas fa-truck"></i></div><span>On Way</span></div>
-                    <div class="track-node ${currentStep >= 3 ? 'done' : ''}"><div class="node-icon"><i class="fas fa-home"></i></div><span>Arrived</span></div>
-                </div>
-
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px; margin-bottom:30px;">
-                    <div style="padding:20px; background:var(--bg); border-radius:15px;">
-                        <span style="font-size:11px; font-weight:800; color:var(--muted); text-transform:uppercase;">Reference ID</span>
-                        <div style="font-weight:700;">${id}</div>
-                    </div>
-                    <div style="padding:20px; background:var(--bg); border-radius:15px;">
-                        <span style="font-size:11px; font-weight:800; color:var(--muted); text-transform:uppercase;">Billing Total</span>
-                        <div style="font-weight:700;">$${o.totalAmount}</div>
-                    </div>
-                </div>
-
-                <h3 style="margin-bottom:15px;">Manifest</h3>
-                <div style="border:1px solid #f1f5f9; border-radius:15px; overflow:hidden;">
-                    ${(o.items || []).map(i => `
-                        <div style="display:flex; justify-content:space-between; padding:15px 20px; border-bottom:1px solid #f1f5f9;">
-                            <span><b>${i.name}</b> × ${i.quantity}</span>
-                            <span>$${i.price}</span>
+                grid.innerHTML = cachedOrders.map(o => {
+                    const orderId = o.orderId || o.id || '---';
+                    const status = o.status || 'Processing';
+                    const statusClass = `status-${status.toLowerCase().replace(/_/g, '-')}`;
+                    
+                    return `
+                        <div class="nexus-card" onclick="openOrderDetails('${orderId}')">
+                            <div class="card-tag card-tag-order ${statusClass}">${status}</div>
+                            <div style="color:var(--accent); font-weight:800; font-family:monospace; margin-bottom:10px;">
+                                #${orderId.toString().substring(0,8)}
+                            </div>
+                            <div style="font-size:24px; font-weight:900; margin-bottom:5px;">
+                                $${parseFloat(o.totalAmount || 0).toFixed(2)}
+                            </div>
+                            <div style="font-size:12px; color:var(--muted); margin-bottom:15px;">
+                                ${o.createdAt ? new Date(o.createdAt).toLocaleDateString('en-US', {
+                                    weekday: 'short',
+                                    year: 'numeric',
+                                    month: 'short',
+                                    day: 'numeric'
+                                }) : 'Date not available'}
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span style="font-size:12px; color:var(--muted);">
+                                    ${o.items ? o.items.length + ' item(s)' : 'No items'}
+                                </span>
+                                <i class="fas fa-chevron-right" style="color:var(--accent);"></i>
+                            </div>
                         </div>
-                    `).join('')}
-                </div>
-            `;
-
-            document.getElementById('modalActions').innerHTML = `
-                <button class="btn btn-primary" onclick="alert('Tracking link sent to email.')"><i class="fas fa-map-marker-alt"></i> Live Tracking</button>
-                <button class="btn btn-outline" onclick="window.print()"><i class="fas fa-print"></i> PDF Receipt</button>
-                <button class="btn btn-danger" style="margin-left:auto;" onclick="cancelOrder('${id}')"><i class="fas fa-trash"></i> Cancel Order</button>
-            `;
-
-            document.getElementById('mainModal').style.display = 'flex';
-        }
-
-        async function fetchBookings(email, session) {
-            try {
-                const res = await fetch(`${NEXUS_CONFIG.api.baseUrl}/bookings?email=${encodeURIComponent(email)}`, {
-                    headers: { 'Authorization': session.getIdToken().getJwtToken() }
-                });
-                cachedBookings = await res.json() || [];
-                const grid = document.getElementById('bookingsGrid');
-                
-                grid.innerHTML = cachedBookings.map(b => `
-                    <div class="nexus-card" onclick="openBookingModal('${b.bookingId || b.id}')">
-                        <div class="card-tag" style="background:#fef3c7; color:#92400e;">Service</div>
-                        <div style="font-weight:800; font-size:18px; margin-bottom:8px;">${b.brand || 'Nexus'} ${b.model || 'Device'}</div>
-                        <div style="font-size:13px; color:var(--muted); line-height:1.5;">${(b.issueDescription || "General service").toString().substring(0, 60)}...</div>
-                    </div>
-                `).join('');
-            } catch(e) { console.error(e); }
-        }
-
-        function openBookingModal(id) {
-            const b = cachedBookings.find(x => (x.bookingId === id || x.id === id));
-            if(!b) return;
-
-            document.getElementById('modalBody').innerHTML = `
-                <div style="text-align:center; padding:20px; background:var(--accent-soft); border-radius:20px; margin-bottom:30px;">
-                    <i class="fas fa-tools" style="font-size:40px; color:var(--accent); margin-bottom:15px;"></i>
-                    <h2 style="margin:0">${b.brand} ${b.model}</h2>
-                    <p style="color:var(--accent); font-weight:700;">Service Ref: #${id.substring(0,8)}</p>
-                </div>
-
-                <div style="background:#f8fafc; padding:30px; border-radius:20px; border-left:5px solid var(--accent);">
-                    <h4 style="margin-top:0">Technical Description</h4>
-                    <p style="margin-bottom:0; line-height:1.6; color:var(--muted);">${b.issueDescription || "No notes provided."}</p>
-                </div>
-            `;
-
-            document.getElementById('modalActions').innerHTML = `
-                <button class="btn btn-primary" onclick="alert('Connecting to technician...')"><i class="fas fa-comments"></i> Chat with Tech</button>
-                <button class="btn btn-outline" onclick="closeModal()">Back to Dashboard</button>
-            `;
-            document.getElementById('mainModal').style.display = 'flex';
-        }
-
-        function cancelOrder(id) {
-            if(confirm("Are you sure you want to request a cancellation for order #" + id + "?")) {
-                alert("Cancellation request submitted to Nexus team.");
-                closeModal();
+                    `;
+                }).join('');
+            } catch(e) { 
+                console.error('Error fetching orders:', e);
+                const grid = document.getElementById('ordersGrid');
+                grid.innerHTML = `
+                    <div class="empty-state" style="grid-column:1/-1; padding:60px; text-align:center;">
+                        <i class="fas fa-exclamation-triangle" style="font-size:48px; color:var(--danger); margin-bottom:20px;"></i>
+                        <h3 style="margin-bottom:10px;">Error Loading Orders</h3>
+                        <p class="text-muted" style="margin-bottom:20px;">Please try again later.</p>
+                        <button class="btn btn-outline" onclick="fetchOrders(currentUserEmail, currentUserSession)" style="display:inline-flex; width:auto;">
+                            <i class="fas fa-redo"></i> Try Again
+                        </button>
+                    </div>`;
             }
         }
 
-        function closeModal() { document.getElementById('mainModal').style.display = 'none'; }
-        
+        // Fetch bookings
+        async function fetchBookings(session) {
+            try {
+                const res = await fetch(`${NEXUS_CONFIG.api.baseUrl}/bookings`, {
+                    headers: { 'Authorization': session.getIdToken().getJwtToken() }
+                });
+                
+                const data = await res.json();
+                cachedBookings = data || [];
+                
+                // Update count
+                document.getElementById('bookingsCount').textContent = cachedBookings.length;
+                
+                const grid = document.getElementById('bookingsGrid');
+                
+                if (!cachedBookings || cachedBookings.length === 0) {
+                    grid.innerHTML = `
+                        <div class="empty-state" style="grid-column:1/-1; padding:60px; text-align:center;">
+                            <i class="fas fa-tools" style="font-size:48px; color:#cbd5e1; margin-bottom:20px;"></i>
+                            <h3 style="margin-bottom:10px;">No Service Bookings</h3>
+                            <p class="text-muted" style="margin-bottom:20px;">You haven't booked any repair services yet.</p>
+                            <a href="book.html" class="btn btn-primary" style="display:inline-flex; width:auto;">
+                                <i class="fas fa-plus-circle"></i> Book a Service
+                            </a>
+                        </div>`;
+                    return;
+                }
+
+                grid.innerHTML = cachedBookings.map(b => {
+                    const bookingId = b.id || b.bookingId || '---';
+                    const deviceName = b.deviceDisplayName || `${b.brand || 'Device'} ${b.model || ''}`;
+                    const status = b.status || b.service?.status || 'RECEIVED';
+                    const statusClass = `status-${status.toLowerCase().replace(/_/g, '-')}`;
+                    const description = b.issue?.description || b.issueDescription || "General service";
+                    
+                    return `
+                        <div class="nexus-card" onclick="openBookingDetails('${bookingId}')">
+                            <div class="card-tag card-tag-booking ${statusClass}">${status}</div>
+                            <div style="font-weight:800; font-size:18px; margin-bottom:8px;">${deviceName}</div>
+                            <div style="font-size:13px; color:var(--muted); line-height:1.5; margin-bottom:15px;">
+                                ${description.toString().substring(0, 80)}...
+                            </div>
+                            <div class="flex justify-between items-center" style="font-size:12px;">
+                                <span style="color:var(--muted);">
+                                    ${b.formattedDate || (b.service?.date ? new Date(b.service.date).toLocaleDateString() : 'Not scheduled')}
+                                </span>
+                                <i class="fas fa-chevron-right" style="color:var(--accent);"></i>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } catch(e) { 
+                console.error('Error fetching bookings:', e);
+                const grid = document.getElementById('bookingsGrid');
+                grid.innerHTML = `
+                    <div class="empty-state" style="grid-column:1/-1; padding:60px; text-align:center;">
+                        <i class="fas fa-exclamation-triangle" style="font-size:48px; color:var(--danger); margin-bottom:20px;"></i>
+                        <h3 style="margin-bottom:10px;">Error Loading Bookings</h3>
+                        <p class="text-muted" style="margin-bottom:20px;">Please try again later.</p>
+                        <button class="btn btn-outline" onclick="fetchBookings(currentUserSession)" style="display:inline-flex; width:auto;">
+                            <i class="fas fa-redo"></i> Try Again
+                        </button>
+                    </div>`;
+            }
+        }
+
+        // Open order details page
+        function openOrderDetails(orderId) {
+            const order = cachedOrders.find(x => (x.orderId === orderId || x.id === orderId));
+            if(!order) return;
+
+            // Switch to details view
+            document.getElementById('dashboardView').style.display = 'none';
+            document.getElementById('detailsView').style.display = 'block';
+            
+            const status = (order.status || "processing").toLowerCase();
+            const statusClass = `status-${status.replace(/_/g, '-')}`;
+            
+            // Create order details HTML
+            const detailsHTML = `
+                <div class="details-wrapper">
+                    <div class="main-content">
+                        <!-- Hero Section -->
+                        <div class="hero-section">
+                            <div class="hero-content">
+                                <div class="hero-badge">
+                                    <i class="fas fa-box"></i>
+                                    ORDER #${orderId.substring(0, 8)}
+                                </div>
+                                <h1 style="font-size:32px; margin-bottom:10px; color:white;">Order Details</h1>
+                                <p style="color:rgba(255,255,255,0.9);">Placed on ${order.createdAt ? new Date(order.createdAt).toLocaleDateString('en-US', { 
+                                    weekday: 'long',
+                                    year: 'numeric',
+                                    month: 'long',
+                                    day: 'numeric' 
+                                }) : 'Unknown date'}</p>
+                            </div>
+                        </div>
+
+                        <!-- Order Summary -->
+                        <div class="info-card">
+                            <div class="card-header">
+                                <div class="card-title">
+                                    <i class="fas fa-receipt" style="color:var(--accent);"></i>
+                                    Order Summary
+                                </div>
+                                <span class="${statusClass} status-badge">${status.toUpperCase()}</span>
+                            </div>
+                            
+                            <div class="details-grid">
+                                <div class="detail-item">
+                                    <span class="detail-label">Order ID</span>
+                                    <span class="detail-value">${orderId}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Total Amount</span>
+                                    <span class="detail-value">$${parseFloat(order.totalAmount || 0).toFixed(2)}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Order Date</span>
+                                    <span class="detail-value">${order.createdAt ? new Date(order.createdAt).toLocaleDateString() : 'N/A'}</span>
+                                </div>
+                                ${order.trackingNumber ? `
+                                <div class="detail-item">
+                                    <span class="detail-label">Tracking Number</span>
+                                    <span class="detail-value">${order.trackingNumber}</span>
+                                </div>
+                                ` : ''}
+                            </div>
+                        </div>
+
+                        <!-- Shipping Information -->
+                        <div class="info-card">
+                            <div class="card-header">
+                                <div class="card-title">
+                                    <i class="fas fa-truck" style="color:var(--accent);"></i>
+                                    Shipping Information
+                                </div>
+                            </div>
+                            
+                            ${order.shippingAddress ? `
+                                <div class="detail-item mb-2">
+                                    <span class="detail-label">Shipping Address</span>
+                                    <span class="detail-value" style="white-space: pre-wrap;">${order.shippingAddress}</span>
+                                </div>
+                            ` : '<p class="text-muted">No shipping address provided.</p>'}
+                            
+                            ${order.shippingMethod ? `
+                                <div class="detail-item">
+                                    <span class="detail-label">Shipping Method</span>
+                                    <span class="detail-value">${order.shippingMethod}</span>
+                                </div>
+                            ` : ''}
+                            
+                            ${order.estimatedDelivery ? `
+                                <div class="detail-item">
+                                    <span class="detail-label">Estimated Delivery</span>
+                                    <span class="detail-value">${new Date(order.estimatedDelivery).toLocaleDateString()}</span>
+                                </div>
+                            ` : ''}
+                        </div>
+
+                        <!-- Order Items -->
+                        <div class="info-card">
+                            <div class="card-header">
+                                <div class="card-title">
+                                    <i class="fas fa-shopping-cart" style="color:var(--accent);"></i>
+                                    Order Items (${order.items ? order.items.length : 0})
+                                </div>
+                            </div>
+                            
+                            ${order.items && order.items.length > 0 ? order.items.map(item => `
+                                <div class="product-item">
+                                    <div class="product-image">
+                                        <i class="fas fa-box"></i>
+                                    </div>
+                                    <div class="product-info">
+                                        <div style="font-weight:600; margin-bottom:5px;">${item.name || 'Unnamed Item'}</div>
+                                        <div class="product-meta">
+                                            <span>Qty: ${item.quantity || 1}</span>
+                                            <span>$${(parseFloat(item.price) || 0).toFixed(2)} each</span>
+                                        </div>
+                                    </div>
+                                    <div style="font-weight:700; font-size:18px;">
+                                        $${((parseFloat(item.price) || 0) * (item.quantity || 1)).toFixed(2)}
+                                    </div>
+                                </div>
+                            `).join('') : '<p class="text-muted">No items found</p>'}
+                            
+                            ${order.items && order.items.length > 0 ? `
+                                <div style="padding-top:20px; border-top:2px solid #f1f5f9;">
+                                    <div class="flex justify-between items-center">
+                                        <span style="font-weight:600;">Total</span>
+                                        <span style="font-size:24px; font-weight:800; color:var(--accent);">
+                                            $${parseFloat(order.totalAmount || 0).toFixed(2)}
+                                        </span>
+                                    </div>
+                                </div>
+                            ` : ''}
+                        </div>
+
+                        <!-- Order Timeline -->
+                        <div class="info-card">
+                            <div class="card-header">
+                                <div class="card-title">
+                                    <i class="fas fa-history" style="color:var(--accent);"></i>
+                                    Order Timeline
+                                </div>
+                            </div>
+                            
+                            <div class="timeline">
+                                ${getOrderTimeline(status).map((step, index) => `
+                                    <div class="timeline-item ${step.status}">
+                                        <div class="timeline-dot"></div>
+                                        <div class="timeline-content">
+                                            <div class="timeline-date">${step.date}</div>
+                                            <div style="font-weight:600; margin-bottom:5px;">${step.title}</div>
+                                            <p style="color:var(--muted); font-size:14px;">${step.description}</p>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sidebar -->
+                    <div class="details-sidebar">
+                        <div class="info-card">
+                            <div class="card-header">
+                                <div class="card-title">
+                                    <i class="fas fa-cog" style="color:var(--accent);"></i>
+                                    Quick Actions
+                                </div>
+                            </div>
+                            
+                            <div class="action-buttons">
+                                <button class="btn btn-primary btn-full" onclick="requestTracking('${orderId}')">
+                                    <i class="fas fa-map-marker-alt"></i> Track Order
+                                </button>
+                                <button class="btn btn-secondary btn-full" onclick="printOrder('${orderId}')">
+                                    <i class="fas fa-print"></i> Print Invoice
+                                </button>
+                                <button class="btn btn-outline btn-full" onclick="contactSupport()">
+                                    <i class="fas fa-headset"></i> Contact Support
+                                </button>
+                                ${status !== 'cancelled' && status !== 'delivered' ? `
+                                <button class="btn btn-danger btn-full" onclick="cancelOrder('${orderId}')">
+                                    <i class="fas fa-times-circle"></i> Cancel Order
+                                </button>
+                                ` : ''}
+                            </div>
+                        </div>
+
+                        <div class="info-card">
+                            <div class="card-header">
+                                <div class="card-title">
+                                    <i class="fas fa-info-circle" style="color:var(--accent);"></i>
+                                    Customer Information
+                                </div>
+                            </div>
+                            
+                            <div class="details-grid">
+                                <div class="detail-item">
+                                    <span class="detail-label">Email</span>
+                                    <span class="detail-value">${order.customerEmail || currentUserEmail}</span>
+                                </div>
+                                ${order.customerName ? `
+                                <div class="detail-item">
+                                    <span class="detail-label">Name</span>
+                                    <span class="detail-value">${order.customerName}</span>
+                                </div>
+                                ` : ''}
+                                ${order.customerPhone ? `
+                                <div class="detail-item">
+                                    <span class="detail-label">Phone</span>
+                                    <span class="detail-value">${order.customerPhone}</span>
+                                </div>
+                                ` : ''}
+                            </div>
+                        </div>
+
+                        <div class="info-card">
+                            <div class="card-header">
+                                <div class="card-title">
+                                    <i class="fas fa-clock" style="color:var(--accent);"></i>
+                                    Order Status
+                                </div>
+                            </div>
+                            
+                            <div class="quick-stats">
+                                <div class="stat-item">
+                                    <div class="stat-value">${getOrderProgress(status)}%</div>
+                                    <div class="stat-label">Progress</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value">${order.items ? order.items.length : 0}</div>
+                                    <div class="stat-label">Items</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('detailsContent').innerHTML = detailsHTML;
+            
+            // Update URL without reloading
+            history.pushState({ type: 'order', id: orderId }, '', `#order-${orderId}`);
+        }
+
+        // Open booking details page
+        function openBookingDetails(bookingId) {
+            const booking = cachedBookings.find(x => (x.id === bookingId || x.bookingId === bookingId));
+            if(!booking) return;
+
+            // Switch to details view
+            document.getElementById('dashboardView').style.display = 'none';
+            document.getElementById('detailsView').style.display = 'block';
+            
+            const deviceName = booking.deviceDisplayName || `${booking.brand || 'Device'} ${booking.model || ''}`;
+            const status = booking.status || booking.service?.status || 'RECEIVED';
+            const statusClass = `status-${status.toLowerCase().replace(/_/g, '-')}`;
+            
+            // Create booking details HTML
+            const detailsHTML = `
+                <div class="details-wrapper">
+                    <div class="main-content">
+                        <!-- Hero Section -->
+                        <div class="hero-section" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+                            <div class="hero-content">
+                                <div class="hero-badge">
+                                    <i class="fas fa-tools"></i>
+                                    SERVICE #${bookingId.substring(0, 8)}
+                                </div>
+                                <h1 style="font-size:32px; margin-bottom:10px; color:white;">${deviceName}</h1>
+                                <p style="color:rgba(255,255,255,0.9);">${booking.issue?.description ? booking.issue.description.substring(0, 100) + '...' : 'Service request'}</p>
+                            </div>
+                        </div>
+
+                        <!-- Service Summary -->
+                        <div class="info-card">
+                            <div class="card-header">
+                                <div class="card-title">
+                                    <i class="fas fa-clipboard-check" style="color:#f59e0b;"></i>
+                                    Service Summary
+                                </div>
+                                <span class="${statusClass} status-badge">${status.replace('_', ' ').toUpperCase()}</span>
+                            </div>
+                            
+                            <div class="details-grid">
+                                <div class="detail-item">
+                                    <span class="detail-label">Service ID</span>
+                                    <span class="detail-value">${bookingId}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Service Type</span>
+                                    <span class="detail-value">${booking.serviceTypeDisplay || booking.service?.type || 'Standard'}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Scheduled Date</span>
+                                    <span class="detail-value">${booking.formattedDate || (booking.service?.date ? new Date(booking.service.date).toLocaleDateString() : 'Not scheduled')}</span>
+                                </div>
+                                ${booking.trackingNumber ? `
+                                <div class="detail-item">
+                                    <span class="detail-label">Tracking Number</span>
+                                    <span class="detail-value">${booking.trackingNumber}</span>
+                                </div>
+                                ` : ''}
+                            </div>
+                        </div>
+
+                        <!-- Device Information -->
+                        <div class="info-card">
+                            <div class="card-header">
+                                <div class="card-title">
+                                    <i class="fas fa-mobile-alt" style="color:#f59e0b;"></i>
+                                    Device Information
+                                </div>
+                            </div>
+                            
+                            <div class="details-grid">
+                                ${booking.device?.brand ? `
+                                <div class="detail-item">
+                                    <span class="detail-label">Brand</span>
+                                    <span class="detail-value">${booking.device.brand}</span>
+                                </div>
+                                ` : ''}
+                                ${booking.device?.model ? `
+                                <div class="detail-item">
+                                    <span class="detail-label">Model</span>
+                                    <span class="detail-value">${booking.device.model}</span>
+                                </div>
+                                ` : ''}
+                                ${booking.device?.serialNumber ? `
+                                <div class="detail-item">
+                                    <span class="detail-label">Serial Number</span>
+                                    <span class="detail-value">${booking.device.serialNumber}</span>
+                                </div>
+                                ` : ''}
+                                ${booking.device?.imei ? `
+                                <div class="detail-item">
+                                    <span class="detail-label">IMEI</span>
+                                    <span class="detail-value">${booking.device.imei}</span>
+                                </div>
+                                ` : ''}
+                                ${booking.device?.condition ? `
+                                <div class="detail-item">
+                                    <span class="detail-label">Condition</span>
+                                    <span class="detail-value">${booking.device.condition}</span>
+                                </div>
+                                ` : ''}
+                                ${booking.device?.age ? `
+                                <div class="detail-item">
+                                    <span class="detail-label">Device Age</span>
+                                    <span class="detail-value">${booking.device.age}</span>
+                                </div>
+                                ` : ''}
+                            </div>
+                        </div>
+
+                        <!-- Issue Details -->
+                        <div class="info-card">
+                            <div class="card-header">
+                                <div class="card-title">
+                                    <i class="fas fa-exclamation-triangle" style="color:#f59e0b;"></i>
+                                    Issue Details
+                                </div>
+                            </div>
+                            
+                            <div style="background:#f8fafc; padding:20px; border-radius:var(--radius-sm); margin-bottom:20px;">
+                                <p style="line-height:1.6; color:var(--text); white-space: pre-wrap;">
+                                    ${booking.issue?.description || booking.issueDescription || 'No description provided'}
+                                </p>
+                            </div>
+                            
+                            <div class="details-grid">
+                                ${booking.issue?.category ? `
+                                <div class="detail-item">
+                                    <span class="detail-label">Issue Category</span>
+                                    <span class="detail-value">${booking.issue.category}</span>
+                                </div>
+                                ` : ''}
+                                ${booking.issue?.liquidDamage !== undefined ? `
+                                <div class="detail-item">
+                                    <span class="detail-label">Liquid Damage</span>
+                                    <span class="detail-value">${booking.issue.liquidDamage ? 'Yes' : 'No'}</span>
+                                </div>
+                                ` : ''}
+                                ${booking.issue?.previousRepair !== undefined ? `
+                                <div class="detail-item">
+                                    <span class="detail-label">Previous Repair</span>
+                                    <span class="detail-value">${booking.issue.previousRepair ? 'Yes' : 'No'}</span>
+                                </div>
+                                ` : ''}
+                            </div>
+                        </div>
+
+                        <!-- Service Timeline -->
+                        <div class="info-card">
+                            <div class="card-header">
+                                <div class="card-title">
+                                    <i class="fas fa-history" style="color:#f59e0b;"></i>
+                                    Service Timeline
+                                </div>
+                            </div>
+                            
+                            <div class="timeline">
+                                ${getServiceTimeline(status).map((step, index) => `
+                                    <div class="timeline-item ${step.status}">
+                                        <div class="timeline-dot"></div>
+                                        <div class="timeline-content">
+                                            <div class="timeline-date">${step.date}</div>
+                                            <div style="font-weight:600; margin-bottom:5px;">${step.title}</div>
+                                            <p style="color:var(--muted); font-size:14px;">${step.description}</p>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sidebar -->
+                    <div class="details-sidebar">
+                        <div class="info-card">
+                            <div class="card-header">
+                                <div class="card-title">
+                                    <i class="fas fa-cog" style="color:#f59e0b;"></i>
+                                    Quick Actions
+                                </div>
+                            </div>
+                            
+                            <div class="action-buttons">
+                                <button class="btn btn-primary btn-full" onclick="contactTechnician('${bookingId}')">
+                                    <i class="fas fa-headset"></i> Contact Technician
+                                </button>
+                                <button class="btn btn-secondary btn-full" onclick="rescheduleBooking('${bookingId}')">
+                                    <i class="fas fa-calendar-alt"></i> Reschedule
+                                </button>
+                                <button class="btn btn-outline btn-full" onclick="updateServiceRequest('${bookingId}')">
+                                    <i class="fas fa-edit"></i> Update Request
+                                </button>
+                                ${status !== 'COMPLETED' && status !== 'CANCELLED' ? `
+                                <button class="btn btn-danger btn-full" onclick="cancelBooking('${bookingId}')">
+                                    <i class="fas fa-times-circle"></i> Cancel Service
+                                </button>
+                                ` : ''}
+                            </div>
+                        </div>
+
+                        <div class="info-card">
+                            <div class="card-header">
+                                <div class="card-title">
+                                    <i class="fas fa-map-marker-alt" style="color:#f59e0b;"></i>
+                                    Service Location
+                                </div>
+                            </div>
+                            
+                            ${booking.location?.pickupAddress ? `
+                                <div class="detail-item mb-2">
+                                    <span class="detail-label">Address</span>
+                                    <span class="detail-value" style="white-space: pre-wrap;">${booking.location.pickupAddress}</span>
+                                </div>
+                            ` : '<p class="text-muted">No address provided.</p>'}
+                            
+                            <div class="details-grid">
+                                ${booking.location?.city ? `
+                                <div class="detail-item">
+                                    <span class="detail-label">City</span>
+                                    <span class="detail-value">${booking.location.city}</span>
+                                </div>
+                                ` : ''}
+                                ${booking.location?.country ? `
+                                <div class="detail-item">
+                                    <span class="detail-label">Country</span>
+                                    <span class="detail-value">${booking.location.country}</span>
+                                </div>
+                                ` : ''}
+                                ${booking.location?.postalCode ? `
+                                <div class="detail-item">
+                                    <span class="detail-label">Postal Code</span>
+                                    <span class="detail-value">${booking.location.postalCode}</span>
+                                </div>
+                                ` : ''}
+                            </div>
+                        </div>
+
+                        <div class="info-card">
+                            <div class="card-header">
+                                <div class="card-title">
+                                    <i class="fas fa-user" style="color:#f59e0b;"></i>
+                                    Contact Information
+                                </div>
+                            </div>
+                            
+                            <div class="details-grid">
+                                ${booking.contact?.email ? `
+                                <div class="detail-item">
+                                    <span class="detail-label">Email</span>
+                                    <span class="detail-value">${booking.contact.email}</span>
+                                </div>
+                                ` : ''}
+                                ${booking.contact?.phone ? `
+                                <div class="detail-item">
+                                    <span class="detail-label">Phone</span>
+                                    <span class="detail-value">${booking.contact.phone}</span>
+                                </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('detailsContent').innerHTML = detailsHTML;
+            
+            // Update URL without reloading
+            history.pushState({ type: 'booking', id: bookingId }, '', `#booking-${bookingId}`);
+        }
+
+        // Helper functions
+        function getOrderTimeline(status) {
+            const steps = [
+                { title: 'Order Placed', description: 'Your order has been received and confirmed.', date: 'Today' },
+                { title: 'Processing', description: 'Order is being prepared for shipment.', date: 'Next Day' },
+                { title: 'Shipped', description: 'Order has been shipped and is on its way.', date: '2-3 Days' },
+                { title: 'Delivered', description: 'Order has been delivered successfully.', date: '5-7 Days' }
+            ];
+            
+            const statusIndex = ['ordered', 'processing', 'shipped', 'delivered'].indexOf(status);
+            
+            return steps.map((step, index) => ({
+                ...step,
+                status: index <= statusIndex ? (index === statusIndex ? 'active' : 'completed') : ''
+            }));
+        }
+
+        function getServiceTimeline(status) {
+            const steps = [
+                { title: 'Request Received', description: 'Your service request has been received.', date: 'Today' },
+                { title: 'Confirmed', description: 'Service appointment has been confirmed.', date: 'Next Day' },
+                { title: 'Diagnosis', description: 'Device is being diagnosed by technicians.', date: '2-3 Days' },
+                { title: 'Repair In Progress', description: 'Device repair is currently underway.', date: '3-5 Days' },
+                { title: 'Testing', description: 'Device is being tested after repair.', date: '5-6 Days' },
+                { title: 'Completed', description: 'Service has been completed successfully.', date: '6-7 Days' }
+            ];
+            
+            const statusMap = {
+                'RECEIVED': 0,
+                'CONFIRMED': 1,
+                'DIAGNOSED': 2,
+                'IN_PROGRESS': 3,
+                'REPAIRING': 3,
+                'TESTING': 4,
+                'COMPLETED': 5,
+                'READY_FOR_PICKUP': 5,
+                'CANCELLED': -1
+            };
+            
+            const statusIndex = statusMap[status] || 0;
+            
+            return steps.map((step, index) => ({
+                ...step,
+                status: statusIndex === -1 ? '' : (index <= statusIndex ? (index === statusIndex ? 'active' : 'completed') : '')
+            }));
+        }
+
+        function getOrderProgress(status) {
+            const progressMap = {
+                'ordered': 25,
+                'processing': 50,
+                'shipped': 75,
+                'delivered': 100,
+                'cancelled': 0
+            };
+            return progressMap[status] || 25;
+        }
+
+        // Navigation functions
+        function goBackToDashboard() {
+            document.getElementById('detailsView').style.display = 'none';
+            document.getElementById('dashboardView').style.display = 'block';
+            history.pushState({}, '', window.location.pathname);
+        }
+
+        // Handle browser back button
+        window.onpopstate = function(event) {
+            if (!window.location.hash) {
+                goBackToDashboard();
+            }
+        };
+
+        // Action functions
+        function requestTracking(orderId) {
+            alert(`Tracking information for order #${orderId.substring(0, 8)} has been sent to your email.`);
+        }
+
+        function printOrder(orderId) {
+            window.print();
+        }
+
+        function contactSupport() {
+            alert('Connecting you to customer support...');
+        }
+
+        async function cancelOrder(orderId) {
+            if (!confirm("Are you sure you want to cancel this order? This action cannot be undone.")) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${NEXUS_CONFIG.api.baseUrl}/orders/${orderId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': currentUserSession.getIdToken().getJwtToken(),
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        status: 'cancelled',
+                        customerEmail: currentUserEmail
+                    })
+                });
+
+                if (response.ok) {
+                    alert('Order cancelled successfully.');
+                    goBackToDashboard();
+                    fetchOrders(currentUserEmail, currentUserSession);
+                } else {
+                    const error = await response.json();
+                    throw new Error(error.message || 'Failed to cancel order');
+                }
+            } catch (error) {
+                console.error('Error cancelling order:', error);
+                alert('Failed to cancel order: ' + error.message);
+            }
+        }
+
+        function contactTechnician(bookingId) {
+            alert(`Connecting you to a technician for service #${bookingId.substring(0, 8)}...`);
+        }
+
+        function rescheduleBooking(bookingId) {
+            alert(`Redirecting to reschedule page for service #${bookingId.substring(0, 8)}...`);
+        }
+
+        function updateServiceRequest(bookingId) {
+            alert(`Opening service request update for #${bookingId.substring(0, 8)}...`);
+        }
+
+        function cancelBooking(bookingId) {
+            if (!confirm("Are you sure you want to cancel this service booking? This action cannot be undone.")) {
+                return;
+            }
+            alert(`Cancellation request submitted for service #${bookingId.substring(0, 8)}. Our team will contact you shortly.`);
+            goBackToDashboard();
+        }
+
+        function openSupportChat() {
+            alert('Opening live support chat...');
+        }
+
+        function openSettings() {
+            alert('Opening profile settings...');
+        }
+
         function sessionTerminate() {
             const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
             const user = userPool.getCurrentUser();
-            if(user) { user.signOut(); localStorage.clear(); window.location.href='login.html'; }
+            if(user) { 
+                user.signOut(); 
+                localStorage.clear(); 
+                sessionStorage.clear();
+                window.location.href='login.html'; 
+            }
         }
-
-        window.onclick = function(e) { if(e.target.className === 'modal') closeModal(); }
     </script>
 </body>
 </html>
