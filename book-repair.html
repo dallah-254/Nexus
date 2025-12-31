@@ -3,291 +3,1938 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexus | Hardware Inventory</title>
+    <title>Nexus | Advanced Repair Booking</title>
     
+    <!-- Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js@6.3.7/dist/amazon-cognito-identity.min.js"></script>
     <script src="auth-config.js"></script>
-    <script src="header.js" defer></script>
-    <script src="footer.js" defer></script>
     <link rel="stylesheet" href="style.css">
     
     <style>
-        body { padding-top: 100px; background-color: #f8fafc; } /* Light Nexus Background */
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --border: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --radius: 12px;
+        }
 
-        #main-content { display: none; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-        .repair-container {
-            max-width: 900px;
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoo UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+            padding-top: 80px;
+        }
+
+        .container {
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 0 20px;
         }
 
-        .form-section { margin-bottom: 40px; }
+        /* Header & Progress */
+        .booking-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
 
-        .section-header {
+        .booking-header h1 {
+            font-size: 2.5rem;
+            color: var(--dark);
+            margin-bottom: 10px;
+        }
+
+        .booking-header h1 span {
+            color: var(--primary);
+        }
+
+        .progress-bar {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 15px;
-            margin-bottom: 25px;
-            border-bottom: 1px solid #e2e8f0;
-            padding-bottom: 10px;
+            margin-top: 30px;
+            position: relative;
         }
 
-        .step-number {
-            background: var(--primary); /* Royal Blue */
-            color: #fff;
-            width: 32px;
-            height: 32px;
+        .progress-bar::before {
+            content: '';
+            position: absolute;
+            top: 25px;
+            left: 50px;
+            right: 50px;
+            height: 4px;
+            background: var(--border);
+            z-index: 1;
+        }
+
+        .progress-step {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            flex: 1;
+        }
+
+        .step-circle {
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
+            background: white;
+            border: 3px solid var(--border);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 700;
-            font-size: 0.85rem;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin: 0 auto 10px;
+            transition: all 0.3s ease;
         }
 
+        .step-circle.active {
+            border-color: var(--primary);
+            background: var(--primary);
+            color: white;
+        }
+
+        .step-circle.completed {
+            border-color: var(--secondary);
+            background: var(--secondary);
+            color: white;
+        }
+
+        /* Form Sections */
+        .form-container {
+            display: none;
+            background: white;
+            border-radius: var(--radius);
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+        }
+
+        .form-container.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .section-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        /* Grid Layout */
         .grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
         }
 
-        .full-width { grid-column: span 2; }
-        
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        /* Form Controls */
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
         label {
             display: block;
             margin-bottom: 8px;
-            font-size: 0.85rem;
-            color: #475569;
             font-weight: 600;
+            color: var(--dark);
+            font-size: 0.95rem;
+        }
+
+        .required::after {
+            content: " *";
+            color: var(--danger);
         }
 
         input, select, textarea {
             width: 100%;
-            background: #ffffff;
-            border: 1px solid #cbd5e1;
-            color: #1e293b;
-            padding: 12px;
+            padding: 14px;
+            border: 2px solid var(--border);
             border-radius: 8px;
-            font-family: inherit;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
         }
 
-        input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
 
-        .checkbox-group {
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .checkbox-group, .radio-group {
             display: flex;
-            gap: 30px;
-            background: #f1f5f9;
-            padding: 20px;
-            border-radius: 8px;
-            border: 1px solid #e2e8f0;
+            gap: 20px;
+            flex-wrap: wrap;
         }
 
-        .check-item {
+        .check-item, .radio-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .check-item input[type="checkbox"],
+        .radio-item input[type="radio"] {
+            width: auto;
+        }
+
+        .error-message {
+            color: var(--danger);
+            font-size: 0.85rem;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .has-error input,
+        .has-error select,
+        .has-error textarea {
+            border-color: var(--danger);
+        }
+
+        /* Map Container */
+        .map-container {
+            height: 300px;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-top: 10px;
+            border: 2px solid var(--border);
+        }
+
+        .map-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .location-option {
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .location-option:hover {
+            border-color: var(--primary);
+            background: rgba(37, 99, 235, 0.05);
+        }
+
+        .location-option.selected {
+            border-color: var(--primary);
+            background: rgba(37, 99, 235, 0.1);
+        }
+
+        .option-header {
             display: flex;
             align-items: center;
             gap: 10px;
-            cursor: pointer;
-            font-size: 0.95rem;
-            color: #334155;
+            margin-bottom: 10px;
         }
 
-        .check-item input { width: auto; margin: 0; }
+        .option-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-        #msg-overlay {
+        /* Accessories */
+        .accessories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .accessory-item {
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .accessory-item:hover {
+            border-color: var(--primary);
+        }
+
+        .accessory-item.selected {
+            border-color: var(--primary);
+            background: rgba(37, 99, 235, 0.1);
+        }
+
+        .accessory-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        /* Navigation Buttons */
+        .form-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid var(--border);
+        }
+
+        .btn {
+            padding: 14px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: var(--border);
+            color: var(--dark);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: #cbd5e1;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Overlay */
+        .overlay {
             display: none;
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255,255,255,0.9);
-            backdrop-filter: blur(4px);
-            z-index: 20000;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
             justify-content: center;
             align-items: center;
             flex-direction: column;
-            color: var(--primary);
         }
 
-        .brand-name {
-            font-weight: 800;
-            font-size: 1.5rem;
-            color: var(--dark);
-            margin-bottom: 10px;
+        .overlay.active {
+            display: flex;
+        }
+
+        .overlay-content {
+            text-align: center;
+            max-width: 500px;
+            padding: 40px;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 30px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Summary Panel */
+        .summary-panel {
+            background: white;
+            border-radius: var(--radius);
+            padding: 30px;
+            margin-top: 30px;
+            box-shadow: var(--shadow);
+        }
+
+        .summary-item {
+            padding: 15px 0;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+
+        .summary-label {
+            color: #64748b;
+        }
+
+        .summary-value {
+            font-weight: 600;
+            text-align: right;
+            max-width: 200px;
+            word-break: break-word;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-container {
+                padding: 20px;
+            }
+            
+            .form-navigation {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .checkbox-group, .radio-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+
+        /* Utility Classes */
+        .hidden {
+            display: none !important;
+        }
+
+        .text-success {
+            color: var(--secondary);
+        }
+
+        .text-danger {
+            color: var(--danger);
+        }
+
+        .text-warning {
+            color: var(--warning);
+        }
+
+        .mb-4 {
+            margin-bottom: 1rem;
+        }
+
+        .mt-4 {
+            margin-top: 1rem;
+        }
+
+        .help-text {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-top: 5px;
         }
     </style>
 </head>
 <body>
+    <!-- Header (You can include your header component here) -->
+    <div id="nexus-header-wrapper"></div>
 
-<div id="nexus-header-wrapper"></div>
-
-<div id="main-content" class="repair-container">
-    <div style="margin-bottom: 50px;">
-        <h1 style="font-size: 2.5rem; color: var(--dark);">Device <span style="color:var(--primary)">Repair Service</span></h1>
-        <p style="color: #64748b;">Schedule a professional diagnostic and repair for your device.</p>
-    </div>
-
-    <div class="card">
-        <form id="repairForm">
-            <div class="form-section">
-                <div class="section-header">
-                    <div class="step-number">1</div>
-                    <h3 style="font-size: 1.1rem; color: var(--dark);">Device Details</h3>
+    <div class="container">
+        <!-- Booking Header -->
+        <div class="booking-header">
+            <h1>Advanced Device <span>Repair Booking</span></h1>
+            <p class="mb-4">Schedule a professional diagnostic and repair for your device with our advanced booking system</p>
+            
+            <div class="progress-bar">
+                <div class="progress-step">
+                    <div class="step-circle active" id="step1">1</div>
+                    <div>Device Info</div>
                 </div>
+                <div class="progress-step">
+                    <div class="step-circle" id="step2">2</div>
+                    <div>Issues</div>
+                </div>
+                <div class="progress-step">
+                    <div class="step-circle" id="step3">3</div>
+                    <div>Location</div>
+                </div>
+                <div class="progress-step">
+                    <div class="step-circle" id="step4">4</div>
+                    <div>Schedule</div>
+                </div>
+                <div class="progress-step">
+                    <div class="step-circle" id="step5">5</div>
+                    <div>Review</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Form Container -->
+        <form id="bookingForm">
+            <!-- Step 1: Device Information -->
+            <div class="form-container active" id="step1-form">
+                <div class="section-title">
+                    <div class="section-icon">📱</div>
+                    <h2>Device Information</h2>
+                </div>
+
                 <div class="grid">
-                    <div>
-                        <label>Device Type</label>
+                    <div class="form-group">
+                        <label for="deviceType" class="required">Device Type</label>
                         <select id="deviceType" required>
+                            <option value="">Select device type</option>
                             <option value="Smartphone">Smartphone</option>
                             <option value="Laptop">Laptop</option>
+                            <option value="Tablet">Tablet</option>
                             <option value="Gaming Console">Gaming Console</option>
+                            <option value="Desktop">Desktop Computer</option>
+                            <option value="Server">Server</option>
                             <option value="Other">Other Electronics</option>
                         </select>
+                        <div class="error-message" id="deviceTypeError"></div>
                     </div>
-                    <div>
-                        <label>Manufacturer</label>
-                        <input type="text" id="brand" placeholder="e.g. Apple, Samsung, HP" required>
+
+                    <div class="form-group">
+                        <label for="brand" class="required">Manufacturer/Brand</label>
+                        <input type="text" id="brand" placeholder="e.g., Apple, Samsung, Dell, HP" required minlength="2">
+                        <div class="error-message" id="brandError"></div>
                     </div>
-                    <div>
-                        <label>Model Name/Number</label>
-                        <input type="text" id="model" placeholder="e.g. iPhone 15, MacBook Pro" required>
+
+                    <div class="form-group">
+                        <label for="model" class="required">Model Name/Number</label>
+                        <input type="text" id="model" placeholder="e.g., iPhone 15 Pro, MacBook Pro M3" required minlength="2">
+                        <div class="error-message" id="modelError"></div>
                     </div>
-                    <div>
-                        <label>Serial Number (Optional)</label>
+
+                    <div class="form-group">
+                        <label for="serialNumber">Serial Number</label>
                         <input type="text" id="serialNumber" placeholder="For warranty verification">
+                        <div class="help-text">Usually found on the device or original box</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="imei">IMEI Number (Mobile Devices)</label>
+                        <input type="text" id="imei" placeholder="15-digit IMEI number" pattern="[0-9]{15}">
+                        <div class="help-text">Dial *#06# on your phone to get IMEI</div>
+                        <div class="error-message" id="imeiError"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="deviceAge" class="required">Device Age (Years)</label>
+                        <input type="number" id="deviceAge" min="0" max="50" step="0.5" placeholder="e.g., 2.5" required>
+                        <div class="error-message" id="deviceAgeError"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="purchaseDate">Purchase Date</label>
+                        <input type="date" id="purchaseDate">
+                        <div class="error-message" id="purchaseDateError"></div>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label class="required">Device Physical Condition</label>
+                        <div class="radio-group" id="deviceConditionGroup">
+                            <label class="radio-item">
+                                <input type="radio" name="deviceCondition" value="Excellent" required>
+                                Excellent - Like new, no scratches
+                            </label>
+                            <label class="radio-item">
+                                <input type="radio" name="deviceCondition" value="Good">
+                                Good - Minor wear and tear
+                            </label>
+                            <label class="radio-item">
+                                <input type="radio" name="deviceCondition" value="Fair">
+                                Fair - Visible scratches/dents
+                            </label>
+                            <label class="radio-item">
+                                <input type="radio" name="deviceCondition" value="Poor">
+                                Poor - Significant damage
+                            </label>
+                        </div>
+                        <div class="error-message" id="deviceConditionError"></div>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label>Warranty Status</label>
+                        <div class="radio-group" id="warrantyStatusGroup">
+                            <label class="radio-item">
+                                <input type="radio" name="warrantyStatus" value="Active">
+                                Active
+                            </label>
+                            <label class="radio-item">
+                                <input type="radio" name="warrantyStatus" value="Expired">
+                                Expired
+                            </label>
+                            <label class="radio-item">
+                                <input type="radio" name="warrantyStatus" value="None">
+                                No Warranty
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="warrantyExpiry">Warranty Expiry Date</label>
+                        <input type="date" id="warrantyExpiry">
+                        <div class="error-message" id="warrantyExpiryError"></div>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label>Accessories Included (Select all that apply)</label>
+                        <div class="accessories-grid" id="accessoriesGrid">
+                            <div class="accessory-item" data-value="charger">
+                                <div class="accessory-icon">🔌</div>
+                                <div>Charger</div>
+                            </div>
+                            <div class="accessory-item" data-value="cable">
+                                <div class="accessory-icon">🔗</div>
+                                <div>Cables</div>
+                            </div>
+                            <div class="accessory-item" data-value="case">
+                                <div class="accessory-icon">📱</div>
+                                <div>Case/Cover</div>
+                            </div>
+                            <div class="accessory-item" data-value="headphones">
+                                <div class="accessory-icon">🎧</div>
+                                <div>Headphones</div>
+                            </div>
+                            <div class="accessory-item" data-value="box">
+                                <div class="accessory-icon">📦</div>
+                                <div>Original Box</div>
+                            </div>
+                            <div class="accessory-item" data-value="manual">
+                                <div class="accessory-icon">📖</div>
+                                <div>Manual</div>
+                            </div>
+                            <div class="accessory-item" data-value="battery">
+                                <div class="accessory-icon">🔋</div>
+                                <div>Extra Battery</div>
+                            </div>
+                            <div class="accessory-item" data-value="none">
+                                <div class="accessory-icon">❌</div>
+                                <div>None</div>
+                            </div>
+                        </div>
+                        <input type="hidden" id="accessories">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="estimatedValue">Estimated Device Value ($)</label>
+                        <input type="number" id="estimatedValue" min="0" step="100" placeholder="e.g., 1200">
+                        <div class="error-message" id="estimatedValueError"></div>
                     </div>
                 </div>
-            </div>
 
-            <div class="form-section">
-                <div class="section-header">
-                    <div class="step-number">2</div>
-                    <h3 style="font-size: 1.1rem; color: var(--dark);">Issue Description</h3>
-                </div>
-                <label>Problem Description</label>
-                <textarea id="issueDescription" rows="4" placeholder="Please describe the issue you are experiencing..." required></textarea>
-                
-                <div class="checkbox-group" style="margin-top: 15px;">
-                    <label class="check-item">
-                        <input type="checkbox" id="liquidDamage"> Liquid Damage
-                    </label>
-                    <label class="check-item">
-                        <input type="checkbox" id="previousRepair"> Previously Repaired Elsewhere
-                    </label>
+                <div class="form-navigation">
+                    <button type="button" class="btn btn-secondary" disabled>Previous</button>
+                    <button type="button" class="btn btn-primary" onclick="validateAndNextStep(2)">
+                        Next: Issue Details →
+                    </button>
                 </div>
             </div>
 
-            <div class="form-section">
-                <div class="section-header">
-                    <div class="step-number">3</div>
-                    <h3 style="font-size: 1.1rem; color: var(--dark);">Logistics & Schedule</h3>
+            <!-- Step 2: Issue Details -->
+            <div class="form-container" id="step2-form">
+                <div class="section-title">
+                    <div class="section-icon">🔧</div>
+                    <h2>Issue Details</h2>
                 </div>
+
                 <div class="grid">
-                    <div class="full-width">
-                        <label>Pickup Address</label>
-                        <input type="text" id="pickupAddress" placeholder="Street name, Building, Apartment number" required>
+                    <div class="form-group">
+                        <label for="issueCategory" class="required">Issue Category</label>
+                        <select id="issueCategory" required>
+                            <option value="">Select category</option>
+                            <option value="Hardware">Hardware Issue</option>
+                            <option value="Software">Software/OS Issue</option>
+                            <option value="Both">Hardware & Software</option>
+                            <option value="Diagnostic">Diagnostic Only</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        <div class="error-message" id="issueCategoryError"></div>
                     </div>
-                    <div>
-                        <label>City</label>
-                        <input type="text" id="city" placeholder="e.g. Nairobi" required>
+
+                    <div class="form-group full-width">
+                        <label for="issueDescription" class="required">Detailed Problem Description</label>
+                        <textarea id="issueDescription" placeholder="Please describe the issue in detail. Include symptoms, when it started, and any error messages..." required minlength="10"></textarea>
+                        <div class="help-text">Be as detailed as possible for accurate diagnosis (minimum 10 characters)</div>
+                        <div class="error-message" id="issueDescriptionError"></div>
                     </div>
-                    <div>
-                        <label>Preferred Date</label>
-                        <input type="date" id="bookingDate" required>
+
+                    <div class="form-group full-width">
+                        <label>Additional Information</label>
+                        <div class="checkbox-group">
+                            <label class="check-item">
+                                <input type="checkbox" id="liquidDamage">
+                                Liquid/Water Damage
+                            </label>
+                            <label class="check-item">
+                                <input type="checkbox" id="previousRepair">
+                                Previously Repaired Elsewhere
+                            </label>
+                            <label class="check-item">
+                                <input type="checkbox" id="powerIssue">
+                                Won't Power On
+                            </label>
+                            <label class="check-item">
+                                <input type="checkbox" id="screenDamage">
+                                Screen Cracked/Damaged
+                            </label>
+                        </div>
                     </div>
+
+                    <div class="form-group full-width">
+                        <label for="previousRepairDetails">Previous Repair Details (if applicable)</label>
+                        <textarea id="previousRepairDetails" placeholder="When and where was it repaired? What was done?"></textarea>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="specialInstructions">Special Instructions for Technician</label>
+                        <textarea id="specialInstructions" placeholder="Any specific requests or important information for our technicians..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="urgency">Urgency Level</label>
+                        <select id="urgency">
+                            <option value="normal">Normal (3-5 business days)</option>
+                            <option value="urgent">Urgent (24-48 hours)</option>
+                            <option value="emergency">Emergency (Same day - extra charge)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-navigation">
+                    <button type="button" class="btn btn-secondary" onclick="prevStep(1)">
+                        ← Previous
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="validateAndNextStep(3)">
+                        Next: Location →
+                    </button>
                 </div>
             </div>
 
-            <button type="submit" id="submitBtn" class="btn btn-primary" style="width: 100%; margin-top: 20px; height: 55px; font-size: 1.1rem;">
-                Confirm Repair Booking
-            </button>
+            <!-- Step 3: Location & Service Type -->
+            <div class="form-container" id="step3-form">
+                <div class="section-title">
+                    <div class="section-icon">📍</div>
+                    <h2>Service Location</h2>
+                </div>
+
+                <div class="form-group full-width">
+                    <label class="required">Service Type</label>
+                    <div class="grid">
+                        <div class="location-option" data-type="visit_shop" onclick="selectServiceType('visit_shop')">
+                            <div class="option-header">
+                                <div class="option-icon">🏪</div>
+                                <h3>Visit Our Shop</h3>
+                            </div>
+                            <p>Bring your device to our service center</p>
+                            <ul style="margin-left: 20px; margin-top: 10px; color: #64748b;">
+                                <li>Free diagnostic</li>
+                                <li>Wait while we repair</li>
+                                <li>Professional environment</li>
+                            </ul>
+                        </div>
+
+                        <div class="location-option" data-type="home_service" onclick="selectServiceType('home_service')">
+                            <div class="option-header">
+                                <div class="option-icon">🚗</div>
+                                <h3>Home/Office Service</h3>
+                            </div>
+                            <p>Technician comes to your location</p>
+                            <ul style="margin-left: 20px; margin-top: 10px; color: #64748b;">
+                                <li>$50 service fee</li>
+                                <li>Same technician throughout</li>
+                                <li>On-site diagnosis & repair</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <input type="hidden" id="serviceType" required>
+                    <div class="error-message" id="serviceTypeError"></div>
+                </div>
+
+                <!-- Shop Visit Address -->
+                <div id="shopAddressSection" class="hidden">
+                    <h3 style="margin: 20px 0 15px; color: var(--dark);">Our Service Center</h3>
+                    <div style="background: #f8fafc; padding: 20px; border-radius: 8px; border: 1px solid var(--border);">
+                        <p><strong>Nexus Tech Repair Center</strong></p>
+                        <p>123 Tech Street, Silicon Valley</p>
+                        <p>San Francisco, CA 94107</p>
+                        <p>United States</p>
+                        <p class="help-text mt-4">Hours: Mon-Fri 9AM-6PM, Sat 10AM-4PM</p>
+                    </div>
+                </div>
+
+                <!-- Home Service Location -->
+                <div id="homeServiceSection" class="hidden">
+                    <div class="grid">
+                        <div class="form-group full-width">
+                            <label for="pickupAddress" class="required">Address</label>
+                            <input type="text" id="pickupAddress" placeholder="Street, Building, Apartment">
+                            <div class="error-message" id="pickupAddressError"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="city" class="required">City</label>
+                            <input type="text" id="city" placeholder="e.g., Nairobi">
+                            <div class="error-message" id="cityError"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="country" class="required">Country</label>
+                            <input type="text" id="country" placeholder="e.g., Kenya">
+                            <div class="error-message" id="countryError"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="postalCode">Postal Code</label>
+                            <input type="text" id="postalCode" placeholder="e.g., 00100">
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label class="required">Select Location on Map</label>
+                            <div class="map-controls">
+                                <button type="button" class="btn btn-secondary" onclick="getCurrentLocation()">
+                                    📍 Use My Current Location
+                                </button>
+                                <button type="button" class="btn btn-secondary" onclick="searchLocation()">
+                                    🔍 Search Location
+                                </button>
+                            </div>
+                            <div id="map" class="map-container"></div>
+                            <div class="help-text">Drag the marker to precise location</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="locationLat">Latitude</label>
+                            <input type="number" id="locationLat" step="0.000001" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="locationLng">Longitude</label>
+                            <input type="number" id="locationLng" step="0.000001" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="locationAccuracy">Accuracy (meters)</label>
+                            <input type="number" id="locationAccuracy" readonly>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-navigation">
+                    <button type="button" class="btn btn-secondary" onclick="prevStep(2)">
+                        ← Previous
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="validateAndNextStep(4)">
+                        Next: Schedule →
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 4: Schedule & Contact -->
+            <div class="form-container" id="step4-form">
+                <div class="section-title">
+                    <div class="section-icon">📅</div>
+                    <h2>Schedule & Contact</h2>
+                </div>
+
+                <div class="grid">
+                    <div class="form-group">
+                        <label for="bookingDate" class="required">Preferred Date</label>
+                        <input type="date" id="bookingDate" required>
+                        <div class="error-message" id="bookingDateError"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="preferredTimeSlot" class="required">Preferred Time Slot</label>
+                        <select id="preferredTimeSlot" required>
+                            <option value="">Select time slot</option>
+                            <option value="morning">Morning (9AM - 12PM)</option>
+                            <option value="afternoon">Afternoon (12PM - 4PM)</option>
+                            <option value="evening">Evening (4PM - 7PM)</option>
+                        </select>
+                        <div class="error-message" id="preferredTimeSlotError"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="contactPhone" class="required">Contact Phone Number</label>
+                        <input type="tel" id="contactPhone" placeholder="+1 234 567 8900" required pattern="^\+?[1-9]\d{1,14}$">
+                        <div class="help-text">We'll call to confirm your appointment</div>
+                        <div class="error-message" id="contactPhoneError"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="contactEmail">Contact Email</label>
+                        <input type="email" id="contactEmail" placeholder="your.email@example.com">
+                        <div class="help-text">For booking confirmation and updates</div>
+                        <div class="error-message" id="contactEmailError"></div>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label>Preferred Contact Method</label>
+                        <div class="radio-group">
+                            <label class="radio-item">
+                                <input type="radio" name="contactMethod" value="phone" checked>
+                                Phone Call
+                            </label>
+                            <label class="radio-item">
+                                <input type="radio" name="contactMethod" value="sms">
+                                SMS/Text
+                            </label>
+                            <label class="radio-item">
+                                <input type="radio" name="contactMethod" value="whatsapp">
+                                WhatsApp
+                            </label>
+                            <label class="radio-item">
+                                <input type="radio" name="contactMethod" value="email">
+                                Email
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="additionalNotes">Additional Notes</label>
+                        <textarea id="additionalNotes" placeholder="Any other information we should know..."></textarea>
+                    </div>
+                </div>
+
+                <div class="form-navigation">
+                    <button type="button" class="btn btn-secondary" onclick="prevStep(3)">
+                        ← Previous
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="validateAndNextStep(5)">
+                        Next: Review & Submit →
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 5: Review & Submit -->
+            <div class="form-container" id="step5-form">
+                <div class="section-title">
+                    <div class="section-icon">✅</div>
+                    <h2>Review & Submit</h2>
+                </div>
+
+                <div class="grid">
+                    <div class="form-group full-width">
+                        <h3 style="margin-bottom: 20px; color: var(--dark);">Booking Summary</h3>
+                        <div id="bookingSummary" class="summary-panel">
+                            <!-- Dynamic content will be inserted here -->
+                        </div>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label>
+                            <input type="checkbox" id="termsAgreement" required>
+                            I agree to the <a href="#" style="color: var(--primary);">Terms of Service</a> and understand that:
+                        </label>
+                        <ul style="margin-left: 25px; margin-top: 10px; color: #64748b;">
+                            <li>A diagnostic fee may apply if repair is declined</li>
+                            <li>Data backup is recommended before repair</li>
+                            <li>Repair timeline depends on parts availability</li>
+                            <li>Quotes are valid for 7 days</li>
+                        </ul>
+                        <div class="error-message" id="termsAgreementError"></div>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label>
+                            <input type="checkbox" id="privacyAgreement" required>
+                            I agree to the <a href="#" style="color: var(--primary);">Privacy Policy</a> and data collection for service purposes
+                        </label>
+                        <div class="error-message" id="privacyAgreementError"></div>
+                    </div>
+                </div>
+
+                <div class="form-navigation">
+                    <button type="button" class="btn btn-secondary" onclick="prevStep(4)">
+                        ← Previous
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="submitBooking()" id="submitBtn">
+                        Submit Booking
+                    </button>
+                </div>
+            </div>
         </form>
     </div>
-</div>
 
-<div id="msg-overlay">
-    <div class="brand-name">NEXUS</div>
-    <p id="overlay-text" style="font-weight: 500;">Connecting to service center...</p>
-</div>
-<footer id="nexus-footer-wrapper"></footer>
-<script src="header.js"></script>
-<script src="footer.js"></script>
-<script>
-    // 1. SESSION GUARD
-    const userPool = new AmazonCognitoIdentity.CognitoUserPool({
-        UserPoolId: NEXUS_CONFIG.auth.UserPoolId,
-        ClientId: NEXUS_CONFIG.auth.ClientId
-    });
-    const cognitoUser = userPool.getCurrentUser();
+    <!-- Loading Overlay -->
+    <div class="overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <h2 style="margin: 20px 0 10px; color: var(--dark);">Processing Your Booking</h2>
+        <p style="color: #64748b;">Please wait while we submit your repair request...</p>
+    </div>
 
-    if (!cognitoUser) {
-        window.location.href = 'login.html?redirect=book-repair.html';
-    } else {
-        cognitoUser.getSession((err, session) => {
-            if (err || !session.isValid()) {
-                window.location.href = 'login.html';
-            } else {
-                document.getElementById('main-content').style.display = 'block';
-            }
+    <!-- Success Overlay -->
+    <div class="overlay" id="successOverlay">
+        <div style="text-align: center;">
+            <div style="font-size: 4rem; color: var(--secondary); margin-bottom: 20px;">✅</div>
+            <h2 style="margin-bottom: 10px; color: var(--dark);">Booking Confirmed!</h2>
+            <p id="successMessage" style="color: #64748b; margin-bottom: 30px;"></p>
+            <button class="btn btn-primary" onclick="redirectToSuccess()">
+                View Booking Details
+            </button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer id="nexus-footer-wrapper"></footer>
+
+    <!-- Google Maps API - Loaded with async to avoid warnings -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&libraries=places&loading=async&callback=initMap" async defer></script>
+
+    <script>
+        // Global variables
+        let currentStep = 1;
+        let map = null;
+        let marker = null;
+        let geocoder = null;
+        let selectedAccessories = [];
+        let userLocation = null;
+        let isMapInitialized = false;
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set minimum date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('bookingDate').min = today;
+            
+            // Initialize accessories selection
+            initAccessories();
+            
+            // Check user session
+            checkUserSession();
+            
+            // Initialize real-time validation
+            initRealTimeValidation();
+            
+            // Set default warranty status
+            document.querySelector('input[name="warrantyStatus"][value="None"]').checked = true;
         });
-    }
 
-    // 2. FORM SUBMISSION
-    document.getElementById('repairForm').onsubmit = function(e) {
-        e.preventDefault();
-        const btn = document.getElementById('submitBtn');
-        const overlay = document.getElementById('msg-overlay');
-        const overlayText = document.getElementById('overlay-text');
-        
-        btn.disabled = true;
-        overlay.style.display = "flex";
+        // Google Maps callback function
+        function initMap() {
+            if (isMapInitialized) return;
+            
+            try {
+                // Default center (San Francisco)
+                const defaultLocation = { lat: 37.7749, lng: -122.4194 };
+                
+                map = new google.maps.Map(document.getElementById('map'), {
+                    center: defaultLocation,
+                    zoom: 12,
+                    mapTypeControl: true,
+                    streetViewControl: false,
+                    fullscreenControl: true
+                });
+                
+                geocoder = new google.maps.Geocoder();
+                
+                // Use AdvancedMarkerElement instead of deprecated Marker
+                if (window.google.maps.marker && window.google.maps.marker.AdvancedMarkerElement) {
+                    marker = new google.maps.marker.AdvancedMarkerElement({
+                        map: map,
+                        position: defaultLocation,
+                        gmpDraggable: true
+                    });
+                } else {
+                    // Fallback to traditional Marker
+                    marker = new google.maps.Marker({
+                        map: map,
+                        draggable: true,
+                        position: defaultLocation
+                    });
+                }
+                
+                // Update coordinates when marker is dragged
+                marker.addListener('dragend', function() {
+                    updateLocationFields(marker.position);
+                });
+                
+                // Click on map to set marker
+                map.addListener('click', function(event) {
+                    marker.position = event.latLng;
+                    updateLocationFields(event.latLng);
+                });
+                
+                // Initialize with default values
+                updateLocationFields(defaultLocation);
+                
+                isMapInitialized = true;
+                console.log('Google Maps initialized successfully');
+            } catch (error) {
+                console.error('Error initializing Google Maps:', error);
+                showNotification('Maps service is temporarily unavailable. Please enter address manually.', 'warning');
+                document.getElementById('map').innerHTML = '<div style="padding: 20px; text-align: center; color: #64748b;">Maps service unavailable. Please use address fields.</div>';
+            }
+        }
 
-        cognitoUser.getSession((err, session) => {
-            if (err || !session.isValid()) { 
-                window.location.href = 'login.html';
-                return; 
+        // Fix for Maps API loading error
+        if (typeof google === 'undefined') {
+            window.gm_authFailure = function() {
+                showNotification('Google Maps authentication failed. Please check your API key.', 'error');
+            };
+        }
+
+        // 1. SESSION GUARD
+        function checkUserSession() {
+            if (typeof AmazonCognitoIdentity === 'undefined') {
+                console.error('Cognito library not loaded');
+                showNotification('Authentication service unavailable. Please refresh the page.', 'error');
+                return;
+            }
+
+            if (!NEXUS_CONFIG || !NEXUS_CONFIG.auth) {
+                console.error('NEXUS_CONFIG not defined');
+                showNotification('Configuration error. Please contact support.', 'error');
+                return;
+            }
+
+            try {
+                const userPool = new AmazonCognitoIdentity.CognitoUserPool({
+                    UserPoolId: NEXUS_CONFIG.auth.UserPoolId,
+                    ClientId: NEXUS_CONFIG.auth.ClientId
+                });
+                const cognitoUser = userPool.getCurrentUser();
+
+                if (!cognitoUser) {
+                    window.location.href = 'login.html?redirect=book-repair.html';
+                } else {
+                    cognitoUser.getSession((err, session) => {
+                        if (err || !session || !session.isValid()) {
+                            window.location.href = 'login.html';
+                        } else {
+                            // Pre-fill contact info from Cognito if available
+                            const userEmail = session.getIdToken().payload.email;
+                            if (userEmail) {
+                                document.getElementById('contactEmail').value = userEmail;
+                            }
+                            // Get phone from Cognito claims
+                            const userPhone = session.getIdToken().payload.phone_number;
+                            if (userPhone) {
+                                document.getElementById('contactPhone').value = userPhone;
+                            }
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('Session check error:', error);
+                showNotification('Authentication error. Please try again.', 'error');
+            }
+        }
+
+        // 2. REAL-TIME VALIDATION
+        function initRealTimeValidation() {
+            // Validate issue description in real-time
+            const issueDescInput = document.getElementById('issueDescription');
+            issueDescInput.addEventListener('input', function() {
+                validateField('issueDescription', this.value.length >= 10, 'Issue description must be at least 10 characters');
+            });
+
+            // Validate phone number format
+            const phoneInput = document.getElementById('contactPhone');
+            phoneInput.addEventListener('input', function() {
+                const phoneRegex = /^\+?[1-9]\d{1,14}$/;
+                validateField('contactPhone', phoneRegex.test(this.value), 'Please enter a valid phone number (e.g., +1234567890)');
+            });
+
+            // Validate email format
+            const emailInput = document.getElementById('contactEmail');
+            if (emailInput.value) {
+                emailInput.addEventListener('input', function() {
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    validateField('contactEmail', this.value === '' || emailRegex.test(this.value), 'Please enter a valid email address');
+                });
+            }
+
+            // Validate IMEI format
+            const imeiInput = document.getElementById('imei');
+            imeiInput.addEventListener('input', function() {
+                const imeiRegex = /^[0-9]{15}$/;
+                validateField('imei', this.value === '' || imeiRegex.test(this.value), 'IMEI must be 15 digits');
+            });
+
+            // Validate device age
+            const deviceAgeInput = document.getElementById('deviceAge');
+            deviceAgeInput.addEventListener('input', function() {
+                const age = parseFloat(this.value);
+                validateField('deviceAge', age >= 0 && age <= 50, 'Device age must be between 0 and 50 years');
+            });
+        }
+
+        function validateField(fieldId, isValid, errorMessage) {
+            const fieldElement = document.getElementById(fieldId);
+            const errorElement = document.getElementById(fieldId + 'Error');
+            
+            if (!fieldElement || !errorElement) return;
+            
+            if (!isValid && fieldElement.value.trim() !== '') {
+                fieldElement.classList.add('has-error');
+                errorElement.textContent = errorMessage;
+                errorElement.style.display = 'block';
+            } else {
+                fieldElement.classList.remove('has-error');
+                errorElement.style.display = 'none';
+            }
+        }
+
+        // 3. STEP NAVIGATION WITH VALIDATION
+        function validateAndNextStep(step) {
+            if (!validateStep(currentStep)) {
+                return;
             }
             
-            const formData = {
-                deviceType: document.getElementById('deviceType').value,
-                brand: document.getElementById('brand').value,
-                model: document.getElementById('model').value,
-                serialNumber: document.getElementById('serialNumber').value,
-                issueDescription: document.getElementById('issueDescription').value,
-                liquidDamage: document.getElementById('liquidDamage').checked,
-                previousRepair: document.getElementById('previousRepair').checked,
-                pickupAddress: document.getElementById('pickupAddress').value,
-                city: document.getElementById('city').value,
-                bookingDate: document.getElementById('bookingDate').value
-            };
+            nextStep(step);
+        }
 
-            fetch(NEXUS_CONFIG.api.baseUrl + '/bookings', {
-                method: 'POST',
-                headers: {
-                    'Authorization': session.getIdToken().getJwtToken(),
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(formData)
-            })
-            .then(res => res.json())
-            .then(data => {
-                overlayText.innerText = "Booking confirmed. Redirecting...";
-                
-                const bookingId = data.bookingId || data.id || `NX-${Math.floor(1000 + Math.random() * 9000)}`;
+        function nextStep(step) {
+            // Hide current step
+            document.getElementById(`step${currentStep}-form`).classList.remove('active');
+            document.getElementById(`step${currentStep}`).classList.remove('active');
+            
+            // Show next step
+            document.getElementById(`step${step}-form`).classList.add('active');
+            document.getElementById(`step${step}`).classList.add('active');
+            currentStep = step;
+            
+            // Update step circles
+            for (let i = 1; i <= 5; i++) {
+                const circle = document.getElementById(`step${i}`);
+                if (i < step) {
+                    circle.classList.add('completed');
+                    circle.classList.remove('active');
+                } else if (i === step) {
+                    circle.classList.add('active');
+                    circle.classList.remove('completed');
+                } else {
+                    circle.classList.remove('active', 'completed');
+                }
+            }
+            
+            // Special handling for step 5
+            if (step === 5) {
+                updateBookingSummary();
+            }
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
 
-                sessionStorage.setItem('lastBooking', JSON.stringify({
-                    id: bookingId,
-                    device: `${formData.brand} ${formData.model}`,
-                    date: formData.bookingDate
-                }));
+        function prevStep(step) {
+            document.getElementById(`step${currentStep}-form`).classList.remove('active');
+            document.getElementById(`step${currentStep}`).classList.remove('active');
+            
+            document.getElementById(`step${step}-form`).classList.add('active');
+            document.getElementById(`step${step}`).classList.add('active');
+            currentStep = step;
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
 
-                setTimeout(() => window.location.href = 'booking-success.html', 1200);
-            })
-            .catch(error => {
-                alert("Could not process booking. Please try again.");
-                btn.disabled = false;
-                overlay.style.display = "none";
+        // 4. FORM VALIDATION
+        function validateStep(step) {
+            let isValid = true;
+            clearAllErrors();
+            
+            switch(step) {
+                case 1:
+                    if (!validateRequired('deviceType', 'Device type is required')) isValid = false;
+                    if (!validateRequired('brand', 'Manufacturer/brand is required')) isValid = false;
+                    if (!validateMinLength('brand', 2, 'Brand must be at least 2 characters')) isValid = false;
+                    if (!validateRequired('model', 'Model is required')) isValid = false;
+                    if (!validateMinLength('model', 2, 'Model must be at least 2 characters')) isValid = false;
+                    if (!validateRequired('deviceAge', 'Device age is required')) isValid = false;
+                    if (!validateDeviceAge()) isValid = false;
+                    if (!validateDeviceCondition()) isValid = false;
+                    if (!validateIMEI()) isValid = false;
+                    break;
+                    
+                case 2:
+                    if (!validateRequired('issueCategory', 'Issue category is required')) isValid = false;
+                    if (!validateRequired('issueDescription', 'Issue description is required')) isValid = false;
+                    if (!validateMinLength('issueDescription', 10, 'Issue description must be at least 10 characters')) isValid = false;
+                    break;
+                    
+                case 3:
+                    if (!validateServiceType()) isValid = false;
+                    const serviceType = document.getElementById('serviceType').value;
+                    if (serviceType === 'home_service') {
+                        if (!validateRequired('pickupAddress', 'Pickup address is required')) isValid = false;
+                        if (!validateRequired('city', 'City is required')) isValid = false;
+                        if (!validateRequired('country', 'Country is required')) isValid = false;
+                        if (!validateLocation()) isValid = false;
+                    }
+                    break;
+                    
+                case 4:
+                    if (!validateRequired('bookingDate', 'Booking date is required')) isValid = false;
+                    if (!validateRequired('preferredTimeSlot', 'Time slot is required')) isValid = false;
+                    if (!validateRequired('contactPhone', 'Contact phone is required')) isValid = false;
+                    if (!validatePhone()) isValid = false;
+                    if (!validateEmail()) isValid = false;
+                    break;
+            }
+            
+            return isValid;
+        }
+
+        // Validation helper functions
+        function validateRequired(fieldId, errorMessage) {
+            const field = document.getElementById(fieldId);
+            if (!field) return true;
+            
+            const value = field.value ? field.value.trim() : '';
+            const isSelect = field.tagName === 'SELECT';
+            const isCheckbox = field.type === 'checkbox';
+            const isRadio = field.type === 'radio';
+            
+            let isValid = true;
+            
+            if (isSelect) {
+                isValid = value !== '';
+            } else if (isCheckbox) {
+                isValid = field.checked;
+            } else if (isRadio) {
+                const radioGroup = document.querySelector(`input[name="${field.name}"]:checked`);
+                isValid = !!radioGroup;
+            } else {
+                isValid = value !== '';
+            }
+            
+            if (!isValid) {
+                showError(fieldId, errorMessage);
+            }
+            
+            return isValid;
+        }
+
+        function validateMinLength(fieldId, minLength, errorMessage) {
+            const field = document.getElementById(fieldId);
+            if (!field || !field.value) return true;
+            
+            const isValid = field.value.length >= minLength;
+            if (!isValid) {
+                showError(fieldId, errorMessage);
+            }
+            return isValid;
+        }
+
+        function validateDeviceAge() {
+            const field = document.getElementById('deviceAge');
+            if (!field || !field.value) return true;
+            
+            const age = parseFloat(field.value);
+            const isValid = !isNaN(age) && age >= 0 && age <= 50;
+            if (!isValid) {
+                showError('deviceAge', 'Device age must be between 0 and 50 years');
+            }
+            return isValid;
+        }
+
+        function validateDeviceCondition() {
+            const radioGroup = document.querySelector('input[name="deviceCondition"]:checked');
+            const isValid = !!radioGroup;
+            if (!isValid) {
+                showError('deviceCondition', 'Device condition is required');
+            }
+            return isValid;
+        }
+
+        function validateServiceType() {
+            const field = document.getElementById('serviceType');
+            const isValid = field && field.value !== '';
+            if (!isValid) {
+                showError('serviceType', 'Service type is required');
+            }
+            return isValid;
+        }
+
+        function validateLocation() {
+            const lat = document.getElementById('locationLat').value;
+            const lng = document.getElementById('locationLng').value;
+            const isValid = lat && lng && !isNaN(parseFloat(lat)) && !isNaN(parseFloat(lng));
+            if (!isValid) {
+                showError('pickupAddress', 'Please select a location on the map');
+            }
+            return isValid;
+        }
+
+        function validatePhone() {
+            const field = document.getElementById('contactPhone');
+            if (!field || !field.value) return false;
+            
+            const phoneRegex = /^\+?[1-9]\d{1,14}$/;
+            const isValid = phoneRegex.test(field.value);
+            if (!isValid) {
+                showError('contactPhone', 'Please enter a valid phone number (e.g., +1234567890)');
+            }
+            return isValid;
+        }
+
+        function validateEmail() {
+            const field = document.getElementById('contactEmail');
+            if (!field || !field.value) return true;
+            
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const isValid = emailRegex.test(field.value);
+            if (!isValid) {
+                showError('contactEmail', 'Please enter a valid email address');
+            }
+            return isValid;
+        }
+
+        function validateIMEI() {
+            const field = document.getElementById('imei');
+            if (!field || !field.value) return true;
+            
+            const imeiRegex = /^[0-9]{15}$/;
+            const isValid = imeiRegex.test(field.value);
+            if (!isValid) {
+                showError('imei', 'IMEI must be exactly 15 digits');
+            }
+            return isValid;
+        }
+
+        function showError(fieldId, message) {
+            const errorElement = document.getElementById(fieldId + 'Error');
+            const fieldElement = document.getElementById(fieldId);
+            
+            if (errorElement) {
+                errorElement.textContent = message;
+                errorElement.style.display = 'block';
+            }
+            
+            if (fieldElement) {
+                fieldElement.classList.add('has-error');
+                fieldElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+
+        function clearAllErrors() {
+            document.querySelectorAll('.error-message').forEach(el => {
+                el.style.display = 'none';
             });
-        });
-    };
-</script>
+            document.querySelectorAll('.has-error').forEach(el => {
+                el.classList.remove('has-error');
+            });
+        }
+
+        // 5. ACCESSORIES SELECTION
+        function initAccessories() {
+            document.querySelectorAll('.accessory-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const value = this.dataset.value;
+                    
+                    if (value === 'none') {
+                        selectedAccessories = ['none'];
+                        document.querySelectorAll('.accessory-item').forEach(i => {
+                            i.classList.remove('selected');
+                        });
+                        this.classList.add('selected');
+                    } else {
+                        const index = selectedAccessories.indexOf(value);
+                        if (index > -1) {
+                            selectedAccessories.splice(index, 1);
+                            this.classList.remove('selected');
+                        } else {
+                            selectedAccessories.push(value);
+                            this.classList.add('selected');
+                        }
+                        
+                        // Remove 'none' if other accessories selected
+                        const noneIndex = selectedAccessories.indexOf('none');
+                        if (noneIndex > -1 && value !== 'none') {
+                            selectedAccessories.splice(noneIndex, 1);
+                            document.querySelector('.accessory-item[data-value="none"]').classList.remove('selected');
+                        }
+                    }
+                    
+                    document.getElementById('accessories').value = JSON.stringify(selectedAccessories);
+                });
+            });
+        }
+
+        // 6. SERVICE TYPE SELECTION
+        function selectServiceType(type) {
+            document.getElementById('serviceType').value = type;
+            
+            document.querySelectorAll('.location-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            document.querySelector(`.location-option[data-type="${type}"]`).classList.add('selected');
+            
+            if (type === 'visit_shop') {
+                document.getElementById('shopAddressSection').classList.remove('hidden');
+                document.getElementById('homeServiceSection').classList.add('hidden');
+                
+                // Pre-fill shop address
+                document.getElementById('pickupAddress').value = '123 Tech Street, Silicon Valley';
+                document.getElementById('city').value = 'San Francisco';
+                document.getElementById('country').value = 'United States';
+                document.getElementById('postalCode').value = '94107';
+                document.getElementById('locationLat').value = '37.7749';
+                document.getElementById('locationLng').value = '-122.4194';
+                document.getElementById('locationAccuracy').value = '10';
+            } else {
+                document.getElementById('shopAddressSection').classList.add('hidden');
+                document.getElementById('homeServiceSection').classList.remove('hidden');
+                
+                // Clear location fields if switching from shop visit
+                if (!document.getElementById('pickupAddress').value.includes('123 Tech Street')) {
+                    document.getElementById('locationLat').value = '';
+                    document.getElementById('locationLng').value = '';
+                }
+            }
+        }
+
+        // 7. GOOGLE MAPS INTEGRATION (FIXED)
+        function getCurrentLocation() {
+            if (!navigator.geolocation) {
+                showNotification('Geolocation is not supported by your browser', 'error');
+                return;
+            }
+            
+            showNotification('Getting your location...', 'info');
+            
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    const pos = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    };
+                    
+                    userLocation = pos;
+                    
+                    if (marker) {
+                        marker.position = pos;
+                    }
+                    
+                    if (map) {
+                        map.setCenter(pos);
+                        map.setZoom(15);
+                    }
+                    
+                    updateLocationFields(pos);
+                    document.getElementById('locationAccuracy').value = position.coords.accuracy.toFixed(2);
+                    
+                    // Reverse geocode to get address
+                    if (geocoder) {
+                        geocoder.geocode({ location: pos }, function(results, status) {
+                            if (status === 'OK' && results[0]) {
+                                const address = results[0].formatted_address;
+                                document.getElementById('pickupAddress').value = address;
+                                
+                                // Extract city and country from address components
+                                results[0].address_components.forEach(component => {
+                                    if (component.types.includes('locality')) {
+                                        document.getElementById('city').value = component.long_name;
+                                    }
+                                    if (component.types.includes('country')) {
+                                        document.getElementById('country').value = component.long_name;
+                                    }
+                                    if (component.types.includes('postal_code')) {
+                                        document.getElementById('postalCode').value = component.long_name;
+                                    }
+                                });
+                            }
+                        });
+                    }
+                    
+                    showNotification('Location found!', 'success');
+                },
+                function(error) {
+                    console.error('Geolocation error:', error);
+                    let message = 'Unable to get your location. ';
+                    switch(error.code) {
+                        case error.PERMISSION_DENIED:
+                            message += 'Permission denied. Please enable location services.';
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            message += 'Location information unavailable.';
+                            break;
+                        case error.TIMEOUT:
+                            message += 'Location request timed out.';
+                            break;
+                        default:
+                            message += 'Unknown error occurred.';
+                    }
+                    showNotification(message, 'error');
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0
+                }
+            );
+        }
+
+        function searchLocation() {
+            const address = document.getElementById('pickupAddress').value;
+            if (!address) {
+                showNotification('Please enter an address first', 'error');
+                return;
+            }
+            
+            if (!geocoder) {
+                showNotification('Maps service not available', 'error');
+                return;
+            }
+            
+            geocoder.geocode({ address: address }, function(results, status) {
+                if (status === 'OK' && results[0]) {
+                    const location = results[0].geometry.location;
+                    if (marker) {
+                        marker.position = location;
+                    }
+                    if (map) {
+                        map.setCenter(location);
+                        map.setZoom(15);
+                    }
+                    
+                    updateLocationFields(location);
+                    showNotification('Location found!', 'success');
+                } else {
+                    showNotification('Location not found. Please check the address.', 'error');
+                }
+            });
+        }
+
+        function updateLocationFields(latLng) {
+            // Handle both google.maps.LatLng objects and plain objects
+            let lat, lng;
+            
+            if (typeof latLng.lat === 'function') {
+                // It's a google.maps.LatLng object
+                lat = latLng.lat();
+                lng = latLng.lng();
+            } else {
+                // It's a plain object
+                lat = latLng.lat;
+                lng = latLng.lng;
+            }
+            
+            document.getElementById('locationLat').value = lat.toFixed(6);
+            document.getElementById('locationLng').value = lng.toFixed(6);
+        }
+
+        // 8. BOOKING SUMMARY
+        function updateBookingSummary() {
+            const summaryDiv = document.getElementById('bookingSummary');
+            let html = '';
+            
+            // Device Details
+            html += '<div class="summary-item"><span class="summary-label">Device:</span><span class="summary-value">';
+            html += document.getElementById('deviceType').value + ' - ' + document.getElementById('brand').value + ' ' + document.getElementById('model').value;
+            html += '</span></div>';
+            
+            // Issue
+            html += '<div class="summary-item"><span class="summary-label">Issue:</span><span class="summary-value">';
+            html += document.getElementById('issueCategory').value;
+            html += '</span></div>';
+            
+            // Service Type
+            const serviceType = document.getElementById('serviceType').value;
+            html += '<div class="summary-item"><span class="summary-label">Service Type:</span><span class="summary-value">';
+            html += serviceType === 'visit_shop' ? 'Shop Visit' : 'Home Service';
+            html += '</span></div>';
+            
+            // Location
+            html += '<div class="summary-item"><span class="summary-label">Location:</span><span class="summary-value">';
+            if (serviceType === 'visit_shop') {
+                html += 'Nexus Tech Repair Center';
+            } else {
+                html += document.getElementById('pickupAddress').value + ', ' + document.getElementById('city').value;
+            }
+            html += '</span></div>';
+            
+            // Schedule
+            const date = new Date(document.getElementById('bookingDate').value).toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            const timeSlot = document.getElementById('preferredTimeSlot').value;
+            const timeText = {
+                morning: '9AM - 12PM',
+                afternoon: '12PM - 4PM',
+                evening: '4PM - 7PM'
+            }[timeSlot];
+            
+            html += '<div class="summary-item"><span class="summary-label">Schedule:</span><span class="summary-value">';
+            html += date + ' (' + timeText + ')';
+            html += '</span></div>';
+            
+            // Contact
+            html += '<div class="summary-item"><span class="summary-label">Contact:</span><span class="summary-value">';
+            html += document.getElementById('contactPhone').value;
+            html += '</span></div>';
+            
+            // Urgency
+            const urgency = document.getElementById('urgency').value;
+            html += '<div class="summary-item"><span class="summary-label">Urgency:</span><span class="summary-value">';
+            html += urgency.charAt(0).toUpperCase() + urgency.slice(1);
+            html += '</span></div>';
+            
+            summaryDiv.innerHTML = html;
+        }
+
+        // 9. FORM SUBMISSION (FIXED)
+        async function submitBooking() {
+            // Validate final step
+            clearAllErrors();
+            let isValid = true;
+            
+            if (!document.getElementById('termsAgreement').checked) {
+                showError('termsAgreement', 'You must agree to the Terms of Service');
+                isValid = false;
+            }
+            
+            if (!document.getElementById('privacyAgreement').checked) {
+                showError('privacyAgreement', 'You must agree to the Privacy Policy');
+                isValid = false;
+            }
+            
+            if (!isValid) {
+                return;
+            }
+            
+            const btn = document.getElementById('submitBtn');
+            const overlay = document.getElementById('loadingOverlay');
+            
+            btn.disabled = true;
+            overlay.classList.add('active');
+            
+            try {
+                // Check Cognito session
+                const userPool = new AmazonCognitoIdentity.CognitoUserPool({
+                    UserPoolId: NEXUS_CONFIG.auth.UserPoolId,
+                    ClientId: NEXUS_CONFIG.auth.ClientId
+                });
+                const cognitoUser = userPool.getCurrentUser();
+                
+                if (!cognitoUser) {
+                    throw new Error('No user session found');
+                }
+                
+                const session = await new Promise((resolve, reject) => {
+                    cognitoUser.getSession((err, session) => {
+                        if (err || !session || !session.isValid()) {
+                            reject(new Error('Invalid session'));
+                        } else {
+                            resolve(session);
+                        }
+                    });
+                });
+                
+                // Prepare form data
+                const formData = {
+                    deviceType: document.getElementById('deviceType').value,
+                    brand: document.getElementById('brand').value,
+                    model: document.getElementById('model').value,
+                    serialNumber: document.getElementById('serialNumber').value || '',
+                    imei: document.getElementById('imei').value || '',
+                    deviceAge: parseFloat(document.getElementById('deviceAge').value),
+                    purchaseDate: document.getElementById('purchaseDate').value || '',
+                    warrantyStatus: document.querySelector('input[name="warrantyStatus"]:checked')?.value || 'None',
+                    warrantyExpiry: document.getElementById('warrantyExpiry').value || '',
+                    deviceCondition: document.querySelector('input[name="deviceCondition"]:checked').value,
+                    accessories: selectedAccessories.filter(a => a !== 'none'),
+                    issueCategory: document.getElementById('issueCategory').value,
+                    issueDescription: document.getElementById('issueDescription').value,
+                    liquidDamage: document.getElementById('liquidDamage').checked,
+                    previousRepair: document.getElementById('previousRepair').checked,
+                    previousRepairDetails: document.getElementById('previousRepairDetails').value || '',
+                    specialInstructions: document.getElementById('specialInstructions').value || '',
+                    serviceType: document.getElementById('serviceType').value,
+                    pickupAddress: document.getElementById('pickupAddress').value,
+                    city: document.getElementById('city').value,
+                    country: document.getElementById('country').value,
+                    postalCode: document.getElementById('postalCode').value || '',
+                    location: {
+                        lat: parseFloat(document.getElementById('locationLat').value),
+                        lng: parseFloat(document.getElementById('locationLng').value),
+                        accuracy: parseFloat(document.getElementById('locationAccuracy').value) || 10
+                    },
+                    bookingDate: document.getElementById('bookingDate').value,
+                    preferredTimeSlot: document.getElementById('preferredTimeSlot').value,
+                    contactPhone: document.getElementById('contactPhone').value,
+                    contactEmail: document.getElementById('contactEmail').value || '',
+                    urgency: document.getElementById('urgency').value,
+                    estimatedValue: document.getElementById('estimatedValue').value ? 
+                        parseFloat(document.getElementById('estimatedValue').value) : undefined
+                };
+                
+                // Validate form data before sending
+                if (!formData.issueDescription || formData.issueDescription.length < 10) {
+                    throw new Error('Issue description must be at least 10 characters');
+                }
+                
+                // Submit to API
+                const response = await fetch(NEXUS_CONFIG.api.baseUrl + '/bookings', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': session.getIdToken().getJwtToken(),
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    if (data.errors && Array.isArray(data.errors)) {
+                        throw new Error('Validation failed: ' + data.errors.join(', '));
+                    } else {
+                        throw new Error(data.message || `Booking failed with status ${response.status}`);
+                    }
+                }
+                
+                // Store booking data for success page
+                sessionStorage.setItem('lastBooking', JSON.stringify({
+                    id: data.data.bookingId,
+                    trackingNumber: data.data.trackingNumber,
+                    device: `${formData.brand} ${formData.model}`,
+                    date: formData.bookingDate,
+                    timeSlot: formData.preferredTimeSlot,
+                    serviceType: formData.serviceType,
+                    contactPhone: formData.contactPhone,
+                    nextSteps: data.data.nextSteps || []
+                }));
+                
+                // Show success
+                overlay.classList.remove('active');
+                document.getElementById('successMessage').textContent = 
+                    `Booking #${data.data.bookingId} confirmed. Tracking: ${data.data.trackingNumber}`;
+                document.getElementById('successOverlay').classList.add('active');
+                
+            } catch (error) {
+                console.error('Booking error:', error);
+                overlay.classList.remove('active');
+                btn.disabled = false;
+                
+                showNotification(error.message || 'Booking failed. Please try again.', 'error');
+            }
+        }
+
+        // 10. UTILITY FUNCTIONS
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.style.cssText = `
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                padding: 15px 25px;
+                background: ${type === 'error' ? '#fef2f2' : type === 'success' ? '#f0fdf4' : '#eff6ff'};
+                color: ${type === 'error' ? '#991b1b' : type === 'success' ? '#166534' : '#1e40af'};
+                border-left: 4px solid ${type === 'error' ? '#ef4444' : type === 'success' ? '#10b981' : '#3b82f6'};
+                border-radius: 8px;
+                box-shadow: var(--shadow);
+                z-index: 10000;
+                animation: slideIn 0.3s ease;
+                max-width: 400px;
+                word-wrap: break-word;
+            `;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 5000);
+        }
+
+        function redirectToSuccess() {
+            window.location.href = 'booking-success.html';
+        }
+
+        // Add CSS animations for notifications
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Fix for Maps API key error - Provide fallback
+        window.gm_authFailure = function() {
+            console.warn('Google Maps API key error');
+            showNotification('Maps service temporarily unavailable. Using manual address input.', 'warning');
+            document.getElementById('map').innerHTML = '<div style="padding: 20px; text-align: center; color: #64748b;">Enter address manually below</div>';
+        };
+    </script>
 </body>
 </html>
