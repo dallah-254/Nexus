@@ -170,10 +170,10 @@
                         Leading provider of enterprise-grade hardware solutions and expert technical repair services. Synchronizing technology with reliability since 2024.
                     </p>
                     <div class="social-icons">
-                        <a href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="https://facebook.com/erick.d.branton" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://instagram.com/erick.d.branton" target="_blank"><i class="fab fa-instagram"></i></a>
+                        <a href="https://wa.me/254704291657" target="_blank"><i class="fab fa-whatsapp"></i></a>
+                        <a href="https://www.linkedin.com/in/dala-erick-866179350" target="_blank"><i class="fab fa-linkedin-in"></i></a>
                     </div>
                 </div>
 
