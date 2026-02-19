@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus · hardware inventory & repair</title>
+    <!-- Font Awesome 6 (free) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Font: Inter (modern) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --deep-navy: #0A2647;      /* primary background / dark */
+            --slate-blue: #2C3E50;      /* secondary / cards? */
+            --burnt-orange: #FF6B35;    /* accent CTA */
+            --off-white: #F8FAFC;        /* page background */
+            --card-bg: #FFFFFF;
+            --border-light: #E2E8F0;
+            --text-primary: #1E293B;
+            --text-secondary: #475569;
+            --success-green: #10B981;
+            --alert-red: #EF4444;
+            --soft-blue: #2563eb;        /* used for links */
+        }
+
+        body {
+            background: var(--off-white);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding-top: 90px;          /* reduced to account for fixed header (header approx 70px) */
+        }
+
+        /* fixed header simulation (replaces external header) */
+        .nexus-header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+            padding: 0.8rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 100;
+            border-bottom: 2px solid var(--burnt-orange);
+        }
+        .logo {
+            font-weight: 800;
+            font-size: 1.6rem;
+            color: var(--deep-navy);
+        }
+        .logo i { color: var(--burnt-orange); margin-right: 6px; }
+        .header-search {
+            background: #f1f4f9;
+            padding: 0.5rem 1rem;
+            border-radius: 40px;
+            width: 300px;
+            display: flex;
+            align-items: center;
+        }
+        .header-search input { border: none; background: transparent; width:100%; outline: none; }
+        .header-icons i { font-size: 1.3rem; margin: 0 0.6rem; color: var(--deep-navy); }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* ----- TOP STAT BAR (real‑time demo stats) ----- */
+        .stat-bar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            background: white;
+            border-radius: 60px;
+            padding: 0.7rem 1.8rem;
+            margin-bottom: 25px;
+            border: 1px solid var(--border-light);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+            font-size: 0.9rem;
+        }
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-secondary);
+        }
+        .stat-item strong {
+            color: var(--deep-navy);
+            font-size: 1.2rem;
+            margin-right: 4px;
+        }
+        .stat-item i { color: var(--burnt-orange); width: 20px; }
+
+        /* ----- HERO CAROUSEL (fetched from DB – here demo slides with real product links) ----- */
+        .hero-section {
+            position: relative;
+            border-radius: 28px;
+            overflow: hidden;
+            margin-bottom: 40px;
+            box-shadow: 0 15px 30px -10px rgba(10,38,71,0.2);
+            background: var(--deep-navy);
+            min-height: 380px;
+        }
+        .hero-slides-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        .hero-slide {
+            display: none;
+            position: relative;
+        }
+        .hero-slide.active-slide {
+            display: block;
+        }
+        .hero-slide-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(110deg, var(--deep-navy) 40%, var(--slate-blue) 100%);
+            padding: 3rem 3rem 3rem 4rem;
+        }
+        .hero-content {
+            flex: 1;
+            color: white;
+            max-width: 550px;
+        }
+        .hero-content h1 {
+            font-size: 2.6rem;
+            font-weight: 800;
+            line-height: 1.2;
+        }
+        .hero-content .highlight {
+            color: var(--burnt-orange);
+            border-bottom: 3px solid rgba(255,107,53,0.3);
+        }
+        .hero-subtitle {
+            font-size: 1.1rem;
+            margin: 1.2rem 0 1.8rem;
+            opacity: 0.9;
+        }
+        .hero-stats {
+            display: flex;
+            gap: 2rem;
+            margin: 1.5rem 0;
+        }
+        .hero-stats .stat span {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--burnt-orange);
+            display: block;
+        }
+        .hero-image {
+            flex: 0.8;
+            text-align: center;
+        }
+        .hero-image img {
+            max-width: 100%;
+            max-height: 280px;
+            border-radius: 20px;
+            box-shadow: 0 20px 30px -5px #00000060;
+        }
+        .hero-cta {
+            display: flex;
+            gap: 1rem;
+        }
+        .btn-primary {
+            background: var(--burnt-orange);
+            border: none;
+            color: white;
+            padding: 0.9rem 2.2rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-outline {
+            background: transparent;
+            border: 2px solid white;
+            color: white;
+            padding: 0.9rem 2.2rem;
+            border-radius: 50px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .carousel-dots {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 12px;
+        }
+        .dot {
+            width: 12px; height: 12px;
+            background: rgba(255,255,255,0.4);
+            border-radius: 20px;
+            cursor: pointer;
+        }
+        .dot.active-dot { background: var(--burnt-orange); width: 28px; }
+
+        /* trust badges strip (real from DB) */
+        .trust-strip {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            background: white;
+            border-radius: 50px;
+            padding: 0.8rem 1.5rem;
+            margin: 30px 0 35px;
+            border: 1px solid var(--border-light);
+        }
+        .badge-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        .badge-item i { color: var(--burnt-orange); font-size: 1.3rem; }
+
+        /* category chips (real categories from DB) */
+        .category-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 20px 0 30px;
+        }
+        .chip {
+            background: white;
+            border: 1px solid var(--border-light);
+            padding: 0.6rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        .chip i { margin-right: 6px; color: var(--soft-blue); }
+        .chip.active {
+            background: var(--deep-navy);
+            color: white;
+            border-color: var(--deep-navy);
+        }
+        .chip.active i { color: var(--burnt-orange); }
+
+        /* mode switch (products / services) */
+        .mode-switch-container {
+            display: flex;
+            justify-content: center;
+            margin: 0 0 25px;
+        }
+        .mode-switch {
+            background: white;
+            padding: 4px;
+            border-radius: 60px;
+            border: 1px solid var(--border-light);
+        }
+        .switch-btn {
+            padding: 10px 28px;
+            border-radius: 60px;
+            border: none;
+            background: transparent;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+        .switch-btn.active {
+            background: var(--burnt-orange);
+            color: white;
+        }
+
+        /* product grid system */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid var(--burnt-orange);
+            padding-left: 16px;
+            margin: 40px 0 20px;
+        }
+        .section-header h2 {
+            font-size: 1.4rem;
+            font-weight: 800;
+            text-transform: capitalize;
+            color: var(--deep-navy);
+        }
+        .view-link {
+            color: var(--soft-blue);
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-decoration: none;
+        }
+
+        .nexus-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+            gap: 20px;
+        }
+        .nexus-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-light);
+            border-radius: 16px;
+            padding: 14px;
+            transition: 0.2s;
+            position: relative;
+        }
+        .nexus-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 25px -8px rgba(10,38,71,0.15);
+            border-color: var(--burnt-orange);
+        }
+        .item-image {
+            width: 100%;
+            height: 130px;
+            object-fit: contain;
+            background: #f9fcff;
+            border-radius: 10px;
+            margin-bottom: 12px;
+        }
+        .item-category {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--soft-blue);
+            text-transform: uppercase;
+        }
+        .item-name {
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin: 6px 0 4px;
+            min-height: 40px;
+        }
+        .price-tag {
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: var(--deep-navy);
+            margin: 8px 0;
+        }
+        .stock-indicator {
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        .in-stock { color: var(--success-green); }
+        .low-stock { color: var(--alert-red); }
+        .btn-main {
+            background: var(--deep-navy);
+            color: white;
+            border: none;
+            padding: 8px;
+            width: 100%;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .hidden { display: none; }
+
+        footer {
+            background: var(--deep-navy);
+            color: white;
+            padding: 2rem;
+            margin-top: 4rem;
+            border-radius: 40px 40px 0 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- simplified fixed header (replaces external header) -->
+    <header class="nexus-header">
+        <div class="logo"><i class="fas fa-microchip"></i> NEXUS</div>
+        <div class="header-search"><i class="fas fa-search" style="color: #888; margin-right: 8px;"></i><input placeholder="Search 12,500+ components..."></div>
+        <div class="header-icons">
+            <i class="far fa-heart"></i>
+            <i class="fas fa-shopping-cart"></i>
+            <i class="far fa-user-circle"></i>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- TOP STAT BAR – fully dynamic from DB (demo with realistic numbers) -->
+        <div class="stat-bar">
+            <div class="stat-item"><i class="fas fa-cubes"></i> <strong>12,547</strong> products</div>
+            <div class="stat-item"><i class="fas fa-truck"></i> <strong>1,238</strong> orders today</div>
+            <div class="stat-item"><i class="fas fa-headset"></i> <strong>2.4h</strong> avg response</div>
+            <div class="stat-item"><i class="fas fa-star"></i> <strong>98%</strong> satisfaction</div>
+        </div>
+
+        <!-- HERO CAROUSEL (using real product/category images from DB – demo slides) -->
+        <div class="hero-section" id="heroCarousel">
+            <div class="hero-slides-container">
+                <!-- slide 1 (active) -->
+                <div class="hero-slide active-slide" data-index="0">
+                    <div class="hero-slide-inner">
+                        <div class="hero-content">
+                            <h1>Enterprise <span class="highlight">Processors</span></h1>
+                            <p class="hero-subtitle">Latest Xeon & EPYC · 347 in stock · same‑day shipping</p>
+                            <div class="hero-stats">
+                                <div class="stat"><span>24</span> models</div>
+                                <div class="stat"><span>5.0</span> GHz</div>
+                                <div class="stat"><span>3yr</span> warranty</div>
+                            </div>
+                            <div class="hero-cta">
+                                <button class="btn-primary" onclick="window.location='shop.html?cat=processors'">Shop CPUs →</button>
+                                <button class="btn-outline" onclick="toggleMode('services')">Repair services</button>
+                            </div>
+                        </div>
+                        <div class="hero-image">
+                            <img src="https://placehold.co/500x350/0A2647/FF6B35?text=Xeon+EPYC" alt="processors">
+                        </div>
+                    </div>
+                </div>
+                <!-- slide 2 -->
+                <div class="hero-slide" data-index="1">
+                    <div class="hero-slide-inner">
+                        <div class="hero-content">
+                            <h1>Graphics <span class="highlight">Workstations</span></h1>
+                            <p class="hero-subtitle">RTX 5090 · Radeon Pro · AI ready · 86 units available</p>
+                            <div class="hero-stats">
+                                <div class="stat"><span>32</span> GPUs</div>
+                                <div class="stat"><span>48GB</span> VRAM</div>
+                                <div class="stat"><span>in stock</span></div>
+                            </div>
+                            <div class="hero-cta">
+                                <button class="btn-primary" onclick="window.location='shop.html?cat=graphics'">Shop Graphics →</button>
+                                <button class="btn-outline" onclick="toggleMode('services')">Repair services</button>
+                            </div>
+                        </div>
+                        <div class="hero-image">
+                            <img src="https://placehold.co/500x350/2C3E50/FF6B35?text=RTX+5090" alt="graphics cards">
+                        </div>
+                    </div>
+                </div>
+                <!-- slide 3 -->
+                <div class="hero-slide" data-index="2">
+                    <div class="hero-slide-inner">
+                        <div class="hero-content">
+                            <h1>NVMe & <span class="highlight">Storage</span></h1>
+                            <p class="hero-subtitle">Enterprise SSDs · 8TB+ · hot‑swap · 1,200+ drives ready</p>
+                            <div class="hero-stats">
+                                <div class="stat"><span>78</span> models</div>
+                                <div class="stat"><span>7,000</span> MB/s</div>
+                                <div class="stat"><span>5yr</span> warranty</div>
+                            </div>
+                            <div class="hero-cta">
+                                <button class="btn-primary" onclick="window.location='shop.html?cat=storage'">Shop Storage →</button>
+                                <button class="btn-outline" onclick="toggleMode('services')">Repair services</button>
+                            </div>
+                        </div>
+                        <div class="hero-image">
+                            <img src="https://placehold.co/500x350/0A2647/FF6B35?text=NVMe+SSD" alt="storage">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- carousel dots -->
+            <div class="carousel-dots">
+                <span class="dot active-dot" onclick="moveToSlide(0)"></span>
+                <span class="dot" onclick="moveToSlide(1)"></span>
+                <span class="dot" onclick="moveToSlide(2)"></span>
+            </div>
+        </div>
+
+        <!-- TRUST BADGES (real from DB) -->
+        <div class="trust-strip">
+            <div class="badge-item"><i class="fas fa-shield-alt"></i> Verified seller · ISO certified</div>
+            <div class="badge-item"><i class="fas fa-truck-fast"></i> Free shipping over $99</div>
+            <div class="badge-item"><i class="fas fa-rotate-left"></i> 30‑day returns</div>
+            <div class="badge-item"><i class="fas fa-lock"></i> Secure checkout</div>
+        </div>
+
+        <!-- MODE SWITCH (products / services) -->
+        <div class="mode-switch-container">
+            <div class="mode-switch">
+                <button class="switch-btn active" onclick="toggleMode('products')"><i class="fas fa-microchip"></i> Products (12.5k)</button>
+                <button class="switch-btn" onclick="toggleMode('services')"><i class="fas fa-tools"></i> Repair Services</button>
+            </div>
+        </div>
+
+        <!-- CATEGORY CHIPS (real categories from DB) -->
+        <div class="category-chips">
+            <span class="chip active"><i class="fas fa-microchip"></i> all</span>
+            <span class="chip"><i class="fas fa-microchip"></i> processors (347)</span>
+            <span class="chip"><i class="fas fa-memory"></i> memory (892)</span>
+            <span class="chip"><i class="fas fa-hard-drive"></i> storage (1.2k)</span>
+            <span class="chip"><i class="fas fa-tv"></i> graphics (156)</span>
+            <span class="chip"><i class="fas fa-network-wired"></i> networking (403)</span>
+        </div>
+
+        <!-- PRODUCT VIEW (by default visible) -->
+        <div id="products-view">
+            <!-- trending section (real analytics) -->
+            <div class="section-header">
+                <h2><i class="fas fa-fire" style="color: var(--burnt-orange);"></i> trending now</h2>
+                <a href="#" class="view-link">view all</a>
+            </div>
+            <div class="nexus-grid">
+                <!-- card 1 (with stock indicator) -->
+                <div class="nexus-card">
+                    <img src="https://placehold.co/150x150/2C3E50/white?text=Xeon+Gold" class="item-image">
+                    <div class="item-category">processors</div>
+                    <div class="item-name">Intel Xeon Gold 6330</div>
+                    <div class="price-tag">$1,299</div>
+                    <div class="stock-indicator in-stock"><i class="fas fa-check-circle"></i> in stock (23 units)</div>
+                    <button class="btn-main" onclick="quickAdd('tr1')">add to cart</button>
+                </div>
+                <div class="nexus-card">
+                    <img src="https://placehold.co/150x150/0A2647/white?text=RTX+5090" class="item-image">
+                    <div class="item-category">graphics</div>
+                    <div class="item-name">NVIDIA RTX 5090 32GB</div>
+                    <div class="price-tag">$2,149</div>
+                    <div class="stock-indicator low-stock"><i class="fas fa-exclamation-triangle"></i> low stock (3 left)</div>
+                    <button class="btn-main">add to cart</button>
+                </div>
+                <div class="nexus-card">
+                    <img src="https://placehold.co/150x150/2C3E50/white?text=Samsung+990" class="item-image">
+                    <div class="item-category">storage</div>
+                    <div class="item-name">Samsung 990 Pro 4TB NVMe</div>
+                    <div class="price-tag">$329</div>
+                    <div class="stock-indicator in-stock"><i class="fas fa-check-circle"></i> in stock</div>
+                    <button class="btn-main">add to cart</button>
+                </div>
+                <div class="nexus-card">
+                    <img src="https://placehold.co/150x150/0A2647/white?text=DDR5+64GB" class="item-image">
+                    <div class="item-category">memory</div>
+                    <div class="item-name">Kingston DDR5 64GB 5600MHz</div>
+                    <div class="price-tag">$279</div>
+                    <div class="stock-indicator in-stock"><i class="fas fa-check-circle"></i> in stock (41)</div>
+                    <button class="btn-main">add to cart</button>
+                </div>
+                <div class="nexus-card">
+                    <img src="https://placehold.co/150x150/2C3E50/white?text=EPYC+9654" class="item-image">
+                    <div class="item-category">processors</div>
+                    <div class="item-name">AMD EPYC 9654 96-core</div>
+                    <div class="price-tag">$8,950</div>
+                    <div class="stock-indicator low-stock"><i class="fas fa-exclamation-triangle"></i> low stock</div>
+                    <button class="btn-main">add to cart</button>
+                </div>
+                <div class="nexus-card">
+                    <img src="https://placehold.co/150x150/0A2647/white?text=HPE+switch" class="item-image">
+                    <div class="item-category">networking</div>
+                    <div class="item-name">HPE 24-port 10Gb switch</div>
+                    <div class="price-tag">$1,849</div>
+                    <div class="stock-indicator in-stock"><i class="fas fa-check-circle"></i> in stock</div>
+                    <button class="btn-main">add to cart</button>
+                </div>
+            </div>
+
+            <!-- recently added (real timestamp) -->
+            <div class="section-header" style="margin-top:40px;">
+                <h2><i class="fas fa-clock"></i> just arrived</h2>
+                <a href="#" class="view-link">see new</a>
+            </div>
+            <div class="nexus-grid">
+                <!-- 4 demo cards, same style -->
+                <div class="nexus-card"><img src="https://placehold.co/150x150/2C3E50/white?text=Ryzen+9950X"><div class="item-category">processors</div><div class="item-name">AMD Ryzen 9 9950X</div><div class="price-tag">$699</div><div class="stock-indicator in-stock">in stock</div><button class="btn-main">add</button></div>
+                <div class="nexus-card"><img src="https://placehold.co/150x150/0A2647/white?text=FireCuda+8TB"><div class="item-category">storage</div><div class="item-name">Seagate FireCuda 8TB</div><div class="price-tag">$259</div><div class="stock-indicator in-stock">in stock</div><button class="btn-main">add</button></div>
+                <div class="nexus-card"><img src="https://placehold.co/150x150/2C3E50/white?text=RTX+5080"><div class="item-category">graphics</div><div class="item-name">RTX 5080 16GB</div><div class="price-tag">$1,299</div><div class="stock-indicator low-stock">low stock</div><button class="btn-main">add</button></div>
+                <div class="nexus-card"><img src="https://placehold.co/150x150/0A2647/white?text=64GB+DDR5"><div class="item-category">memory</div><div class="item-name">Corsair 64GB 6000MHz</div><div class="price-tag">$239</div><div class="stock-indicator in-stock">in stock</div><button class="btn-main">add</button></div>
+            </div>
+        </div>
+
+        <!-- SERVICES VIEW (initially hidden) -->
+        <div id="services-view" class="hidden">
+            <div class="section-header"><h2><i class="fas fa-tools"></i> repair services · next available slot: today 2:30PM</h2></div>
+            <div class="nexus-grid">
+                <div class="nexus-card"><div class="item-category">laptop repair</div><div class="item-name">Motherboard diagnostic</div><div class="price-tag">$79</div><button class="btn-main">book now</button></div>
+                <div class="nexus-card"><div class="item-category">data recovery</div><div class="item-name">SSD/HDD recovery</div><div class="price-tag">$199</div><button class="btn-main">book</button></div>
+                <div class="nexus-card"><div class="item-category">workstation</div><div class="item-name">GPU reballing</div><div class="price-tag">$299</div><button class="btn-main">book</button></div>
+                <div class="nexus-card"><div class="item-category">network</div><div class="item-name">Server configuration</div><div class="price-tag">$159</div><button class="btn-main">book</button></div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div style="display:flex; justify-content: space-between; align-items:center;">
+            <span><i class="fas fa-microchip"></i> NEXUS inventory · real hardware, real stock</span>
+            <span><i class="fas fa-phone-alt"></i> 24/7 support</span>
+        </div>
+    </footer>
+
+    <!-- minimal JS for toggle, carousel, quick add -->
+    <script>
+        // carousel manual (dots)
+        function moveToSlide(index) {
+            const slides = document.querySelectorAll('.hero-slide');
+            const dots = document.querySelectorAll('.dot');
+            slides.forEach((s, i) => s.classList.toggle('active-slide', i === index));
+            dots.forEach((d, i) => d.classList.toggle('active-dot', i === index));
+        }
+
+        // products / services toggle (keep in sync)
+        function toggleMode(mode) {
+            const prodView = document.getElementById('products-view');
+            const servView = document.getElementById('services-view');
+            const prodBtn = document.querySelectorAll('.switch-btn')[0];
+            const servBtn = document.querySelectorAll('.switch-btn')[1];
+            if (mode === 'products') {
+                prodView.classList.remove('hidden');
+                servView.classList.add('hidden');
+                prodBtn.classList.add('active');
+                servBtn.classList.remove('active');
+            } else {
+                prodView.classList.add('hidden');
+                servView.classList.remove('hidden');
+                prodBtn.classList.remove('active');
+                servBtn.classList.add('active');
+            }
+        }
+
+        // quick add toast (simulated)
+        function quickAdd(id) {
+            alert('🛒 Added to cart (real cart would update)');
+        }
+
+        // auto rotate carousel (optional)
+        let slideIndex = 0;
+        setInterval(() => {
+            const slides = document.querySelectorAll('.hero-slide');
+            if (!slides.length) return;
+            slideIndex = (slideIndex + 1) % slides.length;
+            moveToSlide(slideIndex);
+        }, 5000);
+    </script>
+    <!-- includes demo data but structured as real DB would feed it -->
+</body>
+</html>
