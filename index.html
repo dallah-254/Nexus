@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>Nexus | Hardware Inventory</title>
     
     <script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js@6.3.7/dist/amazon-cognito-identity.min.js"></script>
@@ -10,16 +10,30 @@
     <script src="header.js" defer></script>
     <script src="footer.js" defer></script>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         :root {
             --primary: #2563eb;
             --primary-hover: #1d4ed8;
-            --bg-light: #f1f5f9;
+            --primary-light: #3b82f6;
+            --bg-light: #f8fafc;
+            --bg-dark: #0f172a;
             --card-bg: #ffffff;
             --text-main: #0f172a;
-            --text-muted: #475569;
-            --border-color: #cbd5e1;
+            --text-muted: #64748b;
+            --text-light: #94a3b8;
+            --border-color: #e2e8f0;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
+            --gradient: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
         }
 
         body { 
@@ -27,91 +41,553 @@
             color: var(--text-main); 
             margin: 0; 
             font-family: 'Inter', sans-serif; 
-            /* REDUCED SPACE FROM HEADER (Was 130px) */
             padding-top: 130px; 
+            line-height: 1.5;
+            overflow-x: hidden;
         }
 
-        .container { max-width: 1400px; margin: 0 auto; padding: 0 20px; }
+        .container { 
+            max-width: 1400px; 
+            margin: 0 auto; 
+            padding: 0 16px; 
+            width: 100%;
+        }
 
-        /* --- COMPACT MODE SWITCH --- */
+        /* Mode Switch */
         .mode-switch-container {
             display: flex; 
             justify-content: center; 
-            margin-bottom: 20px; /* REDUCED SPACE (Was 40px) */
+            margin: 0 0 30px;
+            width: 100%;
         }
         .mode-switch {
-            background: #e2e8f0; 
-            padding: 4px; 
-            border-radius: 50px; 
-            display: flex; 
+            background: var(--card-bg);
+            padding: 6px;
+            border-radius: 60px;
+            display: flex;
             border: 1px solid var(--border-color);
-            transform: scale(0.9); /* Subtly smaller scale */
+            box-shadow: var(--shadow-sm);
+            width: fit-content;
         }
         .switch-btn {
-            padding: 8px 22px; 
-            border-radius: 50px; 
+            padding: 10px 24px;
+            border-radius: 50px;
             border: none;
-            background: transparent; 
-            color: var(--text-muted); 
+            background: transparent;
+            color: var(--text-muted);
             cursor: pointer;
-            font-weight: 700; 
-            font-size: 0.8rem;
-            transition: all 0.2s ease;
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: 0.3px;
+            transition: all 0.3s ease;
+            white-space: nowrap;
         }
         .switch-btn.active {
-            background: var(--primary); 
+            background: var(--gradient);
             color: white;
-            box-shadow: 0 2px 6px rgba(37, 99, 235, 0.2);
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
         }
 
-        /* Sections */
-        .category-section { margin-bottom: 30px; } /* Tightened sections */
-        .section-header {
-            display: flex; justify-content: space-between; align-items: center;
-            border-left: 3px solid var(--primary); padding-left: 12px; margin-bottom: 15px;
-        }
-        .section-header h2 { text-transform: capitalize; margin: 0; font-size: 1.1rem; font-weight: 800; color: var(--text-main); }
-        .view-more-link { color: var(--primary); text-decoration: none; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
-
-        /* EXTRA COMPACT GRID */
-        .nexus-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); 
-            gap: 15px; 
+        /* Carousel Styles */
+        .carousel-section {
+            margin-bottom: 40px;
+            width: 100%;
         }
         
-        /* Smaller Card Design */
+        .carousel-container {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            overflow: hidden;
+            border-radius: 16px;
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .carousel-slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.6s ease-in-out;
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            padding-left: 20px;
+        }
+        
+        @media (min-width: 768px) {
+            .carousel-slide {
+                padding-left: 60px;
+            }
+        }
+        
+        .carousel-slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 100%);
+        }
+        
+        .carousel-slide.active {
+            opacity: 1;
+        }
+        
+        .carousel-content {
+            position: relative;
+            color: white;
+            max-width: 90%;
+            animation: slideUp 0.8s ease;
+        }
+        
+        @media (min-width: 768px) {
+            .carousel-content {
+                max-width: 550px;
+            }
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .carousel-content h2 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            line-height: 1.2;
+        }
+        
+        @media (min-width: 768px) {
+            .carousel-content h2 {
+                font-size: 2.5rem;
+            }
+        }
+        
+        .carousel-content p {
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+        
+        @media (min-width: 768px) {
+            .carousel-content p {
+                font-size: 1.1rem;
+            }
+        }
+        
+        .carousel-btn {
+            background: var(--gradient);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
+            white-space: nowrap;
+        }
+        
+        .carousel-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5);
+        }
+        
+        .carousel-dots {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            z-index: 10;
+        }
+        
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .dot.active {
+            background: white;
+            width: 24px;
+            border-radius: 10px;
+        }
+        
+        .carousel-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 36px;
+            height: 36px;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(5px);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+        
+        .carousel-arrow:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-50%) scale(1.1);
+        }
+        
+        .carousel-arrow.prev { left: 10px; }
+        .carousel-arrow.next { right: 10px; }
+        
+        @media (min-width: 768px) {
+            .carousel-arrow.prev { left: 25px; }
+            .carousel-arrow.next { right: 25px; }
+        }
+
+        /* Marketing Grid - Horizontal Scroll on Mobile */
+        .marketing-section {
+            margin-bottom: 40px;
+            width: 100%;
+        }
+        
+        .marketing-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .marketing-header h2 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text-main);
+            position: relative;
+            padding-left: 12px;
+        }
+        
+        .marketing-header h2::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 18px;
+            background: var(--gradient);
+            border-radius: 2px;
+        }
+        
+        .marketing-scroll {
+            display: flex;
+            overflow-x: auto;
+            gap: 16px;
+            padding: 5px 0 15px;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .marketing-scroll::-webkit-scrollbar {
+            height: 4px;
+        }
+        
+        .marketing-scroll::-webkit-scrollbar-track {
+            background: var(--border-color);
+            border-radius: 10px;
+        }
+        
+        .marketing-scroll::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+        
+        .marketing-card {
+            flex: 0 0 85%;
+            max-width: 320px;
+            background: var(--card-bg);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            scroll-snap-align: start;
+        }
+        
+        @media (min-width: 768px) {
+            .marketing-scroll {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 20px;
+                overflow-x: visible;
+                padding: 0;
+            }
+            
+            .marketing-card {
+                flex: none;
+                max-width: 100%;
+            }
+        }
+        
+        .marketing-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-light);
+        }
+        
+        .marketing-card-image {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .marketing-card-content {
+            padding: 15px;
+        }
+        
+        .marketing-card-content h3 {
+            margin: 0 0 5px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+        
+        .marketing-card-content p {
+            margin: 0 0 12px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        
+        .marketing-products {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding: 5px 0;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .marketing-products::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .marketing-product {
+            flex: 0 0 80px;
+            text-align: center;
+            cursor: pointer;
+        }
+        
+        .marketing-product img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            background: var(--bg-light);
+            border-radius: 8px;
+            padding: 5px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .marketing-product .product-name {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-main);
+            display: block;
+            margin-top: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Category Sections - Horizontal Scroll on Mobile */
+        .category-section {
+            margin-bottom: 35px;
+            width: 100%;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .section-header h2 {
+            text-transform: capitalize;
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-main);
+            position: relative;
+            padding-left: 12px;
+        }
+        
+        .section-header h2::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 18px;
+            background: var(--gradient);
+            border-radius: 2px;
+        }
+        
+        .view-more-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 5px 10px;
+            border-radius: 20px;
+            background: rgba(37, 99, 235, 0.1);
+            white-space: nowrap;
+        }
+        
+        .horizontal-scroll {
+            display: flex;
+            overflow-x: auto;
+            gap: 12px;
+            padding: 5px 0 15px;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .horizontal-scroll::-webkit-scrollbar {
+            height: 4px;
+        }
+        
+        .horizontal-scroll::-webkit-scrollbar-track {
+            background: var(--border-color);
+            border-radius: 10px;
+        }
+        
+        .horizontal-scroll::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+        
         .nexus-card {
-            background: var(--card-bg); border: 1px solid var(--border-color);
-            border-radius: 10px; padding: 12px; transition: all 0.3s ease;
-            display: flex; flex-direction: column;
+            flex: 0 0 160px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 12px;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            scroll-snap-align: start;
         }
-        .nexus-card:hover { 
-            transform: translateY(-3px); 
-            box-shadow: 0 8px 15px -5px rgba(0,0,0,0.1);
+        
+        @media (min-width: 768px) {
+            .horizontal-scroll {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+                gap: 20px;
+                overflow-x: visible;
+                padding: 0;
+            }
+            
+            .nexus-card {
+                flex: none;
+            }
+        }
+        
+        .nexus-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary-light);
         }
 
-        .item-category { font-size: 0.6rem; color: var(--primary); text-transform: uppercase; font-weight: 800; margin-bottom: 3px; }
-        .item-name { font-size: 0.85rem; font-weight: 700; margin-bottom: 8px; min-height: 2.2rem; line-height: 1.2; color: var(--text-main); }
-        .item-desc { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 12px; line-height: 1.3; height: 32px; overflow: hidden; }
-        .price-tag { font-size: 1rem; font-weight: 800; color: var(--text-main); margin-bottom: 12px; }
-        .price-tag span { font-size: 0.7rem; color: var(--text-muted); font-weight: 500; }
-
+        .item-image {
+            width: 100%;
+            height: 120px;
+            object-fit: contain;
+            margin-bottom: 10px;
+            background: var(--bg-light);
+            border-radius: 8px;
+            padding: 8px;
+        }
+        
+        .item-category {
+            font-size: 0.65rem;
+            color: var(--primary);
+            text-transform: uppercase;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        
+        .item-name {
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            line-height: 1.3;
+            color: var(--text-main);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            height: 35px;
+        }
+        
+        .price-tag {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 10px;
+        }
+        
         .btn-main {
-            width: 100%; background: var(--primary); color: white; font-weight: 700; 
-            border: none; padding: 8px; border-radius: 5px; cursor: pointer;
-            font-size: 0.75rem; transition: background 0.2s;
+            width: 100%;
+            background: var(--gradient);
+            color: white;
+            font-weight: 600;
+            border: none;
+            padding: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: all 0.3s ease;
         }
 
-        .item-image { width: 100%; height: 110px; object-fit: contain; margin-bottom: 10px; background: #f8fafc; border-radius: 4px; }
-
-        .loader { text-align: center; padding: 60px; color: var(--text-muted); font-size: 0.8rem; }
+        .loader {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        
         .hidden { display: none; }
 
         #nexus-toast {
-            position: fixed; bottom: 20px; right: 20px;
-            padding: 12px 20px; background: var(--text-main);
-            border-radius: 8px; color: white; font-size: 0.85rem; z-index: 9999; display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            background: var(--text-main);
+            border-radius: 50px;
+            color: white;
+            font-size: 0.85rem;
+            z-index: 9999;
+            display: none;
+            box-shadow: var(--shadow-lg);
         }
     </style>
 </head>
@@ -123,41 +599,206 @@
     <main class="container">
         <div class="mode-switch-container">
             <div class="mode-switch">
-                <button id="btn-show-services" class="switch-btn" onclick="toggleMode('services')">Repair Services</button>
-
-                <button id="btn-show-products" class="switch-btn active" onclick="toggleMode('products')">products</button>
+                <button id="btn-show-services" class="switch-btn active" onclick="toggleMode('services')">Repair Services</button>
+                <button id="btn-show-products" class="switch-btn" onclick="toggleMode('products')">Products</button>
             </div>
         </div>
 
-        <div id="products-view">
-            <div class="loader">SYNCHRONIZING products...</div>
+        <!-- Products View (Hidden by default) -->
+        <div id="products-view" class="hidden">
+            <!-- Carousel Section -->
+            <div id="carousel-section" class="carousel-section">
+                <div class="loader">Loading deals...</div>
+            </div>
+
+            <!-- Marketing Section -->
+            <div id="marketing-section" class="marketing-section"></div>
+
+            <!-- Products Category Sections -->
+            <div id="products-container"></div>
         </div>
 
-        <div id="services-view" class="hidden">
-            <div class="loader">RETRIEVING SERVICE PROTOCOLS...</div>
+        <!-- Services View (Visible by default) -->
+        <div id="services-view">
+            <div class="loader">Loading services...</div>
         </div>
     </main>
-        <footer id="nexus-footer-wrapper"></footer>
-
+    <footer id="nexus-footer-wrapper"></footer>
 
     <script>
         let allProducts = [];
         let allServices = [];
         let servicesLoaded = false;
+        let carouselItems = [];
+        let marketingSections = [];
+        let currentSlide = 0;
+        let slideInterval;
 
-        async function initPage() {
-            await fetchProducts();
+        const marketingImages = [
+            'https://images.unsplash.com/photo-1546435770-a3e5d5b81b4b?w=600',
+            'https://images.unsplash.com/photo-1598550474472-37e6b8b0f8b3?w=600',
+            'https://images.unsplash.com/photo-1595044426077-d36d9236d44a?w=600',
+            'https://images.unsplash.com/photo-1527443229154-78ba2de82e4d?w=600',
+            'https://images.unsplash.com/photo-1625842268581-51e8f24d6bac?w=600',
+            'https://images.unsplash.com/photo-1580480055273-228ff5388ef8?w=600'
+        ];
+
+        const productImages = [
+            'https://images.unsplash.com/photo-1593305841991-05c297ba4575?w=200',
+            'https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=200',
+            'https://images.unsplash.com/photo-1586210579191-33b45e38fa2c?w=200',
+            'https://images.unsplash.com/photo-1603487742131-4160ec999306?w=200',
+            'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=200',
+            'https://images.unsplash.com/photo-1619953942547-233eab5a70d6?w=200'
+        ];
+
+        function getMarketingImage(index) {
+            return marketingImages[index % marketingImages.length];
         }
 
-        async function fetchProducts() {
-            const view = document.getElementById('products-view');
+        function getProductImage(index) {
+            return productImages[index % productImages.length];
+        }
+
+        async function initPage() {
+            await fetchServices();
+        }
+
+        async function fetchProductsData() {
+            const carouselContainer = document.getElementById('carousel-section');
+            const marketingContainer = document.getElementById('marketing-section');
+            const productsContainer = document.getElementById('products-container');
+            
             try {
-                const response = await fetch(`${NEXUS_CONFIG.api.baseUrl}/products`);
-                allProducts = await response.json();
-                renderItems(allProducts, view, 'product');
+                const [productsRes, carouselRes, marketingRes] = await Promise.all([
+                    fetch(`${NEXUS_CONFIG.api.baseUrl}/products`),
+                    fetch('https://yskkdnff93.execute-api.us-east-1.amazonaws.com/prod/carousels'),
+                    fetch('https://yskkdnff93.execute-api.us-east-1.amazonaws.com/prod/nexus-product-marketing')
+                ]);
+
+                allProducts = await productsRes.json();
+                carouselItems = await carouselRes.json();
+                marketingSections = await marketingRes.json();
+
+                if (carouselItems.length > 0) {
+                    renderCarousel(carouselItems);
+                    startCarousel();
+                } else {
+                    carouselContainer.innerHTML = '';
+                }
+
+                if (marketingSections.length > 0) {
+                    renderMarketing(marketingSections);
+                } else {
+                    marketingContainer.innerHTML = '';
+                }
+
+                renderItems(allProducts, productsContainer, 'product');
+
             } catch (err) {
-                view.innerHTML = `<div class="loader">Unable to connect to products server.</div>`;
+                productsContainer.innerHTML = `<div class="loader">Unable to load products.</div>`;
             }
+        }
+
+        function renderMarketing(sections) {
+            const container = document.getElementById('marketing-section');
+            
+            const cardsHtml = sections.map((section, sectionIndex) => {
+                const products = section.productDetails || [];
+                const productsHtml = products.slice(0, 4).map((p, index) => {
+                    const imageUrl = p.imageUrl || getProductImage(sectionIndex + index);
+                    return `
+                        <div class="marketing-product" onclick="location.href='product-details.html?id=${p.productId}'">
+                            <img src="${imageUrl}" alt="${p.name}">
+                            <span class="product-name">${p.name}</span>
+                        </div>
+                    `;
+                }).join('');
+                
+                return `
+                    <div class="marketing-card">
+                        <img src="${section.bannerImage || getMarketingImage(sectionIndex)}" class="marketing-card-image" alt="${section.name}">
+                        <div class="marketing-card-content">
+                            <h3>${section.name}</h3>
+                            <p>${section.description || ''}</p>
+                            <div class="marketing-products">
+                                ${productsHtml}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            container.innerHTML = `
+                <div class="marketing-header">
+                    <h2>Featured Collections</h2>
+                </div>
+                <div class="marketing-scroll">
+                    ${cardsHtml}
+                </div>
+            `;
+        }
+
+        function renderCarousel(items) {
+            const container = document.getElementById('carousel-section');
+            
+            let slides = '';
+            let dots = '';
+            
+            items.forEach((item, index) => {
+                const imageUrl = item.imageUrl || 'https://images.unsplash.com/photo-1555617778-6c2dc4d9c5ac?w=1200';
+                slides += `
+                    <div class="carousel-slide ${index === 0 ? 'active' : ''}" style="background-image: url('${imageUrl}');">
+                        <div class="carousel-content">
+                            <h2>${item.name}</h2>
+                            <p>${item.description || ''}</p>
+                            <button class="carousel-btn" onclick="location.href='${item.linkUrl || '#'}'">${item.buttonText || 'Shop'} →</button>
+                        </div>
+                    </div>
+                `;
+                
+                dots += `<span class="dot ${index === 0 ? 'active' : ''}" onclick="goToSlide(${index})"></span>`;
+            });
+            
+            container.innerHTML = `
+                <div class="carousel-container">
+                    ${slides}
+                    <div class="carousel-arrow prev" onclick="prevSlide()">❮</div>
+                    <div class="carousel-arrow next" onclick="nextSlide()">❯</div>
+                    <div class="carousel-dots">${dots}</div>
+                </div>
+            `;
+        }
+
+        function startCarousel() {
+            if (slideInterval) clearInterval(slideInterval);
+            slideInterval = setInterval(nextSlide, 5000);
+        }
+
+        window.goToSlide = function(index) {
+            currentSlide = index;
+            updateCarousel();
+            startCarousel();
+        }
+
+        window.prevSlide = function() {
+            currentSlide = (currentSlide - 1 + carouselItems.length) % carouselItems.length;
+            updateCarousel();
+            startCarousel();
+        }
+
+        window.nextSlide = function() {
+            currentSlide = (currentSlide + 1) % carouselItems.length;
+            updateCarousel();
+            startCarousel();
+        }
+
+        function updateCarousel() {
+            const slides = document.querySelectorAll('.carousel-slide');
+            const dots = document.querySelectorAll('.dot');
+            
+            slides.forEach((slide, i) => slide.classList.toggle('active', i === currentSlide));
+            dots.forEach((dot, i) => dot.classList.toggle('active', i === currentSlide));
         }
 
         async function fetchServices() {
@@ -169,7 +810,7 @@
                 renderItems(allServices, view, 'service');
                 servicesLoaded = true;
             } catch (err) {
-                view.innerHTML = `<div class="loader">Service database is currently offline.</div>`;
+                view.innerHTML = `<div class="loader">Service database is offline.</div>`;
             }
         }
 
@@ -189,29 +830,34 @@
                 
                 const viewAllLink = type === 'product' ? `shop.html?cat=${encodeURIComponent(category)}` : `services.html?cat=${encodeURIComponent(category)}`;
                 
+                const itemsHtml = items.slice(0, 8).map((item, index) => 
+                    type === 'product' ? renderProductCard(item, index) : renderServiceCard(item)
+                ).join('');
+                
                 section.innerHTML = `
                     <div class="section-header">
                         <h2>${category}</h2>
                         <a href="${viewAllLink}" class="view-more-link">View All</a>
                     </div>
-                    <div class="nexus-grid">
-                        ${items.slice(0, 6).map(item => type === 'product' ? renderProductCard(item) : renderServiceCard(item)).join('')}
+                    <div class="horizontal-scroll">
+                        ${itemsHtml}
                     </div>
                 `;
                 container.appendChild(section);
             }
         }
 
-        function renderProductCard(p) {
+        function renderProductCard(p, index) {
+            const imageUrl = p.imageUrl || getProductImage(index);
             return `
             <div class="nexus-card">
                 <a href="product-details.html?id=${p.productId}" style="text-decoration:none; color:inherit;">
-                    <img src="${p.imageUrl || 'https://via.placeholder.com/150'}" class="item-image">
+                    <img src="${imageUrl}" class="item-image" alt="${p.name}">
                     <div class="item-category">${p.category}</div>
                     <div class="item-name">${p.name}</div>
                     <div class="price-tag">$${parseFloat(p.price).toFixed(2)}</div>
                 </a>
-                <button class="btn-main" onclick="quickAdd('${p.productId}')">Add to Cart</button>
+                <button class="btn-main" onclick="quickAdd('${p.productId}')">Add</button>
             </div>`;
         }
 
@@ -220,9 +866,9 @@
             <div class="nexus-card">
                 <div class="item-category">${s.serviceCategory}</div>
                 <div class="item-name">${s.serviceName}</div>
-                <div class="item-desc">${s.shortDescription || 'Professional diagnostic and repair services.'}</div>
-                <div class="price-tag"><span>From</span> $${s.basePrice}</div>
-                <button class="btn-main" onclick="location.href='service-details.html?id=${s.serviceId}'">Book Service</button>
+                <div class="item-desc">${s.shortDescription || 'Professional service.'}</div>
+                <div class="price-tag">$${s.basePrice}</div>
+                <button class="btn-main" onclick="location.href='service-details.html?id=${s.serviceId}'">Book</button>
             </div>`;
         }
 
@@ -237,18 +883,19 @@
                 sView.classList.add('hidden');
                 pBtn.classList.add('active');
                 sBtn.classList.remove('active');
+                fetchProductsData();
             } else {
                 pView.classList.add('hidden');
                 sView.classList.remove('hidden');
                 pBtn.classList.remove('active');
                 sBtn.classList.add('active');
-                fetchServices();
             }
         }
 
         function showToast(msg) {
             const t = document.getElementById('nexus-toast');
-            t.innerText = msg; t.style.display = 'block';
+            t.innerText = msg;
+            t.style.display = 'block';
             setTimeout(() => t.style.display='none', 3000);
         }
 
@@ -259,7 +906,7 @@
             cart.push({ productId: p.productId, name: p.name, price: p.price, imageUrl: p.imageUrl });
             localStorage.setItem('nexus_cart', JSON.stringify(cart));
             if (window.updateHeaderBadges) window.updateHeaderBadges();
-            showToast("Added to cart.");
+            showToast("Added to cart");
         }
 
         window.onload = initPage;
