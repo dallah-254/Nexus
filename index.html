@@ -24,13 +24,11 @@
             --primary-hover: #1d4ed8;
             --primary-light: #3b82f6;
             --bg-light: #f8fafc;
-            --bg-dark: #0f172a;
             --card-bg: #ffffff;
             --text-main: #0f172a;
             --text-muted: #64748b;
-            --text-light: #94a3b8;
             --border-color: #e2e8f0;
-            --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
             --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
             --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
             --gradient: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
@@ -44,6 +42,7 @@
             padding-top: 130px; 
             line-height: 1.5;
             overflow-x: hidden;
+            width: 100%;
         }
 
         .container { 
@@ -57,28 +56,29 @@
         .mode-switch-container {
             display: flex; 
             justify-content: center; 
-            margin: 0 0 30px;
+            margin: 0 0 24px;
             width: 100%;
         }
         .mode-switch {
             background: var(--card-bg);
-            padding: 6px;
-            border-radius: 60px;
-            display: flex;
+            padding: 4px;
+            border-radius: 50px;
+            display: inline-flex;
             border: 1px solid var(--border-color);
             box-shadow: var(--shadow-sm);
-            width: fit-content;
+            width: 100%;
+            max-width: 300px;
         }
         .switch-btn {
-            padding: 10px 24px;
+            flex: 1;
+            padding: 10px 16px;
             border-radius: 50px;
             border: none;
             background: transparent;
             color: var(--text-muted);
             cursor: pointer;
             font-weight: 600;
-            font-size: 0.9rem;
-            letter-spacing: 0.3px;
+            font-size: 0.85rem;
             transition: all 0.3s ease;
             white-space: nowrap;
         }
@@ -90,17 +90,21 @@
 
         /* Carousel Styles */
         .carousel-section {
-            margin-bottom: 40px;
+            margin-bottom: 32px;
             width: 100%;
         }
         
         .carousel-container {
             position: relative;
             width: 100%;
-            height: 400px;
+            height: 350px;
             overflow: hidden;
             border-radius: 16px;
             box-shadow: var(--shadow-lg);
+        }
+        
+        @media (min-width: 768px) {
+            .carousel-container { height: 400px; }
         }
         
         .carousel-slide {
@@ -117,9 +121,7 @@
         }
         
         @media (min-width: 768px) {
-            .carousel-slide {
-                padding-left: 60px;
-            }
+            .carousel-slide { padding-left: 60px; }
         }
         
         .carousel-slide::before {
@@ -139,75 +141,55 @@
         .carousel-content {
             position: relative;
             color: white;
-            max-width: 90%;
+            max-width: 100%;
             animation: slideUp 0.8s ease;
+            padding-right: 20px;
         }
         
-        @media (min-width: 768px) {
-            .carousel-content {
-                max-width: 550px;
-            }
+        @media (min-width: 640px) {
+            .carousel-content { max-width: 450px; }
         }
         
         @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
         .carousel-content h2 {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             font-weight: 800;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             line-height: 1.2;
         }
         
         @media (min-width: 768px) {
-            .carousel-content h2 {
-                font-size: 2.5rem;
-            }
+            .carousel-content h2 { font-size: 2rem; }
         }
         
         .carousel-content p {
-            font-size: 0.9rem;
-            margin-bottom: 20px;
+            font-size: 0.85rem;
+            margin-bottom: 16px;
             opacity: 0.9;
             line-height: 1.5;
-        }
-        
-        @media (min-width: 768px) {
-            .carousel-content p {
-                font-size: 1.1rem;
-            }
         }
         
         .carousel-btn {
             background: var(--gradient);
             color: white;
             border: none;
-            padding: 12px 25px;
+            padding: 10px 20px;
             border-radius: 50px;
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             cursor: pointer;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
             white-space: nowrap;
         }
         
-        .carousel-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5);
-        }
-        
         .carousel-dots {
             position: absolute;
-            bottom: 20px;
+            bottom: 16px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
@@ -216,8 +198,8 @@
         }
         
         .dot {
-            width: 8px;
-            height: 8px;
+            width: 6px;
+            height: 6px;
             border-radius: 50%;
             background: rgba(255,255,255,0.5);
             cursor: pointer;
@@ -226,7 +208,7 @@
         
         .dot.active {
             background: white;
-            width: 24px;
+            width: 20px;
             border-radius: 10px;
         }
         
@@ -234,8 +216,8 @@
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            width: 36px;
-            height: 36px;
+            width: 32px;
+            height: 32px;
             background: rgba(255,255,255,0.2);
             backdrop-filter: blur(5px);
             border-radius: 50%;
@@ -243,29 +225,18 @@
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 20px;
+            font-size: 18px;
             cursor: pointer;
             transition: all 0.3s ease;
             z-index: 10;
-            border: 1px solid rgba(255,255,255,0.3);
         }
         
-        .carousel-arrow:hover {
-            background: rgba(255,255,255,0.3);
-            transform: translateY(-50%) scale(1.1);
-        }
-        
-        .carousel-arrow.prev { left: 10px; }
-        .carousel-arrow.next { right: 10px; }
-        
-        @media (min-width: 768px) {
-            .carousel-arrow.prev { left: 25px; }
-            .carousel-arrow.next { right: 25px; }
-        }
+        .carousel-arrow.prev { left: 8px; }
+        .carousel-arrow.next { right: 8px; }
 
-        /* Marketing Grid - Horizontal Scroll on Mobile */
+        /* Marketing Section */
         .marketing-section {
-            margin-bottom: 40px;
+            margin-bottom: 32px;
             width: 100%;
         }
         
@@ -273,11 +244,11 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
         
         .marketing-header h2 {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             font-weight: 700;
             color: var(--text-main);
             position: relative;
@@ -300,7 +271,7 @@
             display: flex;
             overflow-x: auto;
             gap: 16px;
-            padding: 5px 0 15px;
+            padding: 4px 0 16px;
             scroll-snap-type: x mandatory;
             -webkit-overflow-scrolling: touch;
         }
@@ -321,17 +292,20 @@
         
         .marketing-card {
             flex: 0 0 85%;
-            max-width: 320px;
+            max-width: 280px;
             background: var(--card-bg);
             border-radius: 16px;
             overflow: hidden;
-            transition: all 0.3s ease;
             border: 1px solid var(--border-color);
             box-shadow: var(--shadow-sm);
             scroll-snap-align: start;
         }
         
-        @media (min-width: 768px) {
+        @media (min-width: 640px) {
+            .marketing-card { flex: 0 0 45%; max-width: 300px; }
+        }
+        
+        @media (min-width: 1024px) {
             .marketing-scroll {
                 display: grid;
                 grid-template-columns: repeat(3, 1fr);
@@ -339,85 +313,83 @@
                 overflow-x: visible;
                 padding: 0;
             }
-            
             .marketing-card {
                 flex: none;
                 max-width: 100%;
             }
         }
         
-        .marketing-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-lg);
-            border-color: var(--primary-light);
-        }
-        
         .marketing-card-image {
             width: 100%;
-            height: 160px;
+            height: 140px;
             object-fit: cover;
             border-bottom: 1px solid var(--border-color);
         }
         
         .marketing-card-content {
-            padding: 15px;
+            padding: 12px;
         }
         
         .marketing-card-content h3 {
-            margin: 0 0 5px;
-            font-size: 1.2rem;
+            margin: 0 0 4px;
+            font-size: 1rem;
             font-weight: 700;
             color: var(--text-main);
         }
         
         .marketing-card-content p {
-            margin: 0 0 12px;
-            font-size: 0.8rem;
+            margin: 0 0 10px;
+            font-size: 0.75rem;
             color: var(--text-muted);
         }
         
-        .marketing-products {
+        .marketing-items {
             display: flex;
             gap: 8px;
             overflow-x: auto;
-            padding: 5px 0;
-            -webkit-overflow-scrolling: touch;
+            padding: 4px 0;
         }
         
-        .marketing-products::-webkit-scrollbar {
+        .marketing-items::-webkit-scrollbar {
             display: none;
         }
         
-        .marketing-product {
-            flex: 0 0 80px;
+        .marketing-item {
+            flex: 0 0 70px;
             text-align: center;
             cursor: pointer;
         }
         
-        .marketing-product img {
-            width: 80px;
-            height: 80px;
+        .marketing-item img {
+            width: 100%;
+            height: 70px;
             object-fit: contain;
             background: var(--bg-light);
             border-radius: 8px;
-            padding: 5px;
+            padding: 4px;
             border: 1px solid var(--border-color);
         }
         
-        .marketing-product .product-name {
-            font-size: 0.7rem;
+        .marketing-item .item-name {
+            font-size: 0.65rem;
             font-weight: 600;
             color: var(--text-main);
             display: block;
-            margin-top: 5px;
+            margin-top: 4px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
+        
+        .marketing-item .item-price {
+            font-size: 0.6rem;
+            color: var(--primary);
+            font-weight: 600;
+        }
 
-        /* Category Sections - Horizontal Scroll on Mobile */
+        /* Category Sections */
         .category-section {
-            margin-bottom: 35px;
+            margin-bottom: 32px;
             width: 100%;
         }
         
@@ -425,13 +397,13 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
         
         .section-header h2 {
             text-transform: capitalize;
             margin: 0;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 700;
             color: var(--text-main);
             position: relative;
@@ -445,7 +417,7 @@
             top: 50%;
             transform: translateY(-50%);
             width: 4px;
-            height: 18px;
+            height: 16px;
             background: var(--gradient);
             border-radius: 2px;
         }
@@ -453,9 +425,9 @@
         .view-more-link {
             color: var(--primary);
             text-decoration: none;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: 600;
-            padding: 5px 10px;
+            padding: 4px 10px;
             border-radius: 20px;
             background: rgba(37, 99, 235, 0.1);
             white-space: nowrap;
@@ -465,7 +437,7 @@
             display: flex;
             overflow-x: auto;
             gap: 12px;
-            padding: 5px 0 15px;
+            padding: 4px 0 16px;
             scroll-snap-type: x mandatory;
             -webkit-overflow-scrolling: touch;
         }
@@ -484,12 +456,12 @@
             border-radius: 10px;
         }
         
-        .nexus-card {
-            flex: 0 0 160px;
+        .item-card {
+            flex: 0 0 140px;
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            padding: 12px;
+            padding: 10px;
             transition: all 0.3s ease;
             display: flex;
             flex-direction: column;
@@ -497,37 +469,34 @@
         }
         
         @media (min-width: 768px) {
+            .item-card { flex: 0 0 160px; }
+        }
+        
+        @media (min-width: 1024px) {
             .horizontal-scroll {
                 display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
                 gap: 20px;
                 overflow-x: visible;
                 padding: 0;
             }
-            
-            .nexus-card {
+            .item-card {
                 flex: none;
             }
         }
         
-        .nexus-card:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-md);
-            border-color: var(--primary-light);
-        }
-
         .item-image {
             width: 100%;
-            height: 120px;
+            height: 100px;
             object-fit: contain;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             background: var(--bg-light);
             border-radius: 8px;
-            padding: 8px;
+            padding: 6px;
         }
         
         .item-category {
-            font-size: 0.65rem;
+            font-size: 0.6rem;
             color: var(--primary);
             text-transform: uppercase;
             font-weight: 700;
@@ -535,23 +504,35 @@
         }
         
         .item-name {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 600;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             line-height: 1.3;
             color: var(--text-main);
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
-            height: 35px;
+            height: 33px;
+        }
+        
+        .item-desc {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            line-height: 1.3;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            height: 30px;
         }
         
         .price-tag {
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: 700;
             color: var(--text-main);
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
         
         .btn-main {
@@ -563,23 +544,28 @@
             padding: 8px;
             border-radius: 6px;
             cursor: pointer;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             transition: all 0.3s ease;
+            margin-top: auto;
         }
 
         .loader {
             text-align: center;
-            padding: 40px;
+            padding: 40px 16px;
             color: var(--text-muted);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
+            width: 100%;
         }
         
-        .hidden { display: none; }
+        .hidden { display: none !important; }
 
         #nexus-toast {
             position: fixed;
             bottom: 20px;
             right: 20px;
+            left: 20px;
+            max-width: 320px;
+            margin: 0 auto;
             padding: 12px 20px;
             background: var(--text-main);
             border-radius: 50px;
@@ -588,6 +574,11 @@
             z-index: 9999;
             display: none;
             box-shadow: var(--shadow-lg);
+            text-align: center;
+        }
+        
+        @media (min-width: 480px) {
+            #nexus-toast { left: auto; }
         }
     </style>
 </head>
@@ -599,48 +590,53 @@
     <main class="container">
         <div class="mode-switch-container">
             <div class="mode-switch">
-                <button id="btn-show-services" class="switch-btn active" onclick="toggleMode('services')">Repair Services</button>
+                <button id="btn-show-services" class="switch-btn active" onclick="toggleMode('services')">Services</button>
                 <button id="btn-show-products" class="switch-btn" onclick="toggleMode('products')">Products</button>
             </div>
         </div>
 
-        <!-- Products View (Hidden by default) -->
+        <!-- Products View -->
         <div id="products-view" class="hidden">
-            <!-- Carousel Section -->
-            <div id="carousel-section" class="carousel-section">
+            <div id="products-carousel-section" class="carousel-section">
                 <div class="loader">Loading deals...</div>
             </div>
-
-            <!-- Marketing Section -->
-            <div id="marketing-section" class="marketing-section"></div>
-
-            <!-- Products Category Sections -->
+            <div id="products-marketing-section" class="marketing-section"></div>
             <div id="products-container"></div>
         </div>
 
-        <!-- Services View (Visible by default) -->
+        <!-- Services View -->
         <div id="services-view">
-            <div class="loader">Loading services...</div>
+            <div id="services-carousel-section" class="carousel-section">
+                <div class="loader">Loading service offers...</div>
+            </div>
+            <div id="services-marketing-section" class="marketing-section"></div>
+            <div id="services-container"></div>
         </div>
     </main>
+    
     <footer id="nexus-footer-wrapper"></footer>
 
     <script>
-        let allProducts = [];
-        let allServices = [];
-        let servicesLoaded = false;
-        let carouselItems = [];
-        let marketingSections = [];
-        let currentSlide = 0;
-        let slideInterval;
-
-        const marketingImages = [
+        // ==================== CONFIG ====================
+        const API_BASE = 'https://yskkdnff93.execute-api.us-east-1.amazonaws.com/prod';
+        
+        // Images
+        const productsMarketingImages = [
             'https://images.unsplash.com/photo-1546435770-a3e5d5b81b4b?w=600',
             'https://images.unsplash.com/photo-1598550474472-37e6b8b0f8b3?w=600',
             'https://images.unsplash.com/photo-1595044426077-d36d9236d44a?w=600',
             'https://images.unsplash.com/photo-1527443229154-78ba2de82e4d?w=600',
             'https://images.unsplash.com/photo-1625842268581-51e8f24d6bac?w=600',
             'https://images.unsplash.com/photo-1580480055273-228ff5388ef8?w=600'
+        ];
+
+        const servicesMarketingImages = [
+            'https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=600',
+            'https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?w=600',
+            'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=600',
+            'https://images.unsplash.com/photo-1581091226033-d5c48150dbaa?w=600',
+            'https://images.unsplash.com/photo-1576201836106-db1758fd1c97?w=600',
+            'https://images.unsplash.com/photo-1581092335881-219d5c2b8c3b?w=600'
         ];
 
         const productImages = [
@@ -652,227 +648,50 @@
             'https://images.unsplash.com/photo-1619953942547-233eab5a70d6?w=200'
         ];
 
-        function getMarketingImage(index) {
-            return marketingImages[index % marketingImages.length];
+        // ==================== STATE ====================
+        let allProducts = [];
+        let allServices = [];
+        let servicesLoaded = false;
+        let productsCarouselItems = [];
+        let servicesCarouselItems = [];
+        let productsMarketingSections = [];
+        let servicesMarketingSections = [];
+        
+        // Carousel state
+        let currentProductsSlide = 0;
+        let currentServicesSlide = 0;
+        let productsSlideInterval;
+        let servicesSlideInterval;
+
+        // ==================== UTILS ====================
+        function getProductsMarketingImage(index) {
+            return productsMarketingImages[index % productsMarketingImages.length];
+        }
+
+        function getServicesMarketingImage(index) {
+            return servicesMarketingImages[index % servicesMarketingImages.length];
         }
 
         function getProductImage(index) {
             return productImages[index % productImages.length];
         }
 
+        function showToast(msg) {
+            const t = document.getElementById('nexus-toast');
+            t.innerText = msg;
+            t.style.display = 'block';
+            setTimeout(() => t.style.display = 'none', 3000);
+        }
+
+        // ==================== INIT ====================
         async function initPage() {
             await fetchServices();
+            await fetchServicesCarousel();
+            await fetchServicesMarketing();
         }
 
-        async function fetchProductsData() {
-            const carouselContainer = document.getElementById('carousel-section');
-            const marketingContainer = document.getElementById('marketing-section');
-            const productsContainer = document.getElementById('products-container');
-            
-            try {
-                const [productsRes, carouselRes, marketingRes] = await Promise.all([
-                    fetch(`${NEXUS_CONFIG.api.baseUrl}/products`),
-                    fetch('https://yskkdnff93.execute-api.us-east-1.amazonaws.com/prod/carousels'),
-                    fetch('https://yskkdnff93.execute-api.us-east-1.amazonaws.com/prod/nexus-product-marketing')
-                ]);
-
-                allProducts = await productsRes.json();
-                carouselItems = await carouselRes.json();
-                marketingSections = await marketingRes.json();
-
-                if (carouselItems.length > 0) {
-                    renderCarousel(carouselItems);
-                    startCarousel();
-                } else {
-                    carouselContainer.innerHTML = '';
-                }
-
-                if (marketingSections.length > 0) {
-                    renderMarketing(marketingSections);
-                } else {
-                    marketingContainer.innerHTML = '';
-                }
-
-                renderItems(allProducts, productsContainer, 'product');
-
-            } catch (err) {
-                productsContainer.innerHTML = `<div class="loader">Unable to load products.</div>`;
-            }
-        }
-
-        function renderMarketing(sections) {
-            const container = document.getElementById('marketing-section');
-            
-            const cardsHtml = sections.map((section, sectionIndex) => {
-                const products = section.productDetails || [];
-                const productsHtml = products.slice(0, 4).map((p, index) => {
-                    const imageUrl = p.imageUrl || getProductImage(sectionIndex + index);
-                    return `
-                        <div class="marketing-product" onclick="location.href='product-details.html?id=${p.productId}'">
-                            <img src="${imageUrl}" alt="${p.name}">
-                            <span class="product-name">${p.name}</span>
-                        </div>
-                    `;
-                }).join('');
-                
-                return `
-                    <div class="marketing-card">
-                        <img src="${section.bannerImage || getMarketingImage(sectionIndex)}" class="marketing-card-image" alt="${section.name}">
-                        <div class="marketing-card-content">
-                            <h3>${section.name}</h3>
-                            <p>${section.description || ''}</p>
-                            <div class="marketing-products">
-                                ${productsHtml}
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-            
-            container.innerHTML = `
-                <div class="marketing-header">
-                    <h2>Featured Collections</h2>
-                </div>
-                <div class="marketing-scroll">
-                    ${cardsHtml}
-                </div>
-            `;
-        }
-
-        function renderCarousel(items) {
-            const container = document.getElementById('carousel-section');
-            
-            let slides = '';
-            let dots = '';
-            
-            items.forEach((item, index) => {
-                const imageUrl = item.imageUrl || 'https://images.unsplash.com/photo-1555617778-6c2dc4d9c5ac?w=1200';
-                slides += `
-                    <div class="carousel-slide ${index === 0 ? 'active' : ''}" style="background-image: url('${imageUrl}');">
-                        <div class="carousel-content">
-                            <h2>${item.name}</h2>
-                            <p>${item.description || ''}</p>
-                            <button class="carousel-btn" onclick="location.href='${item.linkUrl || '#'}'">${item.buttonText || 'Shop'} →</button>
-                        </div>
-                    </div>
-                `;
-                
-                dots += `<span class="dot ${index === 0 ? 'active' : ''}" onclick="goToSlide(${index})"></span>`;
-            });
-            
-            container.innerHTML = `
-                <div class="carousel-container">
-                    ${slides}
-                    <div class="carousel-arrow prev" onclick="prevSlide()">❮</div>
-                    <div class="carousel-arrow next" onclick="nextSlide()">❯</div>
-                    <div class="carousel-dots">${dots}</div>
-                </div>
-            `;
-        }
-
-        function startCarousel() {
-            if (slideInterval) clearInterval(slideInterval);
-            slideInterval = setInterval(nextSlide, 5000);
-        }
-
-        window.goToSlide = function(index) {
-            currentSlide = index;
-            updateCarousel();
-            startCarousel();
-        }
-
-        window.prevSlide = function() {
-            currentSlide = (currentSlide - 1 + carouselItems.length) % carouselItems.length;
-            updateCarousel();
-            startCarousel();
-        }
-
-        window.nextSlide = function() {
-            currentSlide = (currentSlide + 1) % carouselItems.length;
-            updateCarousel();
-            startCarousel();
-        }
-
-        function updateCarousel() {
-            const slides = document.querySelectorAll('.carousel-slide');
-            const dots = document.querySelectorAll('.dot');
-            
-            slides.forEach((slide, i) => slide.classList.toggle('active', i === currentSlide));
-            dots.forEach((dot, i) => dot.classList.toggle('active', i === currentSlide));
-        }
-
-        async function fetchServices() {
-            if (servicesLoaded) return;
-            const view = document.getElementById('services-view');
-            try {
-                const response = await fetch(`${NEXUS_CONFIG.api.baseUrl}/services`);
-                allServices = await response.json();
-                renderItems(allServices, view, 'service');
-                servicesLoaded = true;
-            } catch (err) {
-                view.innerHTML = `<div class="loader">Service database is offline.</div>`;
-            }
-        }
-
-        function renderItems(data, container, type) {
-            const groups = data.reduce((acc, item) => {
-                const cat = (type === 'product' ? item.category : item.serviceCategory) || "General";
-                if (!acc[cat]) acc[cat] = [];
-                acc[cat].push(item);
-                return acc;
-            }, {});
-
-            container.innerHTML = ''; 
-
-            for (const [category, items] of Object.entries(groups)) {
-                const section = document.createElement('section');
-                section.className = 'category-section';
-                
-                const viewAllLink = type === 'product' ? `shop.html?cat=${encodeURIComponent(category)}` : `services.html?cat=${encodeURIComponent(category)}`;
-                
-                const itemsHtml = items.slice(0, 8).map((item, index) => 
-                    type === 'product' ? renderProductCard(item, index) : renderServiceCard(item)
-                ).join('');
-                
-                section.innerHTML = `
-                    <div class="section-header">
-                        <h2>${category}</h2>
-                        <a href="${viewAllLink}" class="view-more-link">View All</a>
-                    </div>
-                    <div class="horizontal-scroll">
-                        ${itemsHtml}
-                    </div>
-                `;
-                container.appendChild(section);
-            }
-        }
-
-        function renderProductCard(p, index) {
-            const imageUrl = p.imageUrl || getProductImage(index);
-            return `
-            <div class="nexus-card">
-                <a href="product-details.html?id=${p.productId}" style="text-decoration:none; color:inherit;">
-                    <img src="${imageUrl}" class="item-image" alt="${p.name}">
-                    <div class="item-category">${p.category}</div>
-                    <div class="item-name">${p.name}</div>
-                    <div class="price-tag">$${parseFloat(p.price).toFixed(2)}</div>
-                </a>
-                <button class="btn-main" onclick="quickAdd('${p.productId}')">Add</button>
-            </div>`;
-        }
-
-        function renderServiceCard(s) {
-            return `
-            <div class="nexus-card">
-                <div class="item-category">${s.serviceCategory}</div>
-                <div class="item-name">${s.serviceName}</div>
-                <div class="item-desc">${s.shortDescription || 'Professional service.'}</div>
-                <div class="price-tag">$${s.basePrice}</div>
-                <button class="btn-main" onclick="location.href='service-details.html?id=${s.serviceId}'">Book</button>
-            </div>`;
-        }
-
-        function toggleMode(mode) {
+        // ==================== TOGGLE ====================
+        window.toggleMode = function(mode) {
             const pView = document.getElementById('products-view');
             const sView = document.getElementById('services-view');
             const pBtn = document.getElementById('btn-show-products');
@@ -892,14 +711,386 @@
             }
         }
 
-        function showToast(msg) {
-            const t = document.getElementById('nexus-toast');
-            t.innerText = msg;
-            t.style.display = 'block';
-            setTimeout(() => t.style.display='none', 3000);
+        // ==================== PRODUCTS ====================
+        async function fetchProductsData() {
+            const productsCarouselContainer = document.getElementById('products-carousel-section');
+            const productsMarketingContainer = document.getElementById('products-marketing-section');
+            const productsContainer = document.getElementById('products-container');
+            
+            try {
+                const [productsRes, carouselRes, marketingRes] = await Promise.all([
+                    fetch(`${API_BASE}/products`),
+                    fetch(`${API_BASE}/carousels`),
+                    fetch(`${API_BASE}/nexus-product-marketing`)
+                ]);
+
+                allProducts = await productsRes.json();
+                productsCarouselItems = await carouselRes.json();
+                productsMarketingSections = await marketingRes.json();
+
+                if (productsCarouselItems.length > 0) {
+                    renderProductsCarousel(productsCarouselItems);
+                    startProductsCarousel();
+                }
+
+                if (productsMarketingSections.length > 0) {
+                    renderProductsMarketing(productsMarketingSections);
+                }
+
+                renderProductsItems(allProducts, productsContainer);
+
+            } catch (err) {
+                productsContainer.innerHTML = `<div class="loader">Unable to load products.</div>`;
+            }
         }
 
-        function quickAdd(id) {
+        function renderProductsMarketing(sections) {
+            const container = document.getElementById('products-marketing-section');
+            if (!sections.length) {
+                container.innerHTML = '';
+                return;
+            }
+            
+            const cardsHtml = sections.map((section, sectionIndex) => {
+                const products = section.productDetails || [];
+                const productsHtml = products.slice(0, 4).map((p, index) => {
+                    const imageUrl = p.imageUrl || getProductImage(sectionIndex + index);
+                    return `
+                        <div class="marketing-item" onclick="location.href='product-details.html?id=${p.productId}'">
+                            <img src="${imageUrl}" alt="${p.name}" loading="lazy">
+                            <span class="item-name">${p.name}</span>
+                            <span class="item-price">$${parseFloat(p.price).toFixed(2)}</span>
+                        </div>
+                    `;
+                }).join('');
+                
+                return `
+                    <div class="marketing-card">
+                        <img src="${section.bannerImage || getProductsMarketingImage(sectionIndex)}" class="marketing-card-image" alt="${section.name}" loading="lazy">
+                        <div class="marketing-card-content">
+                            <h3>${section.name}</h3>
+                            <p>${section.description || ''}</p>
+                            <div class="marketing-items">
+                                ${productsHtml}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            container.innerHTML = `
+                <div class="marketing-header">
+                    <h2>Featured Collections</h2>
+                </div>
+                <div class="marketing-scroll">
+                    ${cardsHtml}
+                </div>
+            `;
+        }
+
+        function renderProductsCarousel(items) {
+            const container = document.getElementById('products-carousel-section');
+            
+            let slides = '';
+            let dots = '';
+            
+            items.forEach((item, index) => {
+                const imageUrl = item.imageUrl || 'https://images.unsplash.com/photo-1555617778-6c2dc4d9c5ac?w=1200';
+                slides += `
+                    <div class="carousel-slide ${index === 0 ? 'active' : ''}" style="background-image: url('${imageUrl}');">
+                        <div class="carousel-content">
+                            <h2>${item.name}</h2>
+                            <p>${item.description || 'Discover the latest hardware'}</p>
+                            <button class="carousel-btn" onclick="location.href='${item.linkUrl || 'shop.html'}'">${item.buttonText || 'Shop'} →</button>
+                        </div>
+                    </div>
+                `;
+                
+                dots += `<span class="dot ${index === 0 ? 'active' : ''}" onclick="goToProductsSlide(${index})"></span>`;
+            });
+            
+            container.innerHTML = `
+                <div class="carousel-container">
+                    ${slides}
+                    <div class="carousel-arrow prev" onclick="prevProductsSlide()">❮</div>
+                    <div class="carousel-arrow next" onclick="nextProductsSlide()">❯</div>
+                    <div class="carousel-dots">${dots}</div>
+                </div>
+            `;
+        }
+
+        function renderProductsItems(data, container) {
+            const groups = data.reduce((acc, item) => {
+                const cat = item.category || "General";
+                if (!acc[cat]) acc[cat] = [];
+                acc[cat].push(item);
+                return acc;
+            }, {});
+
+            container.innerHTML = ''; 
+
+            for (const [category, items] of Object.entries(groups)) {
+                const section = document.createElement('section');
+                section.className = 'category-section';
+                
+                const itemsHtml = items.slice(0, 8).map((item, index) => renderProductCard(item, index)).join('');
+                
+                section.innerHTML = `
+                    <div class="section-header">
+                        <h2>${category}</h2>
+                        <a href="shop.html?cat=${encodeURIComponent(category)}" class="view-more-link">View All</a>
+                    </div>
+                    <div class="horizontal-scroll">
+                        ${itemsHtml}
+                    </div>
+                `;
+                container.appendChild(section);
+            }
+        }
+
+        function renderProductCard(p, index) {
+            const imageUrl = p.imageUrl || getProductImage(index);
+            return `
+            <div class="item-card">
+                <a href="product-details.html?id=${p.productId}" style="text-decoration:none; color:inherit;">
+                    <img src="${imageUrl}" class="item-image" alt="${p.name}" loading="lazy">
+                    <div class="item-category">${p.category}</div>
+                    <div class="item-name">${p.name}</div>
+                    <div class="price-tag">$${parseFloat(p.price).toFixed(2)}</div>
+                </a>
+                <button class="btn-main" onclick="quickAdd('${p.productId}')">Add to Cart</button>
+            </div>`;
+        }
+
+        // Products Carousel Controls
+        function startProductsCarousel() {
+            if (productsSlideInterval) clearInterval(productsSlideInterval);
+            productsSlideInterval = setInterval(nextProductsSlide, 5000);
+        }
+
+        window.goToProductsSlide = function(index) {
+            currentProductsSlide = index;
+            updateProductsCarousel();
+            startProductsCarousel();
+        }
+
+        window.prevProductsSlide = function() {
+            currentProductsSlide = (currentProductsSlide - 1 + productsCarouselItems.length) % productsCarouselItems.length;
+            updateProductsCarousel();
+            startProductsCarousel();
+        }
+
+        window.nextProductsSlide = function() {
+            currentProductsSlide = (currentProductsSlide + 1) % productsCarouselItems.length;
+            updateProductsCarousel();
+            startProductsCarousel();
+        }
+
+        function updateProductsCarousel() {
+            const container = document.getElementById('products-carousel-section');
+            const slides = container.querySelectorAll('.carousel-slide');
+            const dots = container.querySelectorAll('.dot');
+            
+            slides.forEach((slide, i) => slide.classList.toggle('active', i === currentProductsSlide));
+            dots.forEach((dot, i) => dot.classList.toggle('active', i === currentProductsSlide));
+        }
+
+        // ==================== SERVICES ====================
+        async function fetchServicesCarousel() {
+            try {
+                const response = await fetch(`${API_BASE}/service-carousels`);
+                servicesCarouselItems = await response.json();
+                
+                if (servicesCarouselItems.length > 0) {
+                    renderServicesCarousel(servicesCarouselItems);
+                    startServicesCarousel();
+                }
+            } catch (err) {
+                console.log('Services carousel not available');
+            }
+        }
+
+        async function fetchServicesMarketing() {
+            try {
+                const response = await fetch(`${API_BASE}/service-marketing`);
+                servicesMarketingSections = await response.json();
+                
+                if (servicesMarketingSections.length > 0) {
+                    renderServicesMarketing(servicesMarketingSections);
+                }
+            } catch (err) {
+                console.log('Services marketing not available');
+            }
+        }
+
+        function renderServicesMarketing(sections) {
+            const container = document.getElementById('services-marketing-section');
+            if (!sections.length) {
+                container.innerHTML = '';
+                return;
+            }
+            
+            const cardsHtml = sections.map((section, sectionIndex) => {
+                const services = section.serviceDetails || [];
+                const servicesHtml = services.slice(0, 4).map(s => {
+                    return `
+                        <div class="marketing-item" onclick="location.href='service-details.html?id=${s.serviceId}'">
+                            <div style="width:100%; height:70px; background:var(--bg-light); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:1.8rem;">
+                                🔧
+                            </div>
+                            <span class="item-name">${s.serviceName}</span>
+                            <span class="item-price">$${s.basePrice}</span>
+                        </div>
+                    `;
+                }).join('');
+                
+                return `
+                    <div class="marketing-card">
+                        <img src="${section.bannerImage || getServicesMarketingImage(sectionIndex)}" class="marketing-card-image" alt="${section.name}" loading="lazy">
+                        <div class="marketing-card-content">
+                            <h3>${section.name}</h3>
+                            <p>${section.description || ''}</p>
+                            <div class="marketing-items">
+                                ${servicesHtml}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            container.innerHTML = `
+                <div class="marketing-header">
+                    <h2>Service Packages</h2>
+                </div>
+                <div class="marketing-scroll">
+                    ${cardsHtml}
+                </div>
+            `;
+        }
+
+        function renderServicesCarousel(items) {
+            const container = document.getElementById('services-carousel-section');
+            
+            let slides = '';
+            let dots = '';
+            
+            items.forEach((item, index) => {
+                const imageUrl = item.imageUrl || 'https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=1200';
+                slides += `
+                    <div class="carousel-slide ${index === 0 ? 'active' : ''}" style="background-image: url('${imageUrl}');">
+                        <div class="carousel-content">
+                            <h2>${item.name}</h2>
+                            <p>${item.description || 'Professional repair services'}</p>
+                            <button class="carousel-btn" onclick="location.href='${item.linkUrl || 'services.html'}'">${item.buttonText || 'Book'} →</button>
+                        </div>
+                    </div>
+                `;
+                
+                dots += `<span class="dot ${index === 0 ? 'active' : ''}" onclick="goToServicesSlide(${index})"></span>`;
+            });
+            
+            container.innerHTML = `
+                <div class="carousel-container">
+                    ${slides}
+                    <div class="carousel-arrow prev" onclick="prevServicesSlide()">❮</div>
+                    <div class="carousel-arrow next" onclick="nextServicesSlide()">❯</div>
+                    <div class="carousel-dots">${dots}</div>
+                </div>
+            `;
+        }
+
+        function startServicesCarousel() {
+            if (servicesSlideInterval) clearInterval(servicesSlideInterval);
+            servicesSlideInterval = setInterval(nextServicesSlide, 5000);
+        }
+
+        window.goToServicesSlide = function(index) {
+            currentServicesSlide = index;
+            updateServicesCarousel();
+            startServicesCarousel();
+        }
+
+        window.prevServicesSlide = function() {
+            currentServicesSlide = (currentServicesSlide - 1 + servicesCarouselItems.length) % servicesCarouselItems.length;
+            updateServicesCarousel();
+            startServicesCarousel();
+        }
+
+        window.nextServicesSlide = function() {
+            currentServicesSlide = (currentServicesSlide + 1) % servicesCarouselItems.length;
+            updateServicesCarousel();
+            startServicesCarousel();
+        }
+
+        function updateServicesCarousel() {
+            const container = document.getElementById('services-carousel-section');
+            const slides = container.querySelectorAll('.carousel-slide');
+            const dots = container.querySelectorAll('.dot');
+            
+            slides.forEach((slide, i) => slide.classList.toggle('active', i === currentServicesSlide));
+            dots.forEach((dot, i) => dot.classList.toggle('active', i === currentServicesSlide));
+        }
+
+        async function fetchServices() {
+            if (servicesLoaded) return;
+            const view = document.getElementById('services-container');
+            try {
+                const response = await fetch(`${API_BASE}/services`);
+                allServices = await response.json();
+                renderServicesItems(allServices, view);
+                servicesLoaded = true;
+            } catch (err) {
+                view.innerHTML = `<div class="loader">Service database is offline.</div>`;
+            }
+        }
+
+        function renderServicesItems(data, container) {
+            const groups = data.reduce((acc, item) => {
+                const cat = item.serviceCategory || "General";
+                if (!acc[cat]) acc[cat] = [];
+                acc[cat].push(item);
+                return acc;
+            }, {});
+
+            container.innerHTML = ''; 
+
+            for (const [category, items] of Object.entries(groups)) {
+                const section = document.createElement('section');
+                section.className = 'category-section';
+                
+                const itemsHtml = items.slice(0, 8).map(item => renderServiceCard(item)).join('');
+                
+                section.innerHTML = `
+                    <div class="section-header">
+                        <h2>${category}</h2>
+                        <a href="services.html?cat=${encodeURIComponent(category)}" class="view-more-link">View All</a>
+                    </div>
+                    <div class="horizontal-scroll">
+                        ${itemsHtml}
+                    </div>
+                `;
+                container.appendChild(section);
+            }
+        }
+
+        function renderServiceCard(s) {
+            return `
+            <div class="item-card">
+                <a href="service-details.html?id=${s.serviceId}" style="text-decoration:none; color:inherit;">
+                    <div style="width:100%; height:100px; background:var(--bg-light); border-radius:8px; margin-bottom:8px; display:flex; align-items:center; justify-content:center; font-size:2rem;">
+                        🔧
+                    </div>
+                    <div class="item-category">${s.serviceCategory}</div>
+                    <div class="item-name">${s.serviceName}</div>
+                    <div class="item-desc">${s.shortDescription || 'Professional service'}</div>
+                    <div class="price-tag">$${s.basePrice}</div>
+                </a>
+                <button class="btn-main" onclick="location.href='service-details.html?id=${s.serviceId}'">Book Now</button>
+            </div>`;
+        }
+
+        // ==================== CART ====================
+        window.quickAdd = function(id) {
             const p = allProducts.find(item => item.productId === id);
             if (!p) return;
             let cart = JSON.parse(localStorage.getItem('nexus_cart')) || [];
@@ -909,6 +1100,7 @@
             showToast("Added to cart");
         }
 
+        // Start
         window.onload = initPage;
     </script>
 </body>
