@@ -622,7 +622,7 @@
                     <span>Cart</span>
                     <span id="cart-count-bottom" class="badge-count">0</span>
                 </a>
-                <a href="account.html" class="bottom-nav-item">
+                <a href="profile.html" class="bottom-nav-item">
                     <i class="fa-solid fa-user"></i>
                     <span>Account</span>
                 </a>
