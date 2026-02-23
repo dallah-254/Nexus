@@ -83,6 +83,7 @@
             top: 130px;
             transition: var(--transition);
             box-shadow: var(--shadow-sm);
+            z-index: 99;
         }
 
         .filter-header {
@@ -224,12 +225,6 @@
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
 
-        .price-slider-container {
-            position: relative;
-            height: 40px;
-            margin-top: 10px;
-        }
-
         .price-slider {
             position: relative;
             height: 6px;
@@ -363,24 +358,24 @@
             transform: translateY(-2px);
         }
 
-        /* Filter Toggle Button (Mobile) */
+        /* Filter Toggle Button (Mobile) - Positioned above bottom nav */
         .filter-toggle-btn {
             position: fixed;
-            left: 20px;
-            bottom: 20px;
-            z-index: 99;
+            right: 20px;
+            bottom: 85px; /* Above the bottom navigation (65px + 20px spacing) */
+            z-index: 9998;
             background: var(--gradient);
             color: white;
             border: none;
-            width: 60px;
-            height: 60px;
+            width: 56px;
+            height: 56px;
             border-radius: 50%;
             cursor: pointer;
             box-shadow: var(--shadow-lg);
             display: none;
             align-items: center;
             justify-content: center;
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             transition: var(--transition);
         }
 
@@ -746,7 +741,7 @@
             transform: translateY(-50%) scale(1.1);
         }
 
-        /* ========== MARKETING SECTION ========== */
+        /* ========== MARKETING SECTION - HORIZONTAL SCROLL ========== */
         .marketing-section {
             margin-bottom: 40px;
             width: 100%;
@@ -778,32 +773,74 @@
             background: var(--gradient);
             border-radius: 3px;
         }
+
+        .marketing-header .scroll-indicator {
+            display: flex;
+            gap: 8px;
+        }
+
+        .scroll-indicator button {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            background: var(--card-bg);
+            color: var(--text-main);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .scroll-indicator button:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
         
+        .marketing-scroll-container {
+            position: relative;
+            width: 100%;
+        }
+
         .marketing-scroll {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 24px;
+            display: flex;
+            overflow-x: auto;
+            gap: 20px;
+            padding: 8px 4px 20px;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary) var(--border-light);
         }
-        
-        @media (max-width: 1024px) {
-            .marketing-scroll {
-                grid-template-columns: repeat(2, 1fr);
-            }
+
+        .marketing-scroll::-webkit-scrollbar {
+            height: 6px;
         }
-        
-        @media (max-width: 640px) {
-            .marketing-scroll {
-                grid-template-columns: 1fr;
-            }
+
+        .marketing-scroll::-webkit-scrollbar-track {
+            background: var(--border-light);
+            border-radius: 10px;
+        }
+
+        .marketing-scroll::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
         }
         
         .marketing-card {
+            flex: 0 0 320px;
             background: var(--card-bg);
             border-radius: var(--radius-lg);
             overflow: hidden;
             border: 1px solid var(--border);
             box-shadow: var(--shadow-sm);
             transition: var(--transition);
+            scroll-snap-align: start;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
         }
         
         .marketing-card:hover {
@@ -813,7 +850,7 @@
         
         .marketing-card-image {
             width: 100%;
-            height: 180px;
+            height: 160px;
             object-fit: cover;
             border-bottom: 1px solid var(--border);
         }
@@ -857,7 +894,7 @@
         }
         
         .marketing-item {
-            flex: 0 0 80px;
+            flex: 0 0 70px;
             text-align: center;
             cursor: pointer;
             transition: var(--transition);
@@ -869,7 +906,7 @@
         
         .marketing-item img {
             width: 100%;
-            height: 80px;
+            height: 70px;
             object-fit: contain;
             background: var(--bg);
             border-radius: var(--radius-sm);
@@ -878,7 +915,7 @@
         }
         
         .marketing-item .item-name {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             font-weight: 600;
             color: var(--text-main);
             display: block;
@@ -889,7 +926,7 @@
         }
         
         .marketing-item .item-price {
-            font-size: 0.65rem;
+            font-size: 0.6rem;
             color: var(--primary);
             font-weight: 600;
         }
@@ -904,7 +941,7 @@
 
         #shop-toast {
             position: fixed; 
-            bottom: 30px; 
+            bottom: 85px; 
             left: 50%; 
             transform: translateX(-50%);
             background: var(--text-main); 
@@ -922,6 +959,7 @@
         @media (max-width: 1024px) {
             .container { padding: 0 16px; }
             .nexus-grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
+            .marketing-card { flex: 0 0 280px; }
         }
 
         @media (max-width: 768px) {
@@ -936,7 +974,7 @@
                 left: -320px;
                 top: 90px;
                 bottom: 0;
-                z-index: 1000;
+                z-index: 9999;
                 width: 300px;
                 border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
                 overflow-y: auto;
@@ -964,6 +1002,8 @@
             
             .carousel-arrow.prev { left: 10px; }
             .carousel-arrow.next { right: 10px; }
+            
+            .marketing-card { flex: 0 0 260px; }
         }
 
         @media (max-width: 480px) {
@@ -996,15 +1036,20 @@
             }
             
             .filter-toggle-btn {
-                width: 56px;
-                height: 56px;
+                width: 50px;
+                height: 50px;
                 font-size: 1.2rem;
-                left: 16px;
-                bottom: 16px;
+                right: 16px;
+                bottom: 75px;
             }
             
-            .marketing-card-image {
-                height: 140px;
+            .marketing-card { flex: 0 0 240px; }
+            .marketing-card-image { height: 140px; }
+            
+            #shop-toast {
+                bottom: 75px;
+                padding: 12px 24px;
+                font-size: 0.85rem;
             }
         }
     </style>
@@ -1020,10 +1065,10 @@
             <div class="loader">Loading deals...</div>
         </div>
 
-        <!-- Marketing Section -->
+        <!-- Marketing Section - Horizontal Scroll -->
         <div id="marketing-section" class="marketing-section"></div>
 
-        <!-- Filter Toggle Button (Mobile Only) -->
+        <!-- Filter Toggle Button (Mobile Only) - Positioned above bottom nav -->
         <button class="filter-toggle-btn" id="filterToggle">
             <i class="fa-solid fa-sliders"></i>
         </button>
@@ -1579,12 +1624,13 @@
                 return;
             }
             
+            // Create horizontal scroll with all marketing cards
             const cardsHtml = marketingSections.map((section, sectionIndex) => {
                 const products = section.productDetails || [];
                 const productsHtml = products.slice(0, 4).map(p => {
                     const imageUrl = p.imageUrl || 'https://via.placeholder.com/70';
                     return `
-                        <div class="marketing-item" onclick="location.href='product-details.html?id=${p.productId}'">
+                        <div class="marketing-item" onclick="event.stopPropagation(); location.href='product-details.html?id=${p.productId}'">
                             <img src="${imageUrl}" alt="${p.name}" loading="lazy">
                             <span class="item-name">${p.name}</span>
                             <span class="item-price">$${parseFloat(p.price || 0).toFixed(2)}</span>
@@ -1593,16 +1639,16 @@
                 }).join('');
                 
                 return `
-                    <div class="marketing-card">
+                    <a href="category.html?cat=${section.name.toLowerCase().replace(' ', '-')}" class="marketing-card" onclick="event.stopPropagation();">
                         <img src="${section.bannerImage || marketingImages[sectionIndex % marketingImages.length]}" class="marketing-card-image" alt="${section.name}" loading="lazy">
                         <div class="marketing-card-content">
                             <h3>${section.name}</h3>
                             <p>${section.description || ''}</p>
-                            <div class="marketing-items">
+                            <div class="marketing-items" onclick="event.stopPropagation();">
                                 ${productsHtml || '<div style="padding:20px; text-align:center;">No products</div>'}
                             </div>
                         </div>
-                    </div>
+                    </a>
                 `;
             }).join('');
             
@@ -1610,10 +1656,24 @@
                 <div class="marketing-header">
                     <h2>Featured Collections</h2>
                 </div>
-                <div class="marketing-scroll">
-                    ${cardsHtml}
+                <div class="marketing-scroll-container">
+                    <div class="marketing-scroll">
+                        ${cardsHtml}
+                    </div>
                 </div>
             `;
+
+            // Add click handlers to make marketing items work
+            document.querySelectorAll('.marketing-item').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const link = item.getAttribute('onclick');
+                    if (link) {
+                        const match = link.match(/location\.href='([^']+)'/);
+                        if (match) window.location.href = match[1];
+                    }
+                });
+            });
         }
 
         // ==================== PRODUCTS ====================
@@ -1686,6 +1746,28 @@
             toast.style.display = 'block';
             setTimeout(() => toast.style.display = 'none', 2000);
         }
+
+        // Add scroll indicator functionality (optional)
+        function addScrollIndicators() {
+            const scrollContainer = document.querySelector('.marketing-scroll');
+            if (!scrollContainer) return;
+            
+            const header = document.querySelector('.marketing-header');
+            const indicators = document.createElement('div');
+            indicators.className = 'scroll-indicator';
+            indicators.innerHTML = `
+                <button onclick="document.querySelector('.marketing-scroll').scrollBy({left: -300, behavior: 'smooth'})">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+                <button onclick="document.querySelector('.marketing-scroll').scrollBy({left: 300, behavior: 'smooth'})">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            `;
+            header.appendChild(indicators);
+        }
+        
+        // Call after marketing renders
+        setTimeout(addScrollIndicators, 500);
     </script>
 </body>
 </html>
