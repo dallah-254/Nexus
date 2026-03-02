@@ -1,6 +1,7 @@
 /**
  * NEXUS HARDWARE - PREMIUM NAV SYSTEM
  * Restyled with Logo, Slogan, Red Numeric Badges, Hamburger Menu & Bottom Navigation
+ * ADDED: Working search functionality with page-aware placeholder - FULLY FUNCTIONAL ON ALL SCREENS
  */
 
 (function() {
@@ -253,7 +254,7 @@
             right: 2px;
         }
 
-        /* Mobile Search Bar */
+        /* Mobile Search Bar - FULLY FUNCTIONAL */
         .mobile-search {
             display: none;
             padding: 8px 16px;
@@ -263,11 +264,13 @@
 
         .mobile-search-input {
             width: 100%;
-            padding: 8px 16px;
+            padding: 10px 16px;
             border: 1px solid var(--h-border);
             border-radius: 25px;
             font-size: 0.9rem;
             background: #f8fafc;
+            cursor: text;
+            color: var(--h-dark);
         }
 
         .mobile-search-input:focus {
@@ -276,11 +279,243 @@
             background: white;
         }
 
-        /* Hide desktop elements on mobile/tablet */
+        .mobile-search-input::placeholder {
+            color: #94a3b8;
+        }
+
+        /* Desktop Search Bar - FULLY FUNCTIONAL */
+        .desktop-search {
+            max-width: 300px;
+            margin: 0 15px;
+            flex: 1;
+        }
+
+        .desktop-search-input {
+            width: 100%;
+            padding: 8px 16px;
+            border: 1px solid var(--h-border);
+            border-radius: 25px;
+            font-size: 0.9rem;
+            background: #f8fafc;
+            cursor: text;
+            color: var(--h-dark);
+        }
+
+        .desktop-search-input:focus {
+            outline: none;
+            border-color: var(--h-primary);
+            background: white;
+        }
+
+        .desktop-search-input::placeholder {
+            color: #94a3b8;
+        }
+
+        /* Search Overlay - FULLY FUNCTIONAL */
+        .search-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: white;
+            z-index: 100000;
+            display: none;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .search-overlay.active {
+            display: flex;
+        }
+
+        .search-overlay-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--h-border);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: white;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            flex-wrap: wrap;
+        }
+
+        .search-overlay-type {
+            display: flex;
+            gap: 10px;
+            background: #f8fafc;
+            padding: 4px;
+            border-radius: 30px;
+            border: 1px solid var(--h-border);
+        }
+
+        .search-type-btn {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 30px;
+            background: transparent;
+            color: #64748b;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .search-type-btn.active {
+            background: var(--h-primary);
+            color: white;
+        }
+
+        .search-overlay-input-wrapper {
+            flex: 1;
+            position: relative;
+            min-width: 250px;
+        }
+
+        .search-overlay-input {
+            width: 100%;
+            padding: 14px 45px;
+            font-size: 1rem;
+            border: 1px solid var(--h-border);
+            border-radius: 30px;
+            outline: none;
+            color: var(--h-dark);
+        }
+
+        .search-overlay-input:focus {
+            border-color: var(--h-primary);
+        }
+
+        .search-overlay-input::placeholder {
+            color: #94a3b8;
+        }
+
+        .search-overlay-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+        }
+
+        .search-overlay-close {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #f8fafc;
+            border: 1px solid var(--h-border);
+            color: var(--h-dark);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .search-overlay-content {
+            flex: 1;
+            padding: 20px;
+            background: #f8fafc;
+        }
+
+        .search-suggestions {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .suggestion-group {
+            margin-bottom: 25px;
+        }
+
+        .suggestion-group-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--h-primary);
+            margin-bottom: 15px;
+            padding-left: 5px;
+        }
+
+        .suggestion-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+        }
+
+        .suggestion-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 12px;
+            text-decoration: none;
+            color: inherit;
+            border: 1px solid var(--h-border);
+            transition: all 0.2s;
+        }
+
+        .suggestion-item:hover {
+            border-color: var(--h-primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .suggestion-item-img {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 5px;
+            border: 1px solid var(--h-border);
+        }
+
+        .suggestion-item-content {
+            flex: 1;
+        }
+
+        .suggestion-item-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: var(--h-dark);
+            font-size: 0.95rem;
+        }
+
+        .suggestion-item-category {
+            font-size: 0.75rem;
+            color: var(--h-primary);
+            margin-bottom: 2px;
+        }
+
+        .suggestion-item-price {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--h-dark);
+        }
+
+        .search-loading, .search-no-results {
+            text-align: center;
+            padding: 60px;
+            color: #64748b;
+        }
+
+        .search-loading i {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* SMALL SCREEN OPTIMIZATIONS - Everything smaller and functional */
         @media (max-width: 1024px) {
             .header-top-bar {
                 padding: 4px 20px;
-                font-size: 0.65rem;
+                font-size: 0.6rem;
             }
 
             .header-top-bar > div:first-child,
@@ -289,8 +524,8 @@
             }
 
             .header-main {
-                height: 60px;
-                padding: 0 16px;
+                height: 56px;
+                padding: 0 12px;
             }
 
             .brand-text-group .slogan-text {
@@ -298,11 +533,11 @@
             }
 
             .header-logo-img {
-                height: 35px;
+                height: 30px;
             }
 
             .logo-text {
-                font-size: 1.1rem;
+                font-size: 1rem;
             }
 
             .nav-links {
@@ -311,6 +546,12 @@
 
             .hamburger-menu {
                 display: flex;
+                width: 36px;
+                height: 36px;
+            }
+
+            .hamburger-icon {
+                font-size: 1.3rem;
             }
 
             .user-hub {
@@ -318,58 +559,14 @@
             }
 
             .action-icon {
-                width: 35px;
-                height: 35px;
-                font-size: 1.1rem;
+                width: 32px;
+                height: 32px;
+                font-size: 1rem;
             }
 
             .bottom-nav {
                 display: flex;
-            }
-
-            .mobile-search {
-                display: block;
-            }
-
-            body {
-                padding-bottom: 65px;
-                padding-top: 100px;
-            }
-        }
-
-        /* Tablet specific adjustments */
-        @media (min-width: 768px) and (max-width: 1024px) {
-            .bottom-nav-item {
-                font-size: 0.7rem;
-            }
-
-            .bottom-nav-item i {
-                font-size: 1.4rem;
-            }
-
-            .drawer-item {
-                padding: 14px 20px;
-            }
-        }
-
-        /* Small mobile adjustments */
-        @media (max-width: 480px) {
-            .logo-text {
-                font-size: 1rem;
-            }
-
-            .header-logo-img {
-                height: 30px;
-            }
-
-            .header-actions {
-                gap: 2px;
-            }
-
-            .action-icon {
-                width: 32px;
-                height: 32px;
-                font-size: 1rem;
+                padding: 4px 8px;
             }
 
             .bottom-nav-item {
@@ -380,8 +577,134 @@
                 font-size: 1.2rem;
             }
 
+            .mobile-search {
+                display: block;
+                padding: 6px 12px;
+            }
+
+            .mobile-search-input {
+                padding: 8px 14px;
+                font-size: 0.85rem;
+            }
+
+            .desktop-search {
+                display: none;
+            }
+
+            body {
+                padding-bottom: 60px;
+                padding-top: 95px;
+            }
+
+            /* Smaller overlay for mobile */
+            .search-overlay-header {
+                padding: 12px;
+                gap: 10px;
+            }
+
+            .search-type-btn {
+                padding: 6px 16px;
+                font-size: 0.8rem;
+            }
+
+            .search-overlay-input {
+                padding: 12px 40px;
+                font-size: 0.95rem;
+            }
+
+            .search-overlay-close {
+                width: 38px;
+                height: 38px;
+                font-size: 1rem;
+            }
+
+            .suggestion-items {
+                grid-template-columns: 1fr;
+            }
+
+            .suggestion-item {
+                padding: 12px;
+            }
+
+            .suggestion-item-img {
+                width: 50px;
+                height: 50px;
+            }
+
+            .suggestion-item-title {
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Small mobile adjustments */
+        @media (max-width: 480px) {
+            .header-main {
+                height: 52px;
+                padding: 0 8px;
+            }
+
+            .logo-text {
+                font-size: 0.95rem;
+            }
+
+            .header-logo-img {
+                height: 28px;
+            }
+
+            .header-actions {
+                gap: 0px;
+            }
+
+            .action-icon {
+                width: 30px;
+                height: 30px;
+                font-size: 0.95rem;
+            }
+
+            .hamburger-menu {
+                width: 32px;
+                height: 32px;
+            }
+
+            .hamburger-icon {
+                font-size: 1.2rem;
+            }
+
+            .bottom-nav-item {
+                font-size: 0.55rem;
+            }
+
+            .bottom-nav-item i {
+                font-size: 1.1rem;
+            }
+
             .hamburger-drawer {
-                width: 280px;
+                width: 260px;
+            }
+
+            .drawer-user-avatar {
+                width: 45px;
+                height: 45px;
+                font-size: 1.3rem;
+            }
+
+            .drawer-item {
+                padding: 10px 16px;
+                font-size: 0.9rem;
+            }
+
+            .search-overlay-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-overlay-type {
+                justify-content: center;
+            }
+
+            .search-type-btn {
+                padding: 6px 12px;
+                font-size: 0.75rem;
             }
         }
 
@@ -409,7 +732,7 @@
         .brand-container {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             text-decoration: none;
         }
         .header-logo-img {
@@ -529,6 +852,261 @@
     `;
     document.head.appendChild(style);
 
+    // ==================== SEARCH FUNCTIONALITY ====================
+    const API_BASE = 'https://yskkdnff93.execute-api.us-east-1.amazonaws.com/prod';
+    let searchTimeout;
+
+    function getSearchType() {
+        const path = window.location.pathname;
+        if (path.includes('shop') || path.includes('products')) {
+            return 'products';
+        } else if (path.includes('services')) {
+            return 'services';
+        } else {
+            return 'both';
+        }
+    }
+
+    function getSearchPlaceholder() {
+        const type = getSearchType();
+        if (type === 'products') return 'Search products...';
+        if (type === 'services') return 'Search services...';
+        return 'Search products & services...';
+    }
+
+    function initSearch() {
+        // Create search overlay HTML if it doesn't exist
+        if (!document.getElementById('searchOverlay')) {
+            const searchOverlay = document.createElement('div');
+            searchOverlay.className = 'search-overlay';
+            searchOverlay.id = 'searchOverlay';
+            searchOverlay.innerHTML = `
+                <div class="search-overlay-header">
+                    <div class="search-overlay-type" id="searchTypeButtons">
+                        <button class="search-type-btn" data-type="both">All</button>
+                        <button class="search-type-btn" data-type="products">Products</button>
+                        <button class="search-type-btn" data-type="services">Services</button>
+                    </div>
+                    <div class="search-overlay-input-wrapper">
+                        <i class="fas fa-search search-overlay-icon"></i>
+                        <input type="text" class="search-overlay-input" id="searchOverlayInput" placeholder="Search...">
+                    </div>
+                    <button class="search-overlay-close" id="searchOverlayClose">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="search-overlay-content" id="searchOverlayContent">
+                    <div class="search-suggestions" id="searchSuggestions"></div>
+                </div>
+            `;
+            document.body.appendChild(searchOverlay);
+        }
+
+        const desktopSearch = document.querySelector('.desktop-search-input');
+        const mobileSearch = document.querySelector('.mobile-search-input');
+        const overlay = document.getElementById('searchOverlay');
+        const overlayInput = document.getElementById('searchOverlayInput');
+        const overlayClose = document.getElementById('searchOverlayClose');
+        const searchSuggestions = document.getElementById('searchSuggestions');
+        const typeButtons = document.querySelectorAll('.search-type-btn');
+
+        if (!overlay || !overlayInput) return;
+
+        // Set initial placeholder
+        const placeholder = getSearchPlaceholder();
+        if (desktopSearch) desktopSearch.placeholder = placeholder;
+        if (mobileSearch) mobileSearch.placeholder = placeholder;
+        if (overlayInput) overlayInput.placeholder = placeholder;
+
+        // Set initial active type
+        const currentType = getSearchType();
+        typeButtons.forEach(btn => {
+            if (btn.dataset.type === currentType) {
+                btn.classList.add('active');
+            }
+        });
+
+        // Type button click handlers
+        typeButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                typeButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const type = btn.dataset.type;
+                if (type === 'products') overlayInput.placeholder = 'Search products...';
+                else if (type === 'services') overlayInput.placeholder = 'Search services...';
+                else overlayInput.placeholder = 'Search products & services...';
+            });
+        });
+
+        // Open search function
+        function openSearch(e) {
+            e.preventDefault();
+            overlay.classList.add('active');
+            setTimeout(() => {
+                overlayInput.focus();
+                overlayInput.value = '';
+            }, 100);
+            searchSuggestions.innerHTML = '<div class="search-no-results"><i class="fas fa-search"></i><p>Type at least 3 characters to search</p></div>';
+        }
+
+        // Close search function
+        function closeSearch() {
+            overlay.classList.remove('active');
+        }
+
+        // Attach click events to search inputs
+        if (desktopSearch) {
+            desktopSearch.addEventListener('click', openSearch);
+            desktopSearch.addEventListener('focus', openSearch);
+        }
+        if (mobileSearch) {
+            mobileSearch.addEventListener('click', openSearch);
+            mobileSearch.addEventListener('focus', openSearch);
+        }
+        if (overlayClose) {
+            overlayClose.addEventListener('click', closeSearch);
+        }
+
+        // Input handler
+        overlayInput.addEventListener('input', (e) => {
+            const query = e.target.value.trim();
+            const activeType = document.querySelector('.search-type-btn.active')?.dataset.type || 'both';
+
+            if (query.length < 3) {
+                searchSuggestions.innerHTML = '<div class="search-no-results"><i class="fas fa-search"></i><p>Type at least 3 characters to search</p></div>';
+                return;
+            }
+
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => fetchSuggestions(query, activeType), 300);
+        });
+
+        // Enter key handler
+        overlayInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const query = e.target.value.trim();
+                const activeType = document.querySelector('.search-type-btn.active')?.dataset.type || 'both';
+                if (query.length >= 3) {
+                    performSearch(query, activeType);
+                }
+            }
+        });
+
+        // Escape key handler
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && overlay.classList.contains('active')) {
+                closeSearch();
+            }
+        });
+
+        // Close when clicking outside on mobile
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) {
+                closeSearch();
+            }
+        });
+    }
+
+    async function fetchSuggestions(query, type) {
+        const searchSuggestions = document.getElementById('searchSuggestions');
+        if (!searchSuggestions) return;
+        
+        searchSuggestions.innerHTML = '<div class="search-loading"><i class="fas fa-spinner"></i><p>Searching...</p></div>';
+
+        try {
+            const response = await fetch(`${API_BASE}/suggest?q=${encodeURIComponent(query)}&type=${type}`);
+            
+            if (!response.ok) throw new Error('Failed');
+            
+            const data = await response.json();
+            const suggestions = data.suggestions || [];
+
+            if (suggestions.length === 0) {
+                searchSuggestions.innerHTML = '<div class="search-no-results"><i class="fas fa-box-open"></i><p>No suggestions found</p><small>Press Enter to see all results</small></div>';
+                return;
+            }
+
+            let html = '<div class="suggestion-group"><div class="suggestion-group-title">Suggestions</div><div class="suggestion-items">';
+            
+            suggestions.forEach(item => {
+                const itemType = item.type || type;
+                const detailPage = itemType === 'service' ? 'service-details.html' : 'product-details.html';
+                const itemId = item.id || item.productId || item.serviceId;
+                const itemName = item.text || item.name || item.serviceName || '';
+                const itemPrice = item.price || item.basePrice || 0;
+                const itemCategory = item.category || item.serviceCategory || '';
+                
+                html += `
+                    <a href="${detailPage}?id=${itemId}" class="suggestion-item" onclick="document.getElementById('searchOverlay').classList.remove('active')">
+                        <img src="${item.imageUrl || 'https://via.placeholder.com/60'}" class="suggestion-item-img" alt="${itemName}" onerror="this.src='https://via.placeholder.com/60'">
+                        <div class="suggestion-item-content">
+                            <div class="suggestion-item-category">${itemCategory || (itemType === 'service' ? 'Service' : 'Product')}</div>
+                            <div class="suggestion-item-title">${itemName}</div>
+                            <div class="suggestion-item-price">$${parseFloat(itemPrice).toFixed(2)}</div>
+                        </div>
+                    </a>
+                `;
+            });
+            
+            html += '</div></div>';
+            searchSuggestions.innerHTML = html;
+
+        } catch (error) {
+            console.error('Suggestion error:', error);
+            searchSuggestions.innerHTML = '<div class="search-no-results"><i class="fas fa-exclamation-triangle"></i><p>Unable to get suggestions</p></div>';
+        }
+    }
+
+    async function performSearch(query, type) {
+        const searchSuggestions = document.getElementById('searchSuggestions');
+        if (!searchSuggestions) return;
+        
+        searchSuggestions.innerHTML = '<div class="search-loading"><i class="fas fa-spinner"></i><p>Searching...</p></div>';
+
+        try {
+            const response = await fetch(`${API_BASE}/search2?q=${encodeURIComponent(query)}&type=${type}&limit=20`);
+            
+            if (!response.ok) throw new Error('Failed');
+            
+            const data = await response.json();
+            const results = data.results || [];
+
+            if (results.length === 0) {
+                searchSuggestions.innerHTML = '<div class="search-no-results"><i class="fas fa-box-open"></i><p>No results found</p></div>';
+                return;
+            }
+
+            let html = '<div class="suggestion-group"><div class="suggestion-group-title">Search Results</div><div class="suggestion-items">';
+            
+            results.forEach(item => {
+                const itemType = item.type || type;
+                const detailPage = itemType === 'service' ? 'service-details.html' : 'product-details.html';
+                const itemId = item.id || item.productId || item.serviceId;
+                const itemName = item.name || item.displayName || item.serviceName || '';
+                const itemPrice = item.price || item.displayPrice || item.basePrice || 0;
+                const itemCategory = item.category || item.displayCategory || item.serviceCategory || '';
+                
+                html += `
+                    <a href="${detailPage}?id=${itemId}" class="suggestion-item" onclick="document.getElementById('searchOverlay').classList.remove('active')">
+                        <img src="${item.imageUrl || 'https://via.placeholder.com/60'}" class="suggestion-item-img" alt="${itemName}" onerror="this.src='https://via.placeholder.com/60'">
+                        <div class="suggestion-item-content">
+                            <div class="suggestion-item-category">${itemCategory || (itemType === 'service' ? 'Service' : 'Product')}</div>
+                            <div class="suggestion-item-title">${itemName}</div>
+                            <div class="suggestion-item-price">$${parseFloat(itemPrice).toFixed(2)}</div>
+                        </div>
+                    </a>
+                `;
+            });
+            
+            html += '</div></div>';
+            searchSuggestions.innerHTML = html;
+
+        } catch (error) {
+            console.error('Search error:', error);
+            searchSuggestions.innerHTML = '<div class="search-no-results"><i class="fas fa-exclamation-triangle"></i><p>Something went wrong</p></div>';
+        }
+    }
+
     // --- 2. RENDER LOGIC ---
     function initHeader() {
         const userName = localStorage.getItem('nexusUserFullname') || "Account";
@@ -536,6 +1114,7 @@
         const isLoggedIn = !!cognitoUser;
         const currentPath = window.location.pathname;
         const userInitial = userName.charAt(0).toUpperCase();
+        const searchPlaceholder = getSearchPlaceholder();
 
         const html = `
             <div class="header-top-bar">
@@ -559,6 +1138,11 @@
                         <span class="slogan-text">Precision Hardware. Proven Reliability.</span>
                     </div>
                 </a>
+
+                <!-- Desktop Search Bar - FULLY FUNCTIONAL -->
+                <div class="desktop-search">
+                    <input type="text" class="desktop-search-input" placeholder="${searchPlaceholder}" readonly>
+                </div>
 
                 <nav class="nav-links">
                     <a href="index.html" class="nav-link ${currentPath.includes('index') || currentPath === '/' ? 'active' : ''}">Home</a>
@@ -598,9 +1182,9 @@
                 </div>
             </div>
 
-            <!-- Mobile Search Bar -->
+            <!-- Mobile Search Bar - FULLY FUNCTIONAL -->
             <div class="mobile-search">
-                <input type="text" class="mobile-search-input" placeholder="Search products, services...">
+                <input type="text" class="mobile-search-input" placeholder="${searchPlaceholder}" readonly>
             </div>
 
             <!-- Bottom Navigation (Mobile) -->
@@ -792,7 +1376,6 @@
             hamburgerTrigger.onclick = openMenu;
             hamburgerOverlay.onclick = closeMenu;
 
-            // Close on escape key
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape' && hamburgerDrawer.classList.contains('active')) {
                     closeMenu();
@@ -801,6 +1384,11 @@
         }
 
         syncHeaderBadges();
+        
+        // Initialize search AFTER header is rendered
+        setTimeout(() => {
+            initSearch();
+        }, 100);
     }
 
     function syncHeaderBadges() {
