@@ -1,0 +1,264 @@
+{
+  "NexusFlow_Products": [
+    {
+      "PutRequest": {
+        "Item": {
+          "productId": { "S": "GPU-506" },
+          "brand": { "S": "PNY" },
+          "category": { "S": "Graphics Cards" },
+          "description": { "S": "PNY GeForce RTX 4080 Super 16GB XLR8 Gaming Verto EPIC-X RGB graphics card with triple fan design. Features 10240 CUDA cores, 2550 MHz boost clock, and 16GB GDDR6X memory. Includes metal backplate, dual BIOS, and dynamic RGB lighting. Perfect for 4K gaming and creative workloads." },
+          "imageUrl": { "S": "https://images.unsplash.com/photo-1624701928517-44c8ac49d93c?auto=format&fit=crop&w=600&q=80" },
+          "name": { "S": "PNY XLR8 RTX 4080 Super 16GB Verto EPIC-X RGB" },
+          "price": { "N": "999.99" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "productId": { "S": "GPU-507" },
+          "brand": { "S": "Zotac" },
+          "category": { "S": "Graphics Cards" },
+          "description": { "S": "Zotac Gaming GeForce RTX 4070 Ti Super 16GB Trinity OC graphics card with IceStorm 2.0 cooling. Features 8448 CUDA cores, 2610 MHz boost, and 16GB GDDR6X memory. Includes Spectra 2.0 RGB lighting and metal backplate with active fan control. Ideal for high-refresh 1440p gaming." },
+          "imageUrl": { "S": "https://images.unsplash.com/photo-1624701928517-44c8ac49d93c?auto=format&fit=crop&w=600&q=80" },
+          "name": { "S": "Zotac Gaming RTX 4070 Ti Super Trinity OC 16GB" },
+          "price": { "N": "829.99" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "productId": { "S": "GPU-508" },
+          "brand": { "S": "ASRock" },
+          "category": { "S": "Graphics Cards" },
+          "description": { "S": "ASRock Phantom Gaming Radeon RX 7900 XT 20GB graphics card with triple fan design. Features 5376 stream processors, 20GB GDDR6 memory, and AMD RDNA 3 architecture. Includes Phantom Gaming 3X cooling system with striped axial fans. Perfect for 4K gaming and content creation." },
+          "imageUrl": { "S": "https://images.unsplash.com/photo-1624701928517-44c8ac49d93c?auto=format&fit=crop&w=600&q=80" },
+          "name": { "S": "ASRock Phantom Gaming RX 7900 XT 20GB OC" },
+          "price": { "N": "729.99" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "productId": { "S": "MON-909" },
+          "brand": "Samsung",
+          "category": "Monitors",
+          "description": "Samsung Odyssey OLED G8 34-inch ultrawide gaming monitor with 175Hz refresh rate and 0.03ms response time. 3440x1440 QD-OLED panel with 1800R curvature. Features AMD FreeSync Premium Pro, CoreSync lighting, and Gaming Hub. Perfect for immersive gaming.",
+          "imageUrl": "https://images.unsplash.com/photo-1556155092-490a1ba16284?auto=format&fit=crop&w=600&q=80",
+          "name": "Samsung Odyssey OLED G8 34-inch 175Hz Ultrawide Monitor",
+          "price": 999.99
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "productId": { "S": "MON-910" },
+          "brand": { "S": "LG" },
+          "category": { "S": "Monitors" },
+          "description": { "S": "LG UltraGear 45GR95QE 45-inch OLED curved gaming monitor with 240Hz refresh rate and 0.03ms response time. 3440x1440 resolution with 800R curve. Features NVIDIA G-SYNC, AMD FreeSync Premium, and DCI-P3 98.5% color gamut. Perfect for racing and immersive gaming." },
+          "imageUrl": { "S": "https://images.unsplash.com/photo-1556155092-490a1ba16284?auto=format&fit=crop&w=600&q=80" },
+          "name": { "S": "LG UltraGear 45GR95QE 45-inch OLED 240Hz Curved Monitor" },
+          "price": { "N": "1699.99" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "productId": { "S": "MON-911" },
+          "brand": { "S": "Gigabyte" },
+          "category": { "S": "Monitors" },
+          "description": { "S": "Gigabyte M32U 32-inch 4K gaming monitor with 144Hz refresh rate and 1ms response time. Features SuperSpeed IPS panel with 94% DCI-P3 coverage. Includes KVM switch, USB-C with 18W charging, and 2x HDMI 2.1. Perfect for console and PC gaming." },
+          "imageUrl": { "S": "https://images.unsplash.com/photo-1556155092-490a1ba16284?auto=format&fit=crop&w=600&q=80" },
+          "name": { "S": "Gigabyte M32U 32-inch 4K 144Hz Gaming Monitor with KVM" },
+          "price": { "N": "699.99" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "productId": { "S": "CPU-108" },
+          "brand": { "S": "AMD" },
+          "category": { "S": "Processors" },
+          "description": { "S": "AMD Ryzen 9 7900X 12-core 24-thread desktop processor with 5.6 GHz max boost. 76MB cache with Zen 4 architecture on 5nm process. 170W TDP with AM5 socket. Supports DDR5 and PCIe 5.0. Perfect for high-end productivity and multi-threaded workloads." },
+          "imageUrl": { "S": "https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?auto=format&fit=crop&w=600&q=80" },
+          "name": { "S": "AMD Ryzen 9 7900X 12-Core 24-Thread Desktop Processor" },
+          "price": { "N": "389.99" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "productId": { "S": "CPU-109" },
+          "brand": { "S": "Intel" },
+          "category": { "S": "Processors" },
+          "description": { "S": "Intel Core i5-13600K 14-core (6P+8E) 20-thread desktop processor. 5.1 GHz max turbo with 24MB Intel Smart Cache. 125W TDP with LGA 1700 socket. Supports DDR4 and DDR5 memory. Ideal for mid-range gaming and productivity builds." },
+          "imageUrl": { "S": "https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?auto=format&fit=crop&w=600&q=80" },
+          "name": { "S": "Intel Core i5-13600K 14-Core 20-Thread Processor" },
+          "price": { "N": "299.99" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "productId": { "S": "RAM-305" },
+          "brand": { "S": "TeamGroup" },
+          "category": { "S": "Memory" },
+          "description": { "S": "TeamGroup T-Force Delta RGB 32GB (2x16GB) DDR5 6000MHz CL38 memory kit. RGB lighting with 120-degree ultra-wide lighting. Intel XMP 3.0 compatible with aluminum heat spreader. Perfect for gaming builds with vibrant aesthetics." },
+          "imageUrl": { "S": "https://images.unsplash.com/photo-1591485423007-765bde4139ef?auto=format&fit=crop&w=600&q=80" },
+          "name": { "S": "TeamGroup T-Force Delta RGB 32GB DDR5 6000MHz CL38" },
+          "price": { "N": "99.99" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "productId": { "S": "RAM-306" },
+          "brand": { "S": "Patriot" },
+          "category": { "S": "Memory" },
+          "description": { "S": "Patriot Viper Venom 32GB (2x16GB) DDR5 6200MHz CL40 memory kit. Aluminum heat shield with Intel XMP 3.0 and AMD EXPO support. High-performance ICs with on-die ECC. Ideal for high-performance gaming and content creation." },
+          "imageUrl": { "S": "https://images.unsplash.com/photo-1591485423007-765bde4139ef?auto=format&fit=crop&w=600&q=80" },
+          "name": { "S": "Patriot Viper Venom 32GB DDR5 6200MHz CL40" },
+          "price": { "N": "109.99" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "productId": { "S": "SSD-506" },
+          "brand": { "S": "Kingston" },
+          "category": { "S": "Storage" },
+          "description": { "S": "Kingston KC3000 2TB PCIe 4.0 NVMe SSD with 7,000 MB/s read and 7,000 MB/s write speeds. M.2 2280 form factor with graphene aluminum heat spreader. 1.2PB TBW with 5-year warranty. Perfect for gamers and content creators." },
+          "imageUrl": { "S": "https://images.unsplash.com/photo-1587614382346-4ec70e388b28?auto=format&fit=crop&w=600&q=80" },
+          "name": { "S": "Kingston KC3000 2TB PCIe 4.0 NVMe M.2 SSD" },
+          "price": { "S": "149.99" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "productId": { "S": "SSD-507" },
+          "brand": { "S": "Crucial" },
+          "category": { "S": "Storage" },
+          "description": { "S": "Crucial P3 Plus 4TB PCIe Gen4 NVMe SSD with 5,000 MB/s sequential read. 4,200 MB/s write speeds with Micron Advanced 3D NAND. M.2 2280 form factor with 800 TBW endurance. 5-year limited warranty. Perfect for game libraries and mass storage." },
+          "imageUrl": { "S": "https://images.unsplash.com/photo-1587614382346-4ec70e388b28?auto=format&fit=crop&w=600&q=80" },
+          "name": { "S": "Crucial P3 Plus 4TB PCIe Gen4 NVMe SSD" },
+          "price": { "N": "239.99" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "productId": { "S": "MB-204" },
+          "brand": { "S": "ASRock" },
+          "category": { "S": "Motherboards" },
+          "description": { "S": "ASRock B650E Steel Legend WiFi AM5 motherboard with 14+2+1 power phases. Features PCIe 5.0 x16 slot, 3x M.2 slots, and WiFi 6E. 2.5G LAN with USB 3.2 Gen 2x2 Type-C. Polychrome RGB lighting with steel armor. Perfect for Ryzen 7000 builds." },
+          "imageUrl": { "S": "https://images.unsplash.com/photo-1512499617640-c74ae3a79d37?auto=format&fit=crop&w=600&q=80" },
+          "name": { "S": "ASRock B650E Steel Legend WiFi AM5 Motherboard" },
+          "price": { "N": "219.99" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "productId": { "S": "MB-205" },
+          "brand": { "S": "ASUS" },
+          "category": { "S": "Motherboards" },
+          "description": { "S": "ASUS TUF Gaming B760-Plus WiFi D4 Intel motherboard with 12+1 DrMOS power stages. PCIe 5.0 support with 3x M.2 slots and WiFi 6. TUF protection with military-grade components. 2.5G Ethernet with AI noise canceling. Perfect for 12th-14th Gen Intel builds." },
+          "imageUrl": { "S": "https://images.unsplash.com/photo-1512499617640-c74ae3a79d37?auto=format&fit=crop&w=600&q=80" },
+          "name": { "S": "ASUS TUF Gaming B760-Plus WiFi D4 Intel Motherboard" },
+          "price": { "N": "189.99" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "productId": { "S": "PSU-606" },
+          "brand": { "S": "SeaSonic" },
+          "category": { "S": "Power Supplies" },
+          "description": { "S": "SeaSonic Focus GX-850 850W 80 Plus Gold ATX 3.1 power supply with native 12V-2x6 connector. 120mm fluid dynamic bearing fan with hybrid silent fan control. Fully modular with 100% Japanese capacitors. 10-year warranty. Perfect for mid-to-high-end gaming PCs." },
+          "imageUrl": { "S": "https://images.unsplash.com/photo-1600003263720-95b45a4035d5?auto=format&fit=crop&w=600&q=80" },
+          "name": { "S": "SeaSonic Focus GX-850 850W ATX 3.1 Gold Modular PSU" },
+          "price": { "N": "139.99" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "productId": { "S": "PSU-607" },
+          "brand": { "S": "Thermaltake" },
+          "category": { "S": "Power Supplies" },
+          "description": { "S": "Thermaltake Toughpower GF A3 1050W 80 Plus Gold ATX 3.0 power supply. Native PCIe 5.0 12VHPWR connector with 105°C Japanese capacitors. Smart zero fan mode with 140mm hydraulic bearing fan. Fully modular with 10-year warranty. Perfect for high-power systems." },
+          "imageUrl": { "S": "https://images.unsplash.com/photo-1600003263720-95b45a4035d5?auto=format&fit=crop&w=600&q=80" },
+          "name": { "S": "Thermaltake Toughpower GF A3 1050W ATX 3.0 Gold PSU" },
+          "price": { "N": "159.99" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "productId": { "S": "COOL-806" },
+          "brand": { "S": "DeepCool" },
+          "category": { "S": "Cooling" },
+          "description": { "S": "DeepCool AK620 Zero Dark CPU air cooler with dual tower design and six heat pipes. Two 120mm FDB fans with PWM control. 260W TDP cooling capacity with zero dark aesthetic. Compatible with Intel LGA1700/1200 and AMD AM5/AM4. Excellent silent cooling performance." },
+          "imageUrl": { "S": "https://images.unsplash.com/photo-1528164344705-47542687000d?auto=format&fit=crop&w=600&q=80" },
+          "name": { "S": "DeepCool AK620 Zero Dark Dual Tower CPU Air Cooler" },
+          "price": { "N": "64.99" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "productId": { "S": "COOL-807" },
+          "brand": { "S": "Lian Li" },
+          "category": { "S": "Cooling" },
+          "description": { "S": "Lian Li Galahad II Trinity 360 AIO liquid cooler with 360mm radiator and three SL120 fans. Features UNI FAN design for daisy-chaining and 2.4-inch LCD display on pump. 7th gen Asetek pump with 4000 RPM speed. Perfect for high-end builds with display customization." },
+          "imageUrl": { "S": "https://images.unsplash.com/photo-1528164344705-47542687000d?auto=format&fit=crop&w=600&q=80" },
+          "name": { "S": "Lian Li Galahad II Trinity 360 AIO with LCD Display" },
+          "price": { "N": "229.99" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "productId": { "S": "CASE-705" },
+          "brand": { "S": "Phanteks" },
+          "category": { "S": "Cases" },
+          "description": { "S": "Phanteks Eclipse G360A mid-tower case with mesh front panel and three M25-120 DRGB fans. Tempered glass side panel with hinged design. Supports up to 360mm radiators and 280mm in front. USB-C front I/O with integrated RGB controller. Perfect for high-airflow builds." },
+          "imageUrl": { "S": "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?auto=format&fit=crop&w=600&q=80" },
+          "name": { "S": "Phanteks Eclipse G360A Mesh Mid-Tower Case with RGB Fans" },
+          "price": { "N": "89.99" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "productId": { "S": "CASE-706" },
+          "brand": { "S": "Cooler Master" },
+          "category": { "S": "Cases" },
+          "description": { "S": "Cooler Master Qube 500 Flatpack mid-tower case with modular flat-pack design. Tool-less assembly with mesh and glass panels. Supports ATX motherboards up to 365mm GPUs and 280mm radiators. USB-C 3.2 Gen 2x2 with customizable layout. Perfect for DIY builders." },
+          "imageUrl": { "S": "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?auto=format&fit=crop&w=600&q=80" },
+          "name": { "S": "Cooler Master Qube 500 Flatpack Modular ATX Case" },
+          "price": { "N": "119.99" }
+        }
+      }
+    }
+  ]
+}
